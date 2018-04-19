@@ -1,0 +1,90 @@
+syntax = "proto3"
+
+package bmi;
+
+message Empty{}
+
+message InitializeRequest
+{
+    string config_file = 1;
+}
+
+message UpdateUntilRequest
+{
+    double until = 1;
+}
+
+message UpdateFracRequest
+{
+    double frac = 1;
+}
+
+message GetComponentNameResponse
+{
+    string name = 1;
+}
+
+message GetInputVarNameCountResponse
+{
+    int32 count = 1;
+}
+
+message GetOutputVarNameCountResponse
+{
+    int32 count = 1;
+}
+message GetInputVarNamesResponse
+{
+    repeated string names = 1;
+}
+
+message GetOutputVarNamesResponse
+{
+    repeated string names = 1;
+}
+
+message GetTimeUnitsResponse
+{
+    string units = 1;
+}
+
+message GetTimeStepResponse
+{
+    double interval = 1;
+}
+
+message GetCurrentTimeResponse
+{
+    double time = 1;
+}
+
+message GetStartTimeResponse
+{
+    double time = 1;
+}
+
+message GetEndTimeResponse
+{
+    double time = 1;
+}
+
+service BmiService {
+    rpc initialize(InitializeRequest) returns(Empty) {}
+    rpc update(Empty) returns(Empty) {}
+    rpc updateUntil(UpdateUntilRequest) returns(Empty) {}
+    rpc updateFrac(UpdateFracRequest) returns(Empty) {}
+    rpc finalize(Empty) returns(Empty) {}
+    rpc runModel(Empty) returns(Empty) {}
+    
+    rpc getComponentName(Empty) returns(GetComponentNameResponse) {}
+    rpc getInputVarNameCount(Empty) returns(GetInputVarNameCountResponse) {}
+    rpc getOuputVarNameCount(Empty) returns(GetOuputVarNameCountResponse) {}
+    rpc getInputVarNames(Empty) returns(GetInputVarNamesResponse) {}
+    rpc getOuputVarNames(Empty) returns(GetOuputVarNamesResponse) {}
+
+    rpc getTimeUnits(Empty) returns(GetTimeUnitsResponse) {}
+    rpc getTimeStep(Empty) returns(GetTimeStepResponse) {}
+    rpc getCurrentTime(Empty) returns(GetCurrentTimeResponse) {}
+    rpc getStartTime(Empty) returns(GetStartTimeResponse) {}
+    rpc getEndTime(Empty) returns(GetEndTimeResponse) {}
+}
