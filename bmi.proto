@@ -1,4 +1,4 @@
-syntax = "proto3"
+syntax = "proto3";
 
 package bmi;
 
@@ -33,6 +33,7 @@ message GetOutputVarNameCountResponse
 {
     int32 count = 1;
 }
+
 message GetInputVarNamesResponse
 {
     repeated string names = 1;
@@ -68,7 +69,216 @@ message GetEndTimeResponse
     double time = 1;
 }
 
+message GetVarGridRequest
+{
+    string name = 1;
+}
+
+message GetVarGridResponse
+{
+    int32 grid_id = 1;
+}
+
+message GetVarTypeRequest
+{
+    string name = 1;
+}
+
+message GetVarTypeResponse
+{
+    string type = 1;
+}
+
+message GetVarItemSizeRequest
+{
+    string name = 1;
+}
+
+message GetVarItemSizeResponse
+{
+    int32 size = 1;
+}
+
+message GetVarUnitsRequest
+{
+    string name = 1;
+}
+
+message GetVarUnitsResponse
+{
+    string units = 1;
+}
+
+message GetVarNBytesRequest
+{
+    string name = 1;
+}
+
+message GetVarNBytesResponse
+{
+    int32 nbytes = 1;
+}
+
+message GetValueRequest
+{
+    string name = 1;
+}
+
+message GetValueResponse
+{
+    repeated int32 values_int = 1;
+    repeated double values_double = 2;
+}
+
+message GetValueAtIndicesRequest
+{
+    string name = 1;
+    repeated int32 indices = 2;
+}
+
+message SetValueRequest
+{
+    string name = 1;
+    repeated int32 values_int = 2;
+    repeated double values_double = 3;
+}
+
+message SetValuePtrRequest
+{
+    string name = 1;
+    int32 ref = 2;
+}
+
+message SetValueAtIndicesRequest
+{
+    string name = 1;
+    repeated int32 indices = 2;
+    repeated int32 values_int = 3;
+    repeated double values_double = 4;
+}
+
+message GetGridSizeRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridSizeResponse
+{
+    int32 size = 1;
+}
+
+message GetGridRankRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridRankResponse
+{
+    int32 rank = 1;
+}
+
+message GetGridTypeRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridTypeResponse
+{
+    string type = 1;
+}
+
+message GetGridShapeRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridShapeResponse
+{
+    repeated int32 shape = 1;
+}
+
+message GetGridSpacingRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridSpacingResponse
+{
+    repeated double spacing = 1;
+}
+
+message GetGridOriginRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridOriginResponse
+{
+    repeated double origin = 1;
+}
+
+message GetGridPointsRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridPointsResponse
+{
+    repeated double coordinates = 1;
+}
+
+message GetGridCellCountRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridCellCountResponse
+{
+    int32 count = 1;
+}
+
+message GetGridPointCountRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridPointCountResponse
+{
+    int32 count = 1;
+}
+
+message GetGridVertexCountRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridVertexCountResponse
+{
+    int32 count = 1;
+}
+
+message GetGridConnectivityRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridConnectivityResponse
+{
+    repeated int32 links = 1;
+}
+
+message GetGridOffsetRequest
+{
+    int32 grid_id = 1;
+}
+
+message GetGridOffsetResponse
+{
+    repeated int32 offsets = 1;
+}
+
 service BmiService {
+
     rpc initialize(InitializeRequest) returns(Empty) {}
     rpc update(Empty) returns(Empty) {}
     rpc updateUntil(UpdateUntilRequest) returns(Empty) {}
@@ -78,13 +288,42 @@ service BmiService {
     
     rpc getComponentName(Empty) returns(GetComponentNameResponse) {}
     rpc getInputVarNameCount(Empty) returns(GetInputVarNameCountResponse) {}
-    rpc getOuputVarNameCount(Empty) returns(GetOuputVarNameCountResponse) {}
+    rpc getOuputVarNameCount(Empty) returns(GetOutputVarNameCountResponse) {}
     rpc getInputVarNames(Empty) returns(GetInputVarNamesResponse) {}
-    rpc getOuputVarNames(Empty) returns(GetOuputVarNamesResponse) {}
+    rpc getOuputVarNames(Empty) returns(GetOutputVarNamesResponse) {}
 
     rpc getTimeUnits(Empty) returns(GetTimeUnitsResponse) {}
     rpc getTimeStep(Empty) returns(GetTimeStepResponse) {}
     rpc getCurrentTime(Empty) returns(GetCurrentTimeResponse) {}
     rpc getStartTime(Empty) returns(GetStartTimeResponse) {}
     rpc getEndTime(Empty) returns(GetEndTimeResponse) {}
+
+    rpc getVarGrid(GetVarGridRequest) returns(GetVarGridResponse) {}
+    rpc getVarType(GetVarTypeRequest) returns(GetVarTypeResponse) {}
+    rpc getVarItemSize(GetVarItemSizeRequest) returns(GetVarItemSizeResponse) {}
+    rpc getVarUnits(GetVarUnitsRequest) returns(GetVarUnitsResponse) {}
+    rpc getVarNBytes(GetVarNBytesRequest) returns(GetVarNBytesResponse) {}
+
+    rpc getValue(GetValueRequest) returns(GetValueResponse) {}
+    rpc getValuePtr(GetValueRequest) returns(Empty) {}
+    rpc getValueAtIndices(GetValueAtIndicesRequest) returns(GetValueResponse) {}
+
+    rpc setValue(SetValueRequest) returns(Empty) {}
+    rpc setValuePtr(SetValuePtrRequest) returns(Empty) {}
+    rpc setValueAtIndices(SetValueAtIndicesRequest) returns(Empty) {}
+
+    rpc getGridSize(GetGridSizeRequest) returns(GetGridSizeResponse) {}
+    rpc getGridType(GetGridTypeRequest) returns(GetGridTypeResponse) {}
+    rpc getGridRank(GetGridRankRequest) returns(GetGridRankResponse) {}
+    rpc getGridShape(GetGridShapeRequest) returns(GetGridShapeResponse) {}
+    rpc getGridSpacing(GetGridSpacingRequest) returns(GetGridSpacingResponse) {}
+    rpc getGridOrigin(GetGridOriginRequest) returns(GetGridOriginResponse) {}
+    rpc getGridX(GetGridPointsRequest) returns(GetGridPointsResponse) {}
+    rpc getGridY(GetGridPointsRequest) returns(GetGridPointsResponse) {}
+    rpc getGridZ(GetGridPointsRequest) returns(GetGridPointsResponse) {}
+    rpc getGridCellCount(GetGridCellCountRequest) returns(GetGridCellCountResponse) {}
+    rpc getGridPointCount(GetGridPointCountRequest) returns(GetGridPointCountResponse) {}
+    rpc getGridVertexCount(GetGridVertexCountRequest) returns(GetGridVertexCountResponse) {}
+    rpc getGridConnectivity(GetGridConnectivityRequest) returns(GetGridConnectivityResponse) {}
+    rpc getGridOffset(GetGridOffsetRequest) returns(GetGridOffsetResponse) {}
 }
