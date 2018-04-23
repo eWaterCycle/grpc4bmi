@@ -1,0 +1,140 @@
+import logging
+
+import bmi
+import grpc
+import numpy
+
+import bmi_pb2
+import bmi_pb2_grpc
+
+log = logging.getLogger(__name__)
+
+
+class BmiClient(bmi.Bmi):
+
+    def __init__(self):
+        # TODO: make configurable
+        self.channel = grpc.insecure_channel("localhost:50051")
+        self.stub = bmi_pb2_grpc.BmiServiceStub(self.channel)
+
+    def initialize(self, filename):
+        self.stub.initialize(bmi_pb2.InitializeRequest(config_file=filename))
+
+    def update(self):
+        self.stub.update(bmi_pb2.Empty())
+
+    def update_frac(self, time_frac):
+        self.stub.updateFrac(bmi_pb2.UpdateFracRequest(frac=time_frac))
+
+    def update_until(self, time):
+        self.stub.updateUntil(bmi_pb2.UpdateUntilRequest(until=time))
+
+    def finalize(self):
+        self.stub.finalize(bmi_pb2.Empty())
+
+    def get_component_name(self):
+        return self.stub.getComponentName(bmi_pb2.Empty()).name
+
+    def get_input_var_names(self):
+        return self.stub.getInputVarNames(bmi_pb2.Empty()).names
+
+    def get_output_var_names(self):
+        return self.stub.getOutputVarNames(bmi_pb2.Empty()).names
+
+    def get_time_units(self):
+        return self.stub.getTimeUnits(bmi_pb2.Empty()).units
+
+    def get_time_step(self):
+        return self.stub.getTimeStep(bmi_pb2.Empty()).interval
+
+    def get_current_time(self):
+        return self.stub.getCurrentTime(bmi_pb2.Empty()).time
+
+    def get_start_time(self):
+        return self.stub.getStartTime(bmi_pb2.Empty()).time
+
+    def get_end_time(self):
+        return self.stub.getEndTime(bmi_pb2.Empty()).time
+
+    def get_var_grid(self, var_name):
+        return self.stub.getVarGrid(bmi_pb2.GetVarRequest(name=var_name)).grid_id
+
+    def get_var_type(self, var_name):
+        return self.stub.getVarType(bmi_pb2.GetVarRequest(name=var_name)).type
+
+    def get_var_itemsize(self, var_name):
+        return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=var_name)).size
+
+    def get_var_units(self, var_name):
+        return self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=var_name)).units
+
+    def get_var_nbytes(self, var_name):
+        return self.stub.getVarNBytes(bmi_pb2.GetVarRequest(name=var_name)).nbytes
+
+    def get_value(self, var_name):
+        response = self.stub.getValue(bmi_pb2.GetVarRequest(name=var_name))
+        if any(response.values_int):
+            return response.values_int
+        if any(response.values_double):
+            return response.values_double
+        return []
+
+    def get_value_ref(self, var_name):
+        raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
+
+    def get_value_at_indices(self, var_name, indices):
+        response = self.stub.getValue(bmi_pb2.GetValueAtIndicesRequest(name=var_name, indices=indices))
+        if any(response.values_int):
+            return response.values_int
+        if any(response.values_double):
+            return response.values_double
+        return []
+
+    def set_value(self, var_name, src):
+        request = None
+        if src.dtype == numpy.int32:
+            request = bmi_pb2.SetValueRequest(name=var_name, values_int=src)
+        elif src.dtype == numpy.float64:
+            request = bmi_pb2.SetValueRequest(name=var_name, values_double=src)
+        self.stub.setValue(request)
+
+    def set_value_at_indices(self, var_name, indices, src):
+        request = None
+        if src.dtype == numpy.int32:
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=indices, values_int=src)
+        elif src.dtype == numpy.float64:
+            request = bmi_pb2.SetValueRequest(name=var_name, indices=indices, values_double=src)
+        self.stub.setValueAtIndices(request)
+
+    def get_grid_size(self, grid_id):
+        return self.stub.getGridSize(bmi_pb2.GridRequest(grid_id=grid_id)).size
+
+    def get_grid_rank(self, grid_id):
+        return self.stub.getGridRank(bmi_pb2.GridRequest(grid_id=grid_id)).rank
+
+    def get_grid_type(self, grid_id):
+        return self.stub.getGridType(bmi_pb2.GridRequest(grid_id=grid_id)).type
+
+    def get_grid_x(self, grid_id):
+        return self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
+
+    def get_grid_y(self, grid_id):
+        return self.stub.getGridY(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
+
+    def get_grid_z(self, grid_id):
+        return self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
+
+    def get_grid_shape(self, grid_id):
+        return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).shape
+
+    def get_grid_spacing(self, grid_id):
+        return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).spacing
+
+    def get_grid_offset(self, grid_id):
+        return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).offsets
+
+    def get_grid_connectivity(self, grid_id):
+        return self.stub.getGridConnectivity(bmi_pb2.GridRequest(grid_id=grid_id)).links
+
+    def get_grid_origin(self, grid_id):
+        return self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid_id)).origin
