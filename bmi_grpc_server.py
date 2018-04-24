@@ -1,26 +1,21 @@
-import os
 import logging
+
 import numpy
-import bmi_pb2_grpc
+
 import bmi_pb2
+import bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
 
 class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
-    def __init__(self):
+    def __init__(self, module_name, class_name):
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         self.bmi_model_ = None
-        module_name = os.environ.get("BMI_MODULE", None)
-        class_name = os.environ.get("BMI_MODEL", None)
         if module_name is not None and class_name is not None:
             class_ = getattr(__import__(module_name), class_name, None)
-            if class_ is not None:
-                try:
-                    self.bmi_model_ = class_()
-                except ValueError as e:
-                    log.error("Bad instantiation of BMI model service: %s" % e.message)
+            self.bmi_model_ = class_()
 
     def initialize(self, request, context):
         self.bmi_model_.initialize(request.config_file)
@@ -50,16 +45,16 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         return bmi_pb2.GetComponentNameResponse(name=self.bmi_model_.get_component_name())
 
     def getInputVarNameCount(self, request, context):
-        return bmi_pb2.GetVarNameCountResponse(count=len(self.bmi_model_.get_input_varnames()))
+        return bmi_pb2.GetVarNameCountResponse(count=len(self.bmi_model_.get_input_var_names()))
 
     def getOutputVarNameCount(self, request, context):
-        return bmi_pb2.GetVarNameCountResponse(count=len(self.bmi_model_.get_output_varnames()))
+        return bmi_pb2.GetVarNameCountResponse(count=len(self.bmi_model_.get_output_var_names()))
 
     def getInputVarNames(self, request, context):
-        return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_input_varnames())
+        return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_input_var_names())
 
     def getOutputVarNames(self, request, context):
-        return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_output_varnames())
+        return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_output_var_names())
 
     def getTimeUnits(self, request, context):
         return bmi_pb2.GetTimeUnitsResponse(units=self.bmi_model_.get_time_units())
@@ -172,3 +167,5 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getGridOffset(self, request, context):
         return bmi_pb2.GetGridOffsetResponse(offsets=self.bmi_model_.get_grid_offset(request.grid_id))
+
+
