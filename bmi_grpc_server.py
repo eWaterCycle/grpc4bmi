@@ -16,9 +16,10 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         self.bmi_model_ = class_()
 
     def initialize(self, request, context):
-        if not request.config_file:
-            self.bmi_model_.initialize(None)
-        self.bmi_model_.initialize(request.config_file)
+        ifile = str(request.config_file)
+        if not ifile:
+            ifile = None
+        self.bmi_model_.initialize(ifile)
         return bmi_pb2.Empty()
 
     def update(self, request, context):
@@ -72,7 +73,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_end_time())
 
     def getVarGrid(self, request, context):
-        return bmi_pb2.GetVarGridResponse(grid=self.bmi_model_.get_var_grid(request.name))
+        return bmi_pb2.GetVarGridResponse(grid_id=self.bmi_model_.get_var_grid(request.name))
 
     def getVarType(self, request, context):
         return bmi_pb2.GetVarTypeResponse(type=self.bmi_model_.get_var_type(request.name))

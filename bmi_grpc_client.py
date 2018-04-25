@@ -16,7 +16,8 @@ class BmiClient(bmi.Bmi):
         self.stub = bmi_pb2_grpc.BmiServiceStub(channel)
 
     def initialize(self, filename):
-        self.stub.initialize(bmi_pb2.InitializeRequest(config_file=filename))
+        fname = "" if filename is None else filename
+        self.stub.initialize(bmi_pb2.InitializeRequest(config_file=fname))
 
     def update(self):
         self.stub.update(bmi_pb2.Empty())
@@ -31,16 +32,16 @@ class BmiClient(bmi.Bmi):
         self.stub.finalize(bmi_pb2.Empty())
 
     def get_component_name(self):
-        return self.stub.getComponentName(bmi_pb2.Empty()).name
+        return str(self.stub.getComponentName(bmi_pb2.Empty()).name)
 
     def get_input_var_names(self):
-        return self.stub.getInputVarNames(bmi_pb2.Empty()).names
+        return tuple([str(s) for s in self.stub.getInputVarNames(bmi_pb2.Empty()).names])
 
     def get_output_var_names(self):
-        return self.stub.getOutputVarNames(bmi_pb2.Empty()).names
+        return tuple([str(s) for s in self.stub.getOutputVarNames(bmi_pb2.Empty()).names])
 
     def get_time_units(self):
-        return self.stub.getTimeUnits(bmi_pb2.Empty()).units
+        return str(self.stub.getTimeUnits(bmi_pb2.Empty()).units)
 
     def get_time_step(self):
         return self.stub.getTimeStep(bmi_pb2.Empty()).interval
@@ -58,13 +59,13 @@ class BmiClient(bmi.Bmi):
         return self.stub.getVarGrid(bmi_pb2.GetVarRequest(name=var_name)).grid_id
 
     def get_var_type(self, var_name):
-        return self.stub.getVarType(bmi_pb2.GetVarRequest(name=var_name)).type
+        return str(self.stub.getVarType(bmi_pb2.GetVarRequest(name=var_name)).type)
 
     def get_var_itemsize(self, var_name):
         return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=var_name)).size
 
     def get_var_units(self, var_name):
-        return self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=var_name)).units
+        return str(self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=var_name)).units)
 
     def get_var_nbytes(self, var_name):
         return self.stub.getVarNBytes(bmi_pb2.GetVarRequest(name=var_name)).nbytes
@@ -111,7 +112,7 @@ class BmiClient(bmi.Bmi):
         return self.stub.getGridRank(bmi_pb2.GridRequest(grid_id=grid_id)).rank
 
     def get_grid_type(self, grid_id):
-        return self.stub.getGridType(bmi_pb2.GridRequest(grid_id=grid_id)).type
+        return str(self.stub.getGridType(bmi_pb2.GridRequest(grid_id=grid_id)).type)
 
     def get_grid_x(self, grid_id):
         return self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
@@ -126,10 +127,10 @@ class BmiClient(bmi.Bmi):
         return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).shape
 
     def get_grid_spacing(self, grid_id):
-        return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).spacing
+        return self.stub.getGridSpacing(bmi_pb2.GridRequest(grid_id=grid_id)).spacing
 
     def get_grid_offset(self, grid_id):
-        return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).offsets
+        return self.stub.getGridOffset(bmi_pb2.GridRequest(grid_id=grid_id)).offsets
 
     def get_grid_connectivity(self, grid_id):
         return self.stub.getGridConnectivity(bmi_pb2.GridRequest(grid_id=grid_id)).links
