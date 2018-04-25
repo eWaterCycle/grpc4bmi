@@ -12,10 +12,8 @@ log = logging.getLogger(__name__)
 
 class BmiClient(bmi.Bmi):
 
-    def __init__(self):
-        # TODO: make configurable
-        self.channel = grpc.insecure_channel("localhost:50051")
-        self.stub = bmi_pb2_grpc.BmiServiceStub(self.channel)
+    def __init__(self, channel=grpc.insecure_channel("localhost:50051")):
+        self.stub = bmi_pb2_grpc.BmiServiceStub(channel)
 
     def initialize(self, filename):
         self.stub.initialize(bmi_pb2.InitializeRequest(config_file=filename))

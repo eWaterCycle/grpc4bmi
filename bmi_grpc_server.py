@@ -12,12 +12,12 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def __init__(self, module_name, class_name):
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
-        self.bmi_model_ = None
-        if module_name is not None and class_name is not None:
-            class_ = getattr(__import__(module_name), class_name, None)
-            self.bmi_model_ = class_()
+        class_ = getattr(__import__(module_name), class_name, None)
+        self.bmi_model_ = class_()
 
     def initialize(self, request, context):
+        if not request.config_file:
+            self.bmi_model_.initialize(None)
         self.bmi_model_.initialize(request.config_file)
         return bmi_pb2.Empty()
 
