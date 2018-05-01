@@ -1,0 +1,13 @@
+setuptools==36.2.7
+grpcio
+numpy
+docutils
+protobuf
+PyYAML
+nose
+numpydoc
+cfunits
+scipy
+git+https://github.com/csdms/bmi-python.git
+git+https://github.com/csdms/bmi-tester.git
+git+https://github.com/csdms/standard_names.git

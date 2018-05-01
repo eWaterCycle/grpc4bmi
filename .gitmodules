@@ -1,6 +1,0 @@
-[submodule "bmi"]
-	path = bmi
-	url = https://github.com/csdms/bmi
-[submodule "bmi-tester"]
-	path = bmi-tester
-	url = https://github.com/csdms/bmi-tester
