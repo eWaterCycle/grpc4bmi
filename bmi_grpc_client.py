@@ -72,29 +72,21 @@ class BmiClient(bmi.Bmi):
 
     def get_value(self, var_name):
         response = self.stub.getValue(bmi_pb2.GetVarRequest(name=var_name))
-        if any(response.values_int):
-            return response.values_int
-        if any(response.values_double):
-            return response.values_double
-        return []
+        return BmiClient.make_array(response)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def get_value_at_indices(self, var_name, indices):
         response = self.stub.getValue(bmi_pb2.GetValueAtIndicesRequest(name=var_name, indices=indices))
-        if any(response.values_int):
-            return response.values_int
-        if any(response.values_double):
-            return response.values_double
-        return []
+        return BmiClient.make_array(response)
 
     def set_value(self, var_name, src):
         request = None
         if src.dtype == numpy.int32:
-            request = bmi_pb2.SetValueRequest(name=var_name, values_int=src)
+            request = bmi_pb2.SetValueRequest(name=var_name, values_int=src.flatten(), shape=src.shape)
         elif src.dtype == numpy.float64:
-            request = bmi_pb2.SetValueRequest(name=var_name, values_double=src)
+            request = bmi_pb2.SetValueRequest(name=var_name, values_double=src.flatten(), shape=src.shape)
         self.stub.setValue(request)
 
     def set_value_at_indices(self, var_name, indices, src):
@@ -137,3 +129,12 @@ class BmiClient(bmi.Bmi):
 
     def get_grid_origin(self, grid_id):
         return self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid_id)).origin
+
+    @staticmethod
+    def make_array(response):
+        shape = response.shape
+        if any(response.values_int):
+            return numpy.reshape(response.values_int, shape)
+        if any(response.values_double):
+            return numpy.reshape(response.values_double, shape)
+        return numpy.array([])

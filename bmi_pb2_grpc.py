@@ -132,7 +132,7 @@ class BmiServiceStub(object):
     self.getValueAtIndices = channel.unary_unary(
         '/bmi.BmiService/getValueAtIndices',
         request_serializer=bmi__pb2.GetValueAtIndicesRequest.SerializeToString,
-        response_deserializer=bmi__pb2.GetValueResponse.FromString,
+        response_deserializer=bmi__pb2.GetValueAtIndicesResponse.FromString,
         )
     self.setValue = channel.unary_unary(
         '/bmi.BmiService/setValue',
@@ -633,7 +633,7 @@ def add_BmiServiceServicer_to_server(servicer, server):
       'getValueAtIndices': grpc.unary_unary_rpc_method_handler(
           servicer.getValueAtIndices,
           request_deserializer=bmi__pb2.GetValueAtIndicesRequest.FromString,
-          response_serializer=bmi__pb2.GetValueResponse.SerializeToString,
+          response_serializer=bmi__pb2.GetValueAtIndicesResponse.SerializeToString,
       ),
       'setValue': grpc.unary_unary_rpc_method_handler(
           servicer.setValue,

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='bmi.proto',
   package='bmi',
   syntax='proto3',
-  serialized_pb=_b('\n\tbmi.proto\x12\x03\x62mi\"\x07\n\x05\x45mpty\"(\n\x11InitializeRequest\x12\x13\n\x0b\x63onfig_file\x18\x01 \x01(\t\"#\n\x12UpdateUntilRequest\x12\r\n\x05until\x18\x01 \x01(\x01\"!\n\x11UpdateFracRequest\x12\x0c\n\x04\x66rac\x18\x01 \x01(\x01\"(\n\x18GetComponentNameResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\"(\n\x17GetVarNameCountResponse\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\"$\n\x13GetVarNamesResponse\x12\r\n\x05names\x18\x01 \x03(\t\"%\n\x14GetTimeUnitsResponse\x12\r\n\x05units\x18\x01 \x01(\t\"\'\n\x13GetTimeStepResponse\x12\x10\n\x08interval\x18\x01 \x01(\x01\"\x1f\n\x0fGetTimeResponse\x12\x0c\n\x04time\x18\x01 \x01(\x01\"\x1d\n\rGetVarRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"%\n\x12GetVarGridResponse\x12\x0f\n\x07grid_id\x18\x01 \x01(\x05\"\"\n\x12GetVarTypeResponse\x12\x0c\n\x04type\x18\x01 \x01(\t\"&\n\x16GetVarItemSizeResponse\x12\x0c\n\x04size\x18\x01 \x01(\x05\"$\n\x13GetVarUnitsResponse\x12\r\n\x05units\x18\x01 \x01(\t\"&\n\x14GetVarNBytesResponse\x12\x0e\n\x06nbytes\x18\x01 \x01(\x05\"=\n\x10GetValueResponse\x12\x12\n\nvalues_int\x18\x01 \x03(\x05\x12\x15\n\rvalues_double\x18\x02 \x03(\x01\"9\n\x18GetValueAtIndicesRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07indices\x18\x02 \x03(\x05\"J\n\x0fSetValueRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nvalues_int\x18\x02 \x03(\x05\x12\x15\n\rvalues_double\x18\x03 \x03(\x01\"/\n\x12SetValuePtrRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03ref\x18\x02 \x01(\x05\"d\n\x18SetValueAtIndicesRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07indices\x18\x02 \x03(\x05\x12\x12\n\nvalues_int\x18\x03 \x03(\x05\x12\x15\n\rvalues_double\x18\x04 \x03(\x01\"\x1e\n\x0bGridRequest\x12\x0f\n\x07grid_id\x18\x01 \x01(\x05\"#\n\x13GetGridSizeResponse\x12\x0c\n\x04size\x18\x01 \x01(\x05\"#\n\x13GetGridRankResponse\x12\x0c\n\x04rank\x18\x01 \x01(\x05\"#\n\x13GetGridTypeResponse\x12\x0c\n\x04type\x18\x01 \x01(\t\"%\n\x14GetGridShapeResponse\x12\r\n\x05shape\x18\x01 \x03(\x05\")\n\x16GetGridSpacingResponse\x12\x0f\n\x07spacing\x18\x01 \x03(\x01\"\'\n\x15GetGridOriginResponse\x12\x0e\n\x06origin\x18\x01 \x03(\x01\",\n\x15GetGridPointsResponse\x12\x13\n\x0b\x63oordinates\x18\x01 \x03(\x01\"!\n\x10GetCountResponse\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\",\n\x1bGetGridConnectivityResponse\x12\r\n\x05links\x18\x01 \x03(\x05\"(\n\x15GetGridOffsetResponse\x12\x0f\n\x07offsets\x18\x01 \x03(\x05\x32\x83\x13\n\nBmiService\x12\x32\n\ninitialize\x12\x16.bmi.InitializeRequest\x1a\n.bmi.Empty\"\x00\x12\"\n\x06update\x12\n.bmi.Empty\x1a\n.bmi.Empty\"\x00\x12\x34\n\x0bupdateUntil\x12\x17.bmi.UpdateUntilRequest\x1a\n.bmi.Empty\"\x00\x12\x32\n\nupdateFrac\x12\x16.bmi.UpdateFracRequest\x1a\n.bmi.Empty\"\x00\x12$\n\x08\x66inalize\x12\n.bmi.Empty\x1a\n.bmi.Empty\"\x00\x12$\n\x08runModel\x12\n.bmi.Empty\x1a\n.bmi.Empty\"\x00\x12?\n\x10getComponentName\x12\n.bmi.Empty\x1a\x1d.bmi.GetComponentNameResponse\"\x00\x12\x42\n\x14getInputVarNameCount\x12\n.bmi.Empty\x1a\x1c.bmi.GetVarNameCountResponse\"\x00\x12\x43\n\x15getOutputVarNameCount\x12\n.bmi.Empty\x1a\x1c.bmi.GetVarNameCountResponse\"\x00\x12:\n\x10getInputVarNames\x12\n.bmi.Empty\x1a\x18.bmi.GetVarNamesResponse\"\x00\x12;\n\x11getOutputVarNames\x12\n.bmi.Empty\x1a\x18.bmi.GetVarNamesResponse\"\x00\x12\x37\n\x0cgetTimeUnits\x12\n.bmi.Empty\x1a\x19.bmi.GetTimeUnitsResponse\"\x00\x12\x35\n\x0bgetTimeStep\x12\n.bmi.Empty\x1a\x18.bmi.GetTimeStepResponse\"\x00\x12\x34\n\x0egetCurrentTime\x12\n.bmi.Empty\x1a\x14.bmi.GetTimeResponse\"\x00\x12\x32\n\x0cgetStartTime\x12\n.bmi.Empty\x1a\x14.bmi.GetTimeResponse\"\x00\x12\x30\n\ngetEndTime\x12\n.bmi.Empty\x1a\x14.bmi.GetTimeResponse\"\x00\x12;\n\ngetVarGrid\x12\x12.bmi.GetVarRequest\x1a\x17.bmi.GetVarGridResponse\"\x00\x12;\n\ngetVarType\x12\x12.bmi.GetVarRequest\x1a\x17.bmi.GetVarTypeResponse\"\x00\x12\x43\n\x0egetVarItemSize\x12\x12.bmi.GetVarRequest\x1a\x1b.bmi.GetVarItemSizeResponse\"\x00\x12=\n\x0bgetVarUnits\x12\x12.bmi.GetVarRequest\x1a\x18.bmi.GetVarUnitsResponse\"\x00\x12?\n\x0cgetVarNBytes\x12\x12.bmi.GetVarRequest\x1a\x19.bmi.GetVarNBytesResponse\"\x00\x12\x37\n\x08getValue\x12\x12.bmi.GetVarRequest\x1a\x15.bmi.GetValueResponse\"\x00\x12/\n\x0bgetValuePtr\x12\x12.bmi.GetVarRequest\x1a\n.bmi.Empty\"\x00\x12K\n\x11getValueAtIndices\x12\x1d.bmi.GetValueAtIndicesRequest\x1a\x15.bmi.GetValueResponse\"\x00\x12.\n\x08setValue\x12\x14.bmi.SetValueRequest\x1a\n.bmi.Empty\"\x00\x12\x34\n\x0bsetValuePtr\x12\x17.bmi.SetValuePtrRequest\x1a\n.bmi.Empty\"\x00\x12@\n\x11setValueAtIndices\x12\x1d.bmi.SetValueAtIndicesRequest\x1a\n.bmi.Empty\"\x00\x12;\n\x0bgetGridSize\x12\x10.bmi.GridRequest\x1a\x18.bmi.GetGridSizeResponse\"\x00\x12;\n\x0bgetGridType\x12\x10.bmi.GridRequest\x1a\x18.bmi.GetGridTypeResponse\"\x00\x12;\n\x0bgetGridRank\x12\x10.bmi.GridRequest\x1a\x18.bmi.GetGridRankResponse\"\x00\x12=\n\x0cgetGridShape\x12\x10.bmi.GridRequest\x1a\x19.bmi.GetGridShapeResponse\"\x00\x12\x41\n\x0egetGridSpacing\x12\x10.bmi.GridRequest\x1a\x1b.bmi.GetGridSpacingResponse\"\x00\x12?\n\rgetGridOrigin\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridOriginResponse\"\x00\x12:\n\x08getGridX\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridPointsResponse\"\x00\x12:\n\x08getGridY\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridPointsResponse\"\x00\x12:\n\x08getGridZ\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridPointsResponse\"\x00\x12=\n\x10getGridCellCount\x12\x10.bmi.GridRequest\x1a\x15.bmi.GetCountResponse\"\x00\x12>\n\x11getGridPointCount\x12\x10.bmi.GridRequest\x1a\x15.bmi.GetCountResponse\"\x00\x12?\n\x12getGridVertexCount\x12\x10.bmi.GridRequest\x1a\x15.bmi.GetCountResponse\"\x00\x12K\n\x13getGridConnectivity\x12\x10.bmi.GridRequest\x1a .bmi.GetGridConnectivityResponse\"\x00\x12?\n\rgetGridOffset\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridOffsetResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\tbmi.proto\x12\x03\x62mi\"\x07\n\x05\x45mpty\"(\n\x11InitializeRequest\x12\x13\n\x0b\x63onfig_file\x18\x01 \x01(\t\"#\n\x12UpdateUntilRequest\x12\r\n\x05until\x18\x01 \x01(\x01\"!\n\x11UpdateFracRequest\x12\x0c\n\x04\x66rac\x18\x01 \x01(\x01\"(\n\x18GetComponentNameResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\"(\n\x17GetVarNameCountResponse\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\"$\n\x13GetVarNamesResponse\x12\r\n\x05names\x18\x01 \x03(\t\"%\n\x14GetTimeUnitsResponse\x12\r\n\x05units\x18\x01 \x01(\t\"\'\n\x13GetTimeStepResponse\x12\x10\n\x08interval\x18\x01 \x01(\x01\"\x1f\n\x0fGetTimeResponse\x12\x0c\n\x04time\x18\x01 \x01(\x01\"\x1d\n\rGetVarRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"%\n\x12GetVarGridResponse\x12\x0f\n\x07grid_id\x18\x01 \x01(\x05\"\"\n\x12GetVarTypeResponse\x12\x0c\n\x04type\x18\x01 \x01(\t\"&\n\x16GetVarItemSizeResponse\x12\x0c\n\x04size\x18\x01 \x01(\x05\"$\n\x13GetVarUnitsResponse\x12\r\n\x05units\x18\x01 \x01(\t\"&\n\x14GetVarNBytesResponse\x12\x0e\n\x06nbytes\x18\x01 \x01(\x05\"L\n\x10GetValueResponse\x12\x12\n\nvalues_int\x18\x01 \x03(\x05\x12\x15\n\rvalues_double\x18\x02 \x03(\x01\x12\r\n\x05shape\x18\x03 \x03(\x05\"9\n\x18GetValueAtIndicesRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07indices\x18\x02 \x03(\x05\"F\n\x19GetValueAtIndicesResponse\x12\x12\n\nvalues_int\x18\x01 \x03(\x05\x12\x15\n\rvalues_double\x18\x02 \x03(\x01\"Y\n\x0fSetValueRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nvalues_int\x18\x02 \x03(\x05\x12\x15\n\rvalues_double\x18\x03 \x03(\x01\x12\r\n\x05shape\x18\x04 \x03(\x05\"/\n\x12SetValuePtrRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03ref\x18\x02 \x01(\x05\"d\n\x18SetValueAtIndicesRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07indices\x18\x02 \x03(\x05\x12\x12\n\nvalues_int\x18\x03 \x03(\x05\x12\x15\n\rvalues_double\x18\x04 \x03(\x01\"\x1e\n\x0bGridRequest\x12\x0f\n\x07grid_id\x18\x01 \x01(\x05\"#\n\x13GetGridSizeResponse\x12\x0c\n\x04size\x18\x01 \x01(\x05\"#\n\x13GetGridRankResponse\x12\x0c\n\x04rank\x18\x01 \x01(\x05\"#\n\x13GetGridTypeResponse\x12\x0c\n\x04type\x18\x01 \x01(\t\"%\n\x14GetGridShapeResponse\x12\r\n\x05shape\x18\x01 \x03(\x05\")\n\x16GetGridSpacingResponse\x12\x0f\n\x07spacing\x18\x01 \x03(\x01\"\'\n\x15GetGridOriginResponse\x12\x0e\n\x06origin\x18\x01 \x03(\x01\",\n\x15GetGridPointsResponse\x12\x13\n\x0b\x63oordinates\x18\x01 \x03(\x01\"!\n\x10GetCountResponse\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\",\n\x1bGetGridConnectivityResponse\x12\r\n\x05links\x18\x01 \x03(\x05\"(\n\x15GetGridOffsetResponse\x12\x0f\n\x07offsets\x18\x01 \x03(\x05\x32\x8c\x13\n\nBmiService\x12\x32\n\ninitialize\x12\x16.bmi.InitializeRequest\x1a\n.bmi.Empty\"\x00\x12\"\n\x06update\x12\n.bmi.Empty\x1a\n.bmi.Empty\"\x00\x12\x34\n\x0bupdateUntil\x12\x17.bmi.UpdateUntilRequest\x1a\n.bmi.Empty\"\x00\x12\x32\n\nupdateFrac\x12\x16.bmi.UpdateFracRequest\x1a\n.bmi.Empty\"\x00\x12$\n\x08\x66inalize\x12\n.bmi.Empty\x1a\n.bmi.Empty\"\x00\x12$\n\x08runModel\x12\n.bmi.Empty\x1a\n.bmi.Empty\"\x00\x12?\n\x10getComponentName\x12\n.bmi.Empty\x1a\x1d.bmi.GetComponentNameResponse\"\x00\x12\x42\n\x14getInputVarNameCount\x12\n.bmi.Empty\x1a\x1c.bmi.GetVarNameCountResponse\"\x00\x12\x43\n\x15getOutputVarNameCount\x12\n.bmi.Empty\x1a\x1c.bmi.GetVarNameCountResponse\"\x00\x12:\n\x10getInputVarNames\x12\n.bmi.Empty\x1a\x18.bmi.GetVarNamesResponse\"\x00\x12;\n\x11getOutputVarNames\x12\n.bmi.Empty\x1a\x18.bmi.GetVarNamesResponse\"\x00\x12\x37\n\x0cgetTimeUnits\x12\n.bmi.Empty\x1a\x19.bmi.GetTimeUnitsResponse\"\x00\x12\x35\n\x0bgetTimeStep\x12\n.bmi.Empty\x1a\x18.bmi.GetTimeStepResponse\"\x00\x12\x34\n\x0egetCurrentTime\x12\n.bmi.Empty\x1a\x14.bmi.GetTimeResponse\"\x00\x12\x32\n\x0cgetStartTime\x12\n.bmi.Empty\x1a\x14.bmi.GetTimeResponse\"\x00\x12\x30\n\ngetEndTime\x12\n.bmi.Empty\x1a\x14.bmi.GetTimeResponse\"\x00\x12;\n\ngetVarGrid\x12\x12.bmi.GetVarRequest\x1a\x17.bmi.GetVarGridResponse\"\x00\x12;\n\ngetVarType\x12\x12.bmi.GetVarRequest\x1a\x17.bmi.GetVarTypeResponse\"\x00\x12\x43\n\x0egetVarItemSize\x12\x12.bmi.GetVarRequest\x1a\x1b.bmi.GetVarItemSizeResponse\"\x00\x12=\n\x0bgetVarUnits\x12\x12.bmi.GetVarRequest\x1a\x18.bmi.GetVarUnitsResponse\"\x00\x12?\n\x0cgetVarNBytes\x12\x12.bmi.GetVarRequest\x1a\x19.bmi.GetVarNBytesResponse\"\x00\x12\x37\n\x08getValue\x12\x12.bmi.GetVarRequest\x1a\x15.bmi.GetValueResponse\"\x00\x12/\n\x0bgetValuePtr\x12\x12.bmi.GetVarRequest\x1a\n.bmi.Empty\"\x00\x12T\n\x11getValueAtIndices\x12\x1d.bmi.GetValueAtIndicesRequest\x1a\x1e.bmi.GetValueAtIndicesResponse\"\x00\x12.\n\x08setValue\x12\x14.bmi.SetValueRequest\x1a\n.bmi.Empty\"\x00\x12\x34\n\x0bsetValuePtr\x12\x17.bmi.SetValuePtrRequest\x1a\n.bmi.Empty\"\x00\x12@\n\x11setValueAtIndices\x12\x1d.bmi.SetValueAtIndicesRequest\x1a\n.bmi.Empty\"\x00\x12;\n\x0bgetGridSize\x12\x10.bmi.GridRequest\x1a\x18.bmi.GetGridSizeResponse\"\x00\x12;\n\x0bgetGridType\x12\x10.bmi.GridRequest\x1a\x18.bmi.GetGridTypeResponse\"\x00\x12;\n\x0bgetGridRank\x12\x10.bmi.GridRequest\x1a\x18.bmi.GetGridRankResponse\"\x00\x12=\n\x0cgetGridShape\x12\x10.bmi.GridRequest\x1a\x19.bmi.GetGridShapeResponse\"\x00\x12\x41\n\x0egetGridSpacing\x12\x10.bmi.GridRequest\x1a\x1b.bmi.GetGridSpacingResponse\"\x00\x12?\n\rgetGridOrigin\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridOriginResponse\"\x00\x12:\n\x08getGridX\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridPointsResponse\"\x00\x12:\n\x08getGridY\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridPointsResponse\"\x00\x12:\n\x08getGridZ\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridPointsResponse\"\x00\x12=\n\x10getGridCellCount\x12\x10.bmi.GridRequest\x1a\x15.bmi.GetCountResponse\"\x00\x12>\n\x11getGridPointCount\x12\x10.bmi.GridRequest\x1a\x15.bmi.GetCountResponse\"\x00\x12?\n\x12getGridVertexCount\x12\x10.bmi.GridRequest\x1a\x15.bmi.GetCountResponse\"\x00\x12K\n\x13getGridConnectivity\x12\x10.bmi.GridRequest\x1a .bmi.GetGridConnectivityResponse\"\x00\x12?\n\rgetGridOffset\x12\x10.bmi.GridRequest\x1a\x1a.bmi.GetGridOffsetResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -535,6 +535,13 @@ _GETVALUERESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='shape', full_name='bmi.GetValueResponse.shape', index=2,
+      number=3, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -548,7 +555,7 @@ _GETVALUERESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=600,
-  serialized_end=661,
+  serialized_end=676,
 )
 
 
@@ -585,8 +592,46 @@ _GETVALUEATINDICESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=663,
-  serialized_end=720,
+  serialized_start=678,
+  serialized_end=735,
+)
+
+
+_GETVALUEATINDICESRESPONSE = _descriptor.Descriptor(
+  name='GetValueAtIndicesResponse',
+  full_name='bmi.GetValueAtIndicesResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='values_int', full_name='bmi.GetValueAtIndicesResponse.values_int', index=0,
+      number=1, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='values_double', full_name='bmi.GetValueAtIndicesResponse.values_double', index=1,
+      number=2, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=737,
+  serialized_end=807,
 )
 
 
@@ -618,6 +663,13 @@ _SETVALUEREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='shape', full_name='bmi.SetValueRequest.shape', index=3,
+      number=4, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -630,8 +682,8 @@ _SETVALUEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=722,
-  serialized_end=796,
+  serialized_start=809,
+  serialized_end=898,
 )
 
 
@@ -668,8 +720,8 @@ _SETVALUEPTRREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=798,
-  serialized_end=845,
+  serialized_start=900,
+  serialized_end=947,
 )
 
 
@@ -720,8 +772,8 @@ _SETVALUEATINDICESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=847,
-  serialized_end=947,
+  serialized_start=949,
+  serialized_end=1049,
 )
 
 
@@ -751,8 +803,8 @@ _GRIDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=949,
-  serialized_end=979,
+  serialized_start=1051,
+  serialized_end=1081,
 )
 
 
@@ -782,8 +834,8 @@ _GETGRIDSIZERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=981,
-  serialized_end=1016,
+  serialized_start=1083,
+  serialized_end=1118,
 )
 
 
@@ -813,8 +865,8 @@ _GETGRIDRANKRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1018,
-  serialized_end=1053,
+  serialized_start=1120,
+  serialized_end=1155,
 )
 
 
@@ -844,8 +896,8 @@ _GETGRIDTYPERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1055,
-  serialized_end=1090,
+  serialized_start=1157,
+  serialized_end=1192,
 )
 
 
@@ -875,8 +927,8 @@ _GETGRIDSHAPERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1092,
-  serialized_end=1129,
+  serialized_start=1194,
+  serialized_end=1231,
 )
 
 
@@ -906,8 +958,8 @@ _GETGRIDSPACINGRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1131,
-  serialized_end=1172,
+  serialized_start=1233,
+  serialized_end=1274,
 )
 
 
@@ -937,8 +989,8 @@ _GETGRIDORIGINRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1174,
-  serialized_end=1213,
+  serialized_start=1276,
+  serialized_end=1315,
 )
 
 
@@ -968,8 +1020,8 @@ _GETGRIDPOINTSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1215,
-  serialized_end=1259,
+  serialized_start=1317,
+  serialized_end=1361,
 )
 
 
@@ -999,8 +1051,8 @@ _GETCOUNTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1261,
-  serialized_end=1294,
+  serialized_start=1363,
+  serialized_end=1396,
 )
 
 
@@ -1030,8 +1082,8 @@ _GETGRIDCONNECTIVITYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1296,
-  serialized_end=1340,
+  serialized_start=1398,
+  serialized_end=1442,
 )
 
 
@@ -1061,8 +1113,8 @@ _GETGRIDOFFSETRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1342,
-  serialized_end=1382,
+  serialized_start=1444,
+  serialized_end=1484,
 )
 
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
@@ -1083,6 +1135,7 @@ DESCRIPTOR.message_types_by_name['GetVarUnitsResponse'] = _GETVARUNITSRESPONSE
 DESCRIPTOR.message_types_by_name['GetVarNBytesResponse'] = _GETVARNBYTESRESPONSE
 DESCRIPTOR.message_types_by_name['GetValueResponse'] = _GETVALUERESPONSE
 DESCRIPTOR.message_types_by_name['GetValueAtIndicesRequest'] = _GETVALUEATINDICESREQUEST
+DESCRIPTOR.message_types_by_name['GetValueAtIndicesResponse'] = _GETVALUEATINDICESRESPONSE
 DESCRIPTOR.message_types_by_name['SetValueRequest'] = _SETVALUEREQUEST
 DESCRIPTOR.message_types_by_name['SetValuePtrRequest'] = _SETVALUEPTRREQUEST
 DESCRIPTOR.message_types_by_name['SetValueAtIndicesRequest'] = _SETVALUEATINDICESREQUEST
@@ -1225,6 +1278,13 @@ GetValueAtIndicesRequest = _reflection.GeneratedProtocolMessageType('GetValueAtI
   ))
 _sym_db.RegisterMessage(GetValueAtIndicesRequest)
 
+GetValueAtIndicesResponse = _reflection.GeneratedProtocolMessageType('GetValueAtIndicesResponse', (_message.Message,), dict(
+  DESCRIPTOR = _GETVALUEATINDICESRESPONSE,
+  __module__ = 'bmi_pb2'
+  # @@protoc_insertion_point(class_scope:bmi.GetValueAtIndicesResponse)
+  ))
+_sym_db.RegisterMessage(GetValueAtIndicesResponse)
+
 SetValueRequest = _reflection.GeneratedProtocolMessageType('SetValueRequest', (_message.Message,), dict(
   DESCRIPTOR = _SETVALUEREQUEST,
   __module__ = 'bmi_pb2'
@@ -1331,8 +1391,8 @@ _BMISERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=1385,
-  serialized_end=3820,
+  serialized_start=1487,
+  serialized_end=3931,
   methods=[
   _descriptor.MethodDescriptor(
     name='initialize',
@@ -1547,7 +1607,7 @@ _BMISERVICE = _descriptor.ServiceDescriptor(
     index=23,
     containing_service=None,
     input_type=_GETVALUEATINDICESREQUEST,
-    output_type=_GETVALUERESPONSE,
+    output_type=_GETVALUEATINDICESRESPONSE,
     options=None,
   ),
   _descriptor.MethodDescriptor(

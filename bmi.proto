@@ -83,6 +83,7 @@ message GetValueResponse
 {
     repeated int32 values_int = 1;
     repeated double values_double = 2;
+    repeated int32 shape = 3;
 }
 
 message GetValueAtIndicesRequest
@@ -91,11 +92,18 @@ message GetValueAtIndicesRequest
     repeated int32 indices = 2;
 }
 
+message GetValueAtIndicesResponse
+{
+    repeated int32 values_int = 1;
+    repeated double values_double = 2;
+}
+
 message SetValueRequest
 {
     string name = 1;
     repeated int32 values_int = 2;
     repeated double values_double = 3;
+    repeated int32 shape = 4;
 }
 
 message SetValuePtrRequest
@@ -196,7 +204,7 @@ service BmiService {
 
     rpc getValue(GetVarRequest) returns(GetValueResponse) {}
     rpc getValuePtr(GetVarRequest) returns(Empty) {}
-    rpc getValueAtIndices(GetValueAtIndicesRequest) returns(GetValueResponse) {}
+    rpc getValueAtIndices(GetValueAtIndicesRequest) returns(GetValueAtIndicesResponse) {}
 
     rpc setValue(SetValueRequest) returns(Empty) {}
     rpc setValuePtr(SetValuePtrRequest) returns(Empty) {}

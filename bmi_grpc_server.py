@@ -90,9 +90,9 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getValue(self, request, context):
         vals = self.bmi_model_.get_value(request.name)
         if vals.dtype == int:
-            return bmi_pb2.GetValueResponse(values_int=vals)
+            return bmi_pb2.GetValueResponse(shape=vals.shape, values_int=vals.flatten())
         if vals.dtype == float:
-            return bmi_pb2.GetValueResponse(values_double=vals)
+            return bmi_pb2.GetValueResponse(shape=vals.shape, values_double=vals.flatten())
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     def getValuePtr(self, request, context):
@@ -101,17 +101,21 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getValueAtIndices(self, request, context):
         vals = self.bmi_model_.get_value_at_indices(request.name, request.indices)
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueResponse(values_int=vals)
+            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals)
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueResponse(values_double=vals)
+            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals)
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     def setValue(self, request, context):
         if any(request.values_int):
-            self.bmi_model_.set_value(request.name, numpy.array(request.values_int, dtype=numpy.int32))
+            self.bmi_model_.set_value(request.name, numpy.reshape(numpy.array(request.values_int, dtype=numpy.int32),
+                                                                  request.shape))
             #TODO: warn if ALSO doubles are in the buffer
         elif any(request.values_double):
-            self.bmi_model_.set_value(request.name, numpy.array(request.values_double, dtype=numpy.float64))
+            self.bmi_model_.set_value(request.name,
+                                      numpy.reshape(numpy.array(request.values_double, dtype=numpy.float64),
+                                                    request.shape)
+                                      )
         return bmi_pb2.Empty()
 
     def setValuePtr(self, request, context):
