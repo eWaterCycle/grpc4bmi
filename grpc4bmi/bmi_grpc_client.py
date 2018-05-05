@@ -9,7 +9,6 @@ import bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
-
 class BmiClient(bmi.Bmi):
 
     def __init__(self, channel=grpc.insecure_channel("localhost:50051")):
