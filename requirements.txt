@@ -1,4 +1,4 @@
-setuptools==36.2.7
+setuptools
 grpcio
 numpy
 docutils
@@ -8,6 +8,7 @@ nose
 numpydoc
 cfunits
 scipy
+docker
 git+https://github.com/csdms/bmi-python.git
 git+https://github.com/csdms/bmi-tester.git
 git+https://github.com/csdms/standard_names.git

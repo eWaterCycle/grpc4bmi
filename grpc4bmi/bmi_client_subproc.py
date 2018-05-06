@@ -1,19 +1,17 @@
-import grpc
 import os
+import subprocess
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-import subprocess
 
 
 class BmiClientSubProcess(BmiClient):
 
     def __init__(self, module_name):
-        self.port = 50000
+        port = BmiClient.get_unique_port()
         name_options = ["--name", module_name]
-        port_options = ["--port", str(self.port)]
+        port_options = ["--port", str(port)]
         self.pipe = subprocess.Popen(["run-bmi-server"] + name_options + port_options, env=dict(os.environ))
-        self.pipe.wait()
-        super(BmiClientSubProcess, self).__init__(grpc.insecure_channel("localhost:" + str(self.port)))
+        super(BmiClientSubProcess, self).__init__(BmiClient.create_grpc_channel(port=p))
 
     def __del__(self):
         self.pipe.terminate()

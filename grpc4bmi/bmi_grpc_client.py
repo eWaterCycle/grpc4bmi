@@ -9,10 +9,32 @@ import bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
+
 class BmiClient(bmi.Bmi):
 
-    def __init__(self, channel=grpc.insecure_channel("localhost:50051")):
-        self.stub = bmi_pb2_grpc.BmiServiceStub(channel)
+    occupied_ports = set()
+    start_port = 50051
+
+    def __init__(self, channel=None):
+        c = BmiClient.create_grpc_channel() if channel is None else channel
+        self.stub = bmi_pb2_grpc.BmiServiceStub(c)
+
+    @staticmethod
+    def create_grpc_channel(port=0, host=None):
+        p, h = port, host
+        if p == 0:
+            p = BmiClient.get_unique_port()
+        elif p in BmiClient.occupied_ports:
+            log.error("Attempt to create grpc channel on occupied port %d" % p)
+            return None
+        if h is None:
+            h = "localhost"
+        BmiClient.occupied_ports.add(p)
+        return grpc.insecure_channel(':'.join([h, p]))
+
+    @staticmethod
+    def get_unique_port():
+        return sorted(BmiClient.occupied_ports)[-1] + 1 if any(BmiClient.occupied_ports) else BmiClient.start_port
 
     def initialize(self, filename):
         fname = "" if filename is None else filename
