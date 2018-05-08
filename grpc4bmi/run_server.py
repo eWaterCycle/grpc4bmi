@@ -33,7 +33,7 @@ def serve(class_name, module_name, package_name, port):
 def main():
     parser = argparse.ArgumentParser(description="BMI GRPC server runner",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--name", "-n", metavar="PACKAGE.MODULE.CLASS", required=True, type=str,
+    parser.add_argument("--name", "-n", metavar="PACKAGE.MODULE.CLASS", type=str,
                         help="Full name of the BMI implementation class. The module should be in your python search "
                              "path and the class should have a constructor with no arguments")
     parser.add_argument("--port", "-p", metavar="N", default=50051, type=int,
@@ -45,7 +45,7 @@ def main():
     if args.path is not None:
         sys.path.append(args.path)
 
-    parts = args.name.split('.')
+    parts = getattr(args, "name", "").split('.')
     class_name = parts[-1] if len(parts) > 0 else ""
     if not class_name:
         class_name = os.environ.get(ENV_BMI_CLASS, "")
