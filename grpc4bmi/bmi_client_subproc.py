@@ -11,7 +11,7 @@ class BmiClientSubProcess(BmiClient):
         name_options = ["--name", module_name]
         port_options = ["--port", str(port)]
         self.pipe = subprocess.Popen(["run-bmi-server"] + name_options + port_options, env=dict(os.environ))
-        super(BmiClientSubProcess, self).__init__(BmiClient.create_grpc_channel(port=p))
+        super(BmiClientSubProcess, self).__init__(BmiClient.create_grpc_channel(port=port))
 
     def __del__(self):
         self.pipe.terminate()

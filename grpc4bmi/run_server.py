@@ -17,9 +17,9 @@ ENV_BMI_MODULE = "BMI_MODULE"
 ENV_BMI_CLASS = "BMI_CLASS"
 
 
-def serve(modulename, classname, port):
+def serve(module_name, class_name, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    bmi_pb2_grpc.add_BmiServiceServicer_to_server(BmiServer(modulename, classname), server)
+    bmi_pb2_grpc.add_BmiServiceServicer_to_server(BmiServer(module_name, class_name), server)
     server.add_insecure_port("[::]:" + str(port))
     server.start()
     try:

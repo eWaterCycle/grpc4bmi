@@ -12,7 +12,8 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def __init__(self, module_name, class_name):
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
-        class_ = getattr(__import__(module_name), class_name, None)
+        log.info("Starting BMI class %s in module %s..." % (module_name, class_name))
+        class_ = getattr(__import__(module_name), class_name)
         self.bmi_model_ = class_()
 
     def initialize(self, request, context):

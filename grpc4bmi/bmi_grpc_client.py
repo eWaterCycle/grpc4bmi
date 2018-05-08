@@ -30,7 +30,7 @@ class BmiClient(bmi.Bmi):
         if h is None:
             h = "localhost"
         BmiClient.occupied_ports.add(p)
-        return grpc.insecure_channel(':'.join([h, p]))
+        return grpc.insecure_channel(':'.join([h, str(p)]))
 
     @staticmethod
     def get_unique_port():
