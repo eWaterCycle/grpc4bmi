@@ -1,4 +1,5 @@
 import logging
+import importlib
 
 import numpy
 
@@ -10,10 +11,10 @@ log = logging.getLogger(__name__)
 
 class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
-    def __init__(self, module_name, class_name):
+    def __init__(self, class_name, module_name, package_name=None):
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         log.info("Starting BMI class %s in module %s..." % (module_name, class_name))
-        class_ = getattr(__import__(module_name), class_name)
+        class_ = getattr(importlib.import_module(module_name, package_name), class_name)
         self.bmi_model_ = class_()
 
     def initialize(self, request, context):
