@@ -45,7 +45,7 @@ def main():
     if args.path is not None:
         sys.path.append(args.path)
 
-    parts = getattr(args, "name", "").split('.')
+    parts = "" if args.name is None else args.name.split('.')
     class_name = parts[-1] if len(parts) > 0 else ""
     if not class_name:
         class_name = os.environ.get(ENV_BMI_CLASS, "")
