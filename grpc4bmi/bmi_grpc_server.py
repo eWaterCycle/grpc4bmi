@@ -102,13 +102,13 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getValueAtIndices(self, request, context):
         index_size = request.index_size
-        num_indices = len(request.indices)
+        num_indices = len(request.indices)/index_size
         vals = self.bmi_model_.get_value_at_indices(request.name, numpy.reshape(request.indices,
                                                                                 newshape=(num_indices, index_size)))
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals.flatten(), index_size=index_size)
+            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals.flatten())
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals.flatten(), index_size=index_size)
+            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals.flatten())
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     # TODO: warn if both ints and doubles are in the buffer
@@ -118,7 +118,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             self.bmi_model_.set_value(request.name, array)
         elif any(request.values_double):
             array = numpy.reshape(numpy.array(request.values_double, dtype=numpy.float64), request.shape)
-            self.bmi_model_.set_value(array)
+            self.bmi_model_.set_value(request.name, array)
         return bmi_pb2.Empty()
 
     def setValuePtr(self, request, context):
@@ -127,14 +127,14 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     # TODO: warn if both ints and doubles are in the buffer
     def setValueAtIndices(self, request, context):
         index_size = request.index_size
-        num_indices = len(request.indices)
+        num_indices = len(request.indices)/index_size
         index_array = numpy.reshape(request.indices, newshape=(num_indices, index_size))
         if any(request.values_int):
             array = numpy.array(request.values_int, dtype=numpy.int32)
-            self.bmi_model_.set_value_at_indices(request.name, index_array, array)
+            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
         elif any(request.values_double):
             array = numpy.array(request.values_double, dtype=numpy.float64)
-            self.bmi_model_.set_value(request.name, index_array, array)
+            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
         return bmi_pb2.Empty()
 
     def getGridSize(self, request, context):

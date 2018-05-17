@@ -166,11 +166,50 @@ def test_get_var_ptr():
         server.getValuePtr(request, None)
 
 
-# def test_get_vals_indices():
-#     server, local = make_bmi_classes(True)
-#     request = RequestStub()
-#     varname = local.get_output_var_names()[0]
-#     setattr(request, "name", varname)
-#     values = local.get_value(varname)
-#     assert tuple(server.getValue(request, None).shape) == values.shape
-#     assert numpy.array_equal(numpy.reshape(server.getValue(request, None).values_double, values.shape), values)
+def test_get_vals_indices():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
+    setattr(request, "name", varname)
+    setattr(request, "indices", indices.flatten())
+    setattr(request, "index_size", 2)
+    values = local.get_value_at_indices(varname, indices)
+    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double, values.flatten())
+
+
+def test_set_var_values():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    values = 0.123 * local.get_value(varname)
+    setattr(request, "name", varname)
+    setattr(request, "values_double", values.flatten())
+    setattr(request, "values_int", [])
+    setattr(request, "shape", values.shape)
+    server.setValue(request, None)
+    delattr(request, "values_double")
+    delattr(request, "values_int")
+    delattr(request, "shape")
+    response = server.getValue(request, None)
+    values_copy = numpy.reshape(response.values_double, response.shape)
+    assert numpy.array_equal(values, values_copy)
+
+
+def test_set_values_indices():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
+    values = numpy.array([0.123, 4.567, 8.901])
+    setattr(request, "name", varname)
+    setattr(request, "values_double", values.flatten())
+    setattr(request, "values_int", [])
+    setattr(request, "indices", indices.flatten())
+    setattr(request, "index_size", 2)
+    server.setValueAtIndices(request, None)
+    delattr(request, "values_double")
+    delattr(request, "values_int")
+    response = server.getValueAtIndices(request, None)
+    values_copy = numpy.array(response.values_double)
+    assert numpy.array_equal(values, values_copy)
