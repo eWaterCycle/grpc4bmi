@@ -9,6 +9,7 @@ numpydoc
 cfunits
 scipy
 docker
+pytest
 git+https://github.com/csdms/bmi-python.git
 git+https://github.com/csdms/bmi-tester.git
 git+https://github.com/csdms/standard_names.git

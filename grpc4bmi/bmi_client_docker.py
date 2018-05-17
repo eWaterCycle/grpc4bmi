@@ -1,3 +1,5 @@
+import shutil
+
 import docker
 
 from grpc4bmi.bmi_grpc_client import BmiClient
@@ -9,8 +11,9 @@ class BmiClientDocker(BmiClient):
         client = docker.from_env()
         port = BmiClient.get_unique_port()
         volumes = {}
+        self.input_dir = input_dir
         if input_dir is not None:
-            volumes[input_dir] = {"bind": "/data/input", "mode": "ro"}
+            volumes[input_dir] = {"bind": "/data", "mode": "ro"}
         if output_dir is not None:
             volumes[output_dir] = {"bind": "/data/output", "mode": "rw"}
         self.container = client.containers.run(image, ports={"50051/tcp": port},
@@ -20,6 +23,13 @@ class BmiClientDocker(BmiClient):
 
     def __del__(self):
         self.container.stop()
+
+    def initialize(self, filename):
+        if self.input_dir is not None:
+            shutil.copy(filename, self.input_dir)
+            super(BmiClientDocker, self).initialize("/data/" + filename)
+        else:
+            super(BmiClientDocker, self).initialize(filename)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")

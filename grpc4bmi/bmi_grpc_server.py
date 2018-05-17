@@ -91,9 +91,9 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getValue(self, request, context):
         vals = self.bmi_model_.get_value(request.name)
-        if vals.dtype == int:
+        if vals.dtype == numpy.int32:
             return bmi_pb2.GetValueResponse(shape=vals.shape, values_int=vals.flatten())
-        if vals.dtype == float:
+        if vals.dtype == numpy.float64:
             return bmi_pb2.GetValueResponse(shape=vals.shape, values_double=vals.flatten())
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
@@ -101,36 +101,40 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def getValueAtIndices(self, request, context):
-        vals = self.bmi_model_.get_value_at_indices(request.name, request.indices)
+        index_size = request.index_size
+        num_indices = len(request.indices)
+        vals = self.bmi_model_.get_value_at_indices(request.name, numpy.reshape(request.indices,
+                                                                                newshape=(num_indices, index_size)))
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals)
+            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals.flatten(), index_size=index_size)
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals)
+            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals.flatten(), index_size=index_size)
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
+    # TODO: warn if both ints and doubles are in the buffer
     def setValue(self, request, context):
         if any(request.values_int):
-            self.bmi_model_.set_value(request.name, numpy.reshape(numpy.array(request.values_int, dtype=numpy.int32),
-                                                                  request.shape))
-            #TODO: warn if ALSO doubles are in the buffer
+            array = numpy.reshape(numpy.array(request.values_int, dtype=numpy.int32), request.shape)
+            self.bmi_model_.set_value(request.name, array)
         elif any(request.values_double):
-            self.bmi_model_.set_value(request.name,
-                                      numpy.reshape(numpy.array(request.values_double, dtype=numpy.float64),
-                                                    request.shape)
-                                      )
+            array = numpy.reshape(numpy.array(request.values_double, dtype=numpy.float64), request.shape)
+            self.bmi_model_.set_value(array)
         return bmi_pb2.Empty()
 
     def setValuePtr(self, request, context):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
+    # TODO: warn if both ints and doubles are in the buffer
     def setValueAtIndices(self, request, context):
+        index_size = request.index_size
+        num_indices = len(request.indices)
+        index_array = numpy.reshape(request.indices, newshape=(num_indices, index_size))
         if any(request.values_int):
-            self.bmi_model_.set_value_at_indices(request.name, request.indices, numpy.array(request.values_int,
-                                                                                            dtype=numpy.int32))
-            #TODO: warn if ALSO doubles are in the buffer
+            array = numpy.array(request.values_int, dtype=numpy.int32)
+            self.bmi_model_.set_value_at_indices(request.name, index_array, array)
         elif any(request.values_double):
-            self.bmi_model_.set_value(request.name, request.indices, numpy.array(request.values_double,
-                                                                                 dtype=numpy.float64))
+            array = numpy.array(request.values_double, dtype=numpy.float64)
+            self.bmi_model_.set_value(request.name, index_array, array)
         return bmi_pb2.Empty()
 
     def getGridSize(self, request, context):

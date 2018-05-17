@@ -99,7 +99,17 @@ class BmiClient(bmi.Bmi):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def get_value_at_indices(self, var_name, indices):
-        response = self.stub.getValue(bmi_pb2.GetValueAtIndicesRequest(name=var_name, indices=indices))
+        index_array = indices
+        if indices is list:
+            index_array = numpy.array(indices)
+        if len(index_array.shape) == 1:
+            index_size = 1
+        elif len(index_array.shape) == 2:
+            index_size = index_array.shape[1]
+        else:
+            raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
+        response = self.stub.getValue(bmi_pb2.GetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(),
+                                                                       index_size=index_size))
         return BmiClient.make_array(response)
 
     def set_value(self, var_name, src):
@@ -111,11 +121,22 @@ class BmiClient(bmi.Bmi):
         self.stub.setValue(request)
 
     def set_value_at_indices(self, var_name, indices, src):
+        index_array = indices
+        if indices is list:
+            index_array = numpy.array(indices)
+        if len(index_array.shape) == 1:
+            index_size = 1
+        elif len(index_array.shape) == 2:
+            index_size = index_array.shape[1]
+        else:
+            raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
         request = None
         if src.dtype == numpy.int32:
-            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=indices, values_int=src)
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_int=src,
+                                                       index_size=index_size)
         elif src.dtype == numpy.float64:
-            request = bmi_pb2.SetValueRequest(name=var_name, indices=indices, values_double=src)
+            request = bmi_pb2.SetValueRequest(name=var_name, indices=index_array.flatten(), values_double=src,
+                                              index_size=index_size)
         self.stub.setValueAtIndices(request)
 
     def get_grid_size(self, grid_id):

@@ -81,29 +81,30 @@ message GetVarNBytesResponse
 
 message GetValueResponse
 {
-    repeated int32 values_int = 1;
-    repeated double values_double = 2;
-    repeated int32 shape = 3;
+    repeated int32 values_int = 1 [packed = true];
+    repeated double values_double = 2 [packed = true];
+    repeated int32 shape = 3 [packed = true];
 }
 
 message GetValueAtIndicesRequest
 {
     string name = 1;
-    repeated int32 indices = 2;
+    repeated int32 indices = 2 [packed = true];
+    int32 index_size = 3;
 }
 
 message GetValueAtIndicesResponse
 {
-    repeated int32 values_int = 1;
-    repeated double values_double = 2;
+    repeated int32 values_int = 1 [packed = true];
+    repeated double values_double = 2 [packed = true];
 }
 
 message SetValueRequest
 {
     string name = 1;
-    repeated int32 values_int = 2;
-    repeated double values_double = 3;
-    repeated int32 shape = 4;
+    repeated int32 values_int = 2 [packed = true];
+    repeated double values_double = 3 [packed = true];
+    repeated int32 shape = 4 [packed = true];
 }
 
 message SetValuePtrRequest
@@ -115,9 +116,10 @@ message SetValuePtrRequest
 message SetValueAtIndicesRequest
 {
     string name = 1;
-    repeated int32 indices = 2;
-    repeated int32 values_int = 3;
-    repeated double values_double = 4;
+    repeated int32 indices = 2 [packed = true];
+    repeated int32 values_int = 3 [packed = true];
+    repeated double values_double = 4 [packed = true];
+    int32 index_size = 5;
 }
 
 message GridRequest
@@ -142,22 +144,22 @@ message GetGridTypeResponse
 
 message GetGridShapeResponse
 {
-    repeated int32 shape = 1;
+    repeated int32 shape = 1 [packed = true];
 }
 
 message GetGridSpacingResponse
 {
-    repeated double spacing = 1;
+    repeated double spacing = 1 [packed = true];
 }
 
 message GetGridOriginResponse
 {
-    repeated double origin = 1;
+    repeated double origin = 1 [packed = true];
 }
 
 message GetGridPointsResponse
 {
-    repeated double coordinates = 1;
+    repeated double coordinates = 1 [packed = true];
 }
 
 message GetCountResponse
@@ -167,12 +169,12 @@ message GetCountResponse
 
 message GetGridConnectivityResponse
 {
-    repeated int32 links = 1;
+    repeated int32 links = 1 [packed = true];
 }
 
 message GetGridOffsetResponse
 {
-    repeated int32 offsets = 1;
+    repeated int32 offsets = 1 [packed = true];
 }
 
 service BmiService {
