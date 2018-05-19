@@ -1,4 +1,7 @@
 import logging
+import os
+import socket
+from contextlib import closing
 
 import bmi
 import grpc
@@ -33,7 +36,7 @@ class BmiClient(bmi.Bmi):
         if h is None:
             h = "localhost"
         if p == 0:
-            p = BmiClient.get_unique_port(h)
+            p = os.environ.get("BMI_PORT", 50051)
         elif p in BmiClient.occupied_ports:
             log.error("Attempt to create grpc channel on occupied port %d" % p)
             return None
@@ -42,8 +45,6 @@ class BmiClient(bmi.Bmi):
 
     @staticmethod
     def get_unique_port(host=None):
-        import socket
-        from contextlib import closing
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
             s.bind(("" if host is None else host, 0))
             return int(s.getsockname()[1])

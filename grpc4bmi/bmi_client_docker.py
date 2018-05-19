@@ -13,7 +13,7 @@ class BmiClientDocker(BmiClient):
     destruction, this class terminates the corresponding docker server.
     """
 
-    def __init__(self, image, host=None, input_dir=None, output_dir=None):
+    def __init__(self, image, image_port=50051, host=None, input_dir=None, output_dir=None):
         client = docker.from_env()
         port = BmiClient.get_unique_port()
         volumes = {}
@@ -22,7 +22,7 @@ class BmiClientDocker(BmiClient):
             volumes[input_dir] = {"bind": "/data", "mode": "ro"}
         if output_dir is not None:
             volumes[output_dir] = {"bind": "/data/output", "mode": "rw"}
-        self.container = client.containers.run(image, ports={"50051/tcp": port},
+        self.container = client.containers.run(image, ports={image_port + "/tcp": port},
                                                volumes=volumes,
                                                detach=True)
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))

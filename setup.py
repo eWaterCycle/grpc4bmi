@@ -18,7 +18,7 @@ for d in directories:
     package_data[d] = files
 
 setup(name="grpc4bmi",
-      version="1.0.0",
+      version="0.1",
       author="Gijs van den Oord",
       author_email="g.vandenoord@esciencecenter.nl",
       description="Run your BMI implementation in a separate process and expose it as BMI-python with GRPC",
@@ -28,7 +28,7 @@ setup(name="grpc4bmi",
       dependency_links=["https://github.com/csdms/bmi-python", "https://github.com/csdms/bmi-tester/"],
       package_data=package_data,
       include_package_data=True,
-      long_description=read("README.md"),
+      long_description=open("README.md").read(),
       entry_points={"console_scripts": [
           "run-bmi-server =  grpc4bmi.run_server:main"
       ]},

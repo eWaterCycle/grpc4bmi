@@ -18,7 +18,8 @@ where ```<PACKAGE>, <MODULE>``` are the python package and module containing you
 bmi model class name, ```<PORT>``` is any available port on the host system, and optionally ```<PATH>``` denotes an 
 additional path that should be added to the system path to make your implementation work. The name option above is 
 optional, and if not provided the script will look at the environment variables ```BMI_PACKAGE```, ```BMI_MODULE``` and 
-```BMI_CLASS```. This software assumes that your implementation constructor has no parameters.
+```BMI_CLASS```. Similarly, the port can be defined by the environment variable ```BMI_PORT```.
+This software assumes that your implementation constructor has no parameters.
  
 Now connect to this process by running python in another terminal and executing
 ```python
@@ -38,9 +39,9 @@ mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
 will automatically launch the server in a sub-process and
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientDocker
-mymodel = BmiClientDocker(<IMAGE>)
+mymodel = BmiClientDocker(<IMAGE>,<PORT>)
 
 ```
-will launch a docker container, assuming that a GRPC BMI server will start and exposes the port 50051.
+will launch a docker container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
 ## Future work
 More language bindings are underway.
