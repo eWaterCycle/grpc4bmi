@@ -7,6 +7,10 @@ from heat import BmiHeat
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 
+"""
+Unit tests for the BMI server class. Every test performs cross-checking with a local instance of the BMI heat toy model.
+"""
+
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -17,6 +21,14 @@ class RequestStub(object):
 
 def make_string(obj):
     return '' if obj is None else str(obj)
+
+
+def make_list(obj):
+    if obj is list:
+        return obj
+    if obj is None:
+        return []
+    return [obj]
 
 
 def make_bmi_classes(init=False):
@@ -170,6 +182,18 @@ def test_get_vals_indices():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
+    indices = numpy.array([29, 8, 19, 81])
+    setattr(request, "name", varname)
+    setattr(request, "indices", indices.flatten())
+    setattr(request, "index_size", 1)
+    values = local.get_value_at_indices(varname, indices)
+    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double, values.flatten())
+
+
+def test_get_vals_indices_2d():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
     indices = numpy.array([[0, 1], [1, 0], [2, 2]])
     setattr(request, "name", varname)
     setattr(request, "indices", indices.flatten())
@@ -200,16 +224,90 @@ def test_set_values_indices():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
-    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
+    indices = numpy.array([1, 11, 21])
     values = numpy.array([0.123, 4.567, 8.901])
     setattr(request, "name", varname)
     setattr(request, "values_double", values.flatten())
     setattr(request, "values_int", [])
     setattr(request, "indices", indices.flatten())
-    setattr(request, "index_size", 2)
+    setattr(request, "index_size", 1)
     server.setValueAtIndices(request, None)
     delattr(request, "values_double")
     delattr(request, "values_int")
     response = server.getValueAtIndices(request, None)
     values_copy = numpy.array(response.values_double)
     assert numpy.array_equal(values, values_copy)
+
+
+def test_get_grid_size():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert server.getGridSize(request, None).size == local.get_grid_size(grid_id)
+
+
+def test_get_grid_rank():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert server.getGridRank(request, None).rank == local.get_grid_rank(grid_id)
+
+
+def test_get_grid_type():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert server.getGridType(request, None).type == local.get_grid_type(grid_id)
+
+
+def test_get_grid_shape():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert tuple(server.getGridShape(request, None).shape) == local.get_grid_shape(grid_id)
+
+
+def test_get_grid_spacing():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert tuple(server.getGridSpacing(request, None).spacing) == local.get_grid_spacing(grid_id)
+
+
+def test_get_grid_origin():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert tuple(server.getGridOrigin(request, None).origin) == local.get_grid_origin(grid_id)
+
+
+def test_get_grid_points():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert server.getGridX(request, None).coordinates == make_list(local.get_grid_x(grid_id))
+    assert server.getGridY(request, None).coordinates == make_list(local.get_grid_y(grid_id))
+    assert server.getGridZ(request, None).coordinates == make_list(local.get_grid_z(grid_id))
+
+
+def test_get_grid_connectivity():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert server.getGridConnectivity(request, None).links == make_list(local.get_grid_connectivity(grid_id))

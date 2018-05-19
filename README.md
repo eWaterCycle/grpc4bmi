@@ -12,10 +12,16 @@ python setup.py install
 ## Usage
 For inspiration look at the example in the test directory. To start a server process that allows calls to your BMI implementation, type
 ```
-run-bmi-server --name <MODULE>.<CLASS> --port <PORT>
+run-bmi-server --name <PACKAGE>.<MODULE>.<CLASS> --port <PORT> --path <PATH>
 ```
-where ```<MODULE>``` is the python module containing your implementation, ```<CLASS>``` is your bmi model class name and ```<PORT>``` is any network port on your system. Now connect to this process from within python by
-```
+where ```<PACKAGE>, <MODULE>``` are the python package and module containing your implementation, ```<CLASS>``` is your 
+bmi model class name, ```<PORT>``` is any available port on the host system, and optionally ```<PATH>``` denotes an 
+additional path that should be added to the system path to make your implementation work. The name option above is 
+optional, and if not provided the script will look at the environment variables ```BMI_PACKAGE```, ```BMI_MODULE``` and 
+```BMI_CLASS```. This software assumes that your implementation constructor has no parameters.
+ 
+Now connect to this process by running python in another terminal and executing
+```python
 from grpc4bmi.bmi_grpc_client import BmiClient
 mymodel = BmiClient(grpc.insecure_channel("localhost:<PORT>"))
 print mymodel.get_component_name()
@@ -23,5 +29,18 @@ mymodel.initialize(<FILEPATH>)
 ...further BMI calls...
 ```
 
+The package contains also client implementation that own the server process, either as a python subprocess or a docker 
+image running the ```run-bmi-server``` script. For instance
+```python
+from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
+mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
+```
+will automatically launch the server in a sub-process and
+```python
+from grpc4bmi.bmi_client_subproc import BmiClientDocker
+mymodel = BmiClientDocker(<IMAGE>)
+
+```
+will launch a docker container, assuming that a GRPC BMI server will start and exposes the port 50051.
 ## Future work
-More language bindings and support for dockerized server processes and are underway.
+More language bindings are underway.

@@ -12,29 +12,41 @@ log = logging.getLogger(__name__)
 
 class BmiClient(bmi.Bmi):
 
+    """
+    Client BMI interface, implementing BMI by forwarding every function call via GRPC to the server connected to the
+    same port. A GRPC channel can be passed to the constructor; if not, it constructs an insecure channel on a free
+    port itself.
+    """
+
     occupied_ports = set()
-    start_port = 50051
 
     def __init__(self, channel=None):
         c = BmiClient.create_grpc_channel() if channel is None else channel
         self.stub = bmi_pb2_grpc.BmiServiceStub(c)
 
+    def __del__(self):
+        del self.stub
+
     @staticmethod
     def create_grpc_channel(port=0, host=None):
         p, h = port, host
+        if h is None:
+            h = "localhost"
         if p == 0:
-            p = BmiClient.get_unique_port()
+            p = BmiClient.get_unique_port(h)
         elif p in BmiClient.occupied_ports:
             log.error("Attempt to create grpc channel on occupied port %d" % p)
             return None
-        if h is None:
-            h = "localhost"
         BmiClient.occupied_ports.add(p)
         return grpc.insecure_channel(':'.join([h, str(p)]))
 
     @staticmethod
-    def get_unique_port():
-        return sorted(BmiClient.occupied_ports)[-1] + 1 if any(BmiClient.occupied_ports) else BmiClient.start_port
+    def get_unique_port(host=None):
+        import socket
+        from contextlib import closing
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            s.bind(("" if host is None else host, 0))
+            return int(s.getsockname()[1])
 
     def initialize(self, filename):
         fname = "" if filename is None else filename
@@ -62,7 +74,8 @@ class BmiClient(bmi.Bmi):
         return tuple([str(s) for s in self.stub.getOutputVarNames(bmi_pb2.Empty()).names])
 
     def get_time_units(self):
-        return str(self.stub.getTimeUnits(bmi_pb2.Empty()).units)
+        response = str(self.stub.getTimeUnits(bmi_pb2.Empty()).units)
+        return None if not response else response
 
     def get_time_step(self):
         return self.stub.getTimeStep(bmi_pb2.Empty()).interval
@@ -86,7 +99,8 @@ class BmiClient(bmi.Bmi):
         return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=var_name)).size
 
     def get_var_units(self, var_name):
-        return str(self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=var_name)).units)
+        response = str(self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=var_name)).units)
+        return None if not response else response
 
     def get_var_nbytes(self, var_name):
         return self.stub.getVarNBytes(bmi_pb2.GetVarRequest(name=var_name)).nbytes
@@ -108,8 +122,9 @@ class BmiClient(bmi.Bmi):
             index_size = index_array.shape[1]
         else:
             raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
-        response = self.stub.getValue(bmi_pb2.GetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(),
-                                                                       index_size=index_size))
+        response = self.stub.getValueAtIndices(bmi_pb2.GetValueAtIndicesRequest(name=var_name,
+                                                                                indices=index_array.flatten(),
+                                                                                index_size=index_size))
         return BmiClient.make_array(response)
 
     def set_value(self, var_name, src):
@@ -135,8 +150,8 @@ class BmiClient(bmi.Bmi):
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_int=src,
                                                        index_size=index_size)
         elif src.dtype == numpy.float64:
-            request = bmi_pb2.SetValueRequest(name=var_name, indices=index_array.flatten(), values_double=src,
-                                              index_size=index_size)
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_double=src,
+                                                       index_size=index_size)
         self.stub.setValueAtIndices(request)
 
     def get_grid_size(self, grid_id):
@@ -158,19 +173,19 @@ class BmiClient(bmi.Bmi):
         return self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
 
     def get_grid_shape(self, grid_id):
-        return self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).shape
+        return tuple(self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).shape)
 
     def get_grid_spacing(self, grid_id):
-        return self.stub.getGridSpacing(bmi_pb2.GridRequest(grid_id=grid_id)).spacing
+        return tuple(self.stub.getGridSpacing(bmi_pb2.GridRequest(grid_id=grid_id)).spacing)
 
     def get_grid_offset(self, grid_id):
-        return self.stub.getGridOffset(bmi_pb2.GridRequest(grid_id=grid_id)).offsets
+        return tuple(self.stub.getGridOffset(bmi_pb2.GridRequest(grid_id=grid_id)).offsets)
 
     def get_grid_connectivity(self, grid_id):
         return self.stub.getGridConnectivity(bmi_pb2.GridRequest(grid_id=grid_id)).links
 
     def get_grid_origin(self, grid_id):
-        return self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid_id)).origin
+        return tuple(self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid_id)).origin)
 
     @staticmethod
     def make_array(response):

@@ -97,6 +97,7 @@ message GetValueAtIndicesResponse
 {
     repeated int32 values_int = 1 [packed = true];
     repeated double values_double = 2 [packed = true];
+    repeated int32 shape = 3 [packed = true];
 }
 
 message SetValueRequest

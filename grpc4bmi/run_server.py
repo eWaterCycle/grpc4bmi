@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import time
+import signal
 
 import grpc
 from concurrent import futures
@@ -11,21 +12,36 @@ from concurrent import futures
 import bmi_pb2_grpc
 from bmi_grpc_server import BmiServer
 
-_ONE_DAY_IN_SECONDS = 60 * 60 * 24
+"""
+Run server script, turning a BMI implementation into an executable by looping indefinitely, until interrupt signals are
+handled. The command line tool needs at least a module and class name to instantiate the BMI wrapper class that exposes
+the implementation to other processes.
+"""
 
 ENV_BMI_PACKAGE = "BMI_PACKAGE"
 ENV_BMI_MODULE = "BMI_MODULE"
 ENV_BMI_CLASS = "BMI_CLASS"
+
+kill_server = False
+
+
+def interrupt(signum, frame):
+    global kill_server
+    kill_server = True
 
 
 def serve(class_name, module_name, package_name, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     bmi_pb2_grpc.add_BmiServiceServicer_to_server(BmiServer(class_name, module_name, package_name), server)
     server.add_insecure_port("[::]:" + str(port))
+    signal.signal(signal.SIGINT, interrupt)
+    signal.signal(signal.SIGABRT, interrupt)
+    signal.signal(signal.SIGTERM, interrupt)
     server.start()
     try:
-        while True:
-            time.sleep(_ONE_DAY_IN_SECONDS)
+        while not kill_server:
+            time.sleep(0.1)
+        server.stop(0)
     except KeyboardInterrupt:
         server.stop(0)
 

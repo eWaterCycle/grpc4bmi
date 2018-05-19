@@ -11,6 +11,12 @@ log = logging.getLogger(__name__)
 
 class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
+    """
+    BMI Server class, wrapping an existing python implementation and exposing it via GRPC across the memory space (to
+    listening client processes). The class takes a package, module and class name and instantiates the BMI
+    implementation by assuming a default constructor with no arguments.
+    """
+
     def __init__(self, class_name, module_name, package_name=None):
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         log.info("Starting BMI class %s in module %s..." % (module_name, class_name))
@@ -101,14 +107,16 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def getValueAtIndices(self, request, context):
+        indices = request.indices
         index_size = request.index_size
-        num_indices = len(request.indices)/index_size
-        vals = self.bmi_model_.get_value_at_indices(request.name, numpy.reshape(request.indices,
-                                                                                newshape=(num_indices, index_size)))
+        if index_size == 2:
+            num_indices = len(request.indices)/index_size
+            indices = numpy.reshape(indices,(num_indices, index_size))
+        vals = self.bmi_model_.get_value_at_indices(request.name, indices)
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals.flatten())
+            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals.flatten(), shape=vals.shape)
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals.flatten())
+            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals.flatten(), shape=vals.shape)
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     # TODO: warn if both ints and doubles are in the buffer
@@ -153,28 +161,28 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         return bmi_pb2.GetGridSpacingResponse(spacing=self.bmi_model_.get_grid_spacing(request.grid_id))
 
     def getGridOrigin(self, request, context):
-        return bmi_pb2.GetGridOriginResponse(origin=self.bmi_model_.get_grid_spacing(request.grid_id))
+        return bmi_pb2.GetGridOriginResponse(origin=self.bmi_model_.get_grid_origin(request.grid_id))
 
     def getGridX(self, request, context):
-        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_spacing(request.grid_id))
+        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_x(request.grid_id))
 
     def getGridY(self, request, context):
-        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_spacing(request.grid_id))
+        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_y(request.grid_id))
 
     def getGridZ(self, request, context):
-        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_spacing(request.grid_id))
+        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_z(request.grid_id))
 
-    def getGridCellCount(self, request, context):
-        return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_cell_count(request.grid_id))
-
-    def getGridPointCount(self, request, context):
-        return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_cell_count(request.grid_id))
-
-    def getGridVertexCount(self, request, context):
-        return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_cell_count(request.grid_id))
+    # def getGridCellCount(self, request, context):
+    #     return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_cell_count(request.grid_id))
+    #
+    # def getGridPointCount(self, request, context):
+    #     return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_point_count(request.grid_id))
+    #
+    # def getGridVertexCount(self, request, context):
+    #     return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_vertex_count(request.grid_id))
 
     def getGridConnectivity(self, request, context):
-        return bmi_pb2.GetGridConnectivityResponse(links=self.bmi_model_.get_grid_cell_count(request.grid_id))
+        return bmi_pb2.GetGridConnectivityResponse(links=self.bmi_model_.get_grid_connectivity(request.grid_id))
 
     def getGridOffset(self, request, context):
         return bmi_pb2.GetGridOffsetResponse(offsets=self.bmi_model_.get_grid_offset(request.grid_id))

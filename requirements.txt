@@ -4,7 +4,6 @@ numpy
 docutils
 protobuf
 PyYAML
-nose
 numpydoc
 cfunits
 scipy
