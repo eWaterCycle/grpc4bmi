@@ -37,7 +37,7 @@ setup(name="grpc4bmi",
                    "Programming Language :: Python",
                    "Operating System :: OS Independent",
                    "Topic :: Utilities",
-                   "Topic :: Scientific/Engineering :: Hydrology",
+                   "Topic :: Scientific/Engineering",
                    "License :: OSI Approved :: Apache Software License"
                    ],
       )
