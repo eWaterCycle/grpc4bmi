@@ -22,7 +22,7 @@ class BmiClientDocker(BmiClient):
             volumes[input_dir] = {"bind": "/data", "mode": "ro"}
         if output_dir is not None:
             volumes[output_dir] = {"bind": "/data/output", "mode": "rw"}
-        self.container = client.containers.run(image, ports={image_port + "/tcp": port},
+        self.container = client.containers.run(image, ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,
                                                detach=True)
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))

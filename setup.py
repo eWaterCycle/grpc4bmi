@@ -32,6 +32,7 @@ setup(name="grpc4bmi",
       entry_points={"console_scripts": [
           "run-bmi-server =  grpc4bmi.run_server:main"
       ]},
+      install_requires=["grpcio","protobuf","numpy","futures","docker"],
       classifiers=["Development Status :: 3 - Alpha",
                    "Intended Audience :: Science/Research",
                    "Programming Language :: Python",
