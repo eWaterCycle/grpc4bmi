@@ -18,7 +18,7 @@ for d in directories:
     package_data[d] = files
 
 setup(name="grpc4bmi",
-      version="0.1",
+      version="0.1.2",
       author="Gijs van den Oord",
       author_email="g.vandenoord@esciencecenter.nl",
       description="Run your BMI implementation in a separate process and expose it as BMI-python with GRPC",

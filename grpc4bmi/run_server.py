@@ -12,7 +12,7 @@ from contextlib import closing
 import grpc
 from concurrent import futures
 
-import bmi_pb2_grpc
+from grpc4bmi import bmi_pb2_grpc
 from bmi_grpc_server import BmiServer
 
 """

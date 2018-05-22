@@ -82,8 +82,9 @@ message GetVarNBytesResponse
 message GetValueResponse
 {
     repeated int32 values_int = 1 [packed = true];
-    repeated double values_double = 2 [packed = true];
-    repeated int32 shape = 3 [packed = true];
+    repeated float values_float = 2 [packed = true];
+    repeated double values_double = 3 [packed = true];
+    repeated int32 shape = 4 [packed = true];
 }
 
 message GetValueAtIndicesRequest
@@ -96,16 +97,18 @@ message GetValueAtIndicesRequest
 message GetValueAtIndicesResponse
 {
     repeated int32 values_int = 1 [packed = true];
-    repeated double values_double = 2 [packed = true];
-    repeated int32 shape = 3 [packed = true];
+    repeated float values_float = 2 [packed = true];
+    repeated double values_double = 3 [packed = true];
+    repeated int32 shape = 4 [packed = true];
 }
 
 message SetValueRequest
 {
     string name = 1;
     repeated int32 values_int = 2 [packed = true];
-    repeated double values_double = 3 [packed = true];
-    repeated int32 shape = 4 [packed = true];
+    repeated float values_float = 3 [packed = true];
+    repeated double values_double = 4 [packed = true];
+    repeated int32 shape = 5 [packed = true];
 }
 
 message SetValuePtrRequest
@@ -119,8 +122,9 @@ message SetValueAtIndicesRequest
     string name = 1;
     repeated int32 indices = 2 [packed = true];
     repeated int32 values_int = 3 [packed = true];
-    repeated double values_double = 4 [packed = true];
-    int32 index_size = 5;
+    repeated float values_float = 4 [packed = true];
+    repeated double values_double = 5 [packed = true];
+    int32 index_size = 6;
 }
 
 message GridRequest

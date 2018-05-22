@@ -7,8 +7,7 @@ import bmi
 import grpc
 import numpy
 
-import bmi_pb2
-import bmi_pb2_grpc
+from grpc4bmi import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
@@ -129,11 +128,14 @@ class BmiClient(bmi.Bmi):
         return BmiClient.make_array(response)
 
     def set_value(self, var_name, src):
-        request = None
         if src.dtype == numpy.int32:
             request = bmi_pb2.SetValueRequest(name=var_name, values_int=src.flatten(), shape=src.shape)
+        elif src.dtype == numpy.float32:
+            request = bmi_pb2.SetValueRequest(name=var_name, values_float=src.flatten(), shape=src.shape)
         elif src.dtype == numpy.float64:
             request = bmi_pb2.SetValueRequest(name=var_name, values_double=src.flatten(), shape=src.shape)
+        else:
+            raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
         self.stub.setValue(request)
 
     def set_value_at_indices(self, var_name, indices, src):
@@ -146,13 +148,17 @@ class BmiClient(bmi.Bmi):
             index_size = index_array.shape[1]
         else:
             raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
-        request = None
         if src.dtype == numpy.int32:
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_int=src,
+                                                       index_size=index_size)
+        elif src.dtype == numpy.float32:
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_float=src,
                                                        index_size=index_size)
         elif src.dtype == numpy.float64:
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_double=src,
                                                        index_size=index_size)
+        else:
+            raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
         self.stub.setValueAtIndices(request)
 
     def get_grid_size(self, grid_id):
@@ -190,9 +196,19 @@ class BmiClient(bmi.Bmi):
 
     @staticmethod
     def make_array(response):
+        ints_in_buffer = any(response.values_int)
+        floats_in_buffer = any(response.values_float)
+        doubles_in_buffer = any(response.values_double)
+        code = (1 if ints_in_buffer else 0) + (1 if floats_in_buffer else 0) + (1 if doubles_in_buffer else 0)
+        if code == 0:
+            log.warning("No values found in server response buffer detected")
+            return numpy.array([])
+        if code > 1:
+            raise NotImplementedError("Multiple value types in single server response buffer detected")
         shape = response.shape
-        if any(response.values_int):
+        if ints_in_buffer:
             return numpy.reshape(response.values_int, shape)
-        if any(response.values_double):
+        if floats_in_buffer:
+            return numpy.reshape(response.values_float, shape)
+        if doubles_in_buffer:
             return numpy.reshape(response.values_double, shape)
-        return numpy.array([])
