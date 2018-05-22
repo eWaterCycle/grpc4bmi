@@ -18,21 +18,21 @@ for d in directories:
     package_data[d] = files
 
 setup(name="grpc4bmi",
-      version="0.1.2",
+      version="0.1.3",
       author="Gijs van den Oord",
       author_email="g.vandenoord@esciencecenter.nl",
       description="Run your BMI implementation in a separate process and expose it as BMI-python with GRPC",
       license="Apache License, Version 2.0",
       url="https://github.com/eWaterCycle/grpc4bmi",
       packages=find_packages(),
-      dependency_links=["https://github.com/csdms/bmi-python", "https://github.com/csdms/bmi-tester/"],
+      dependency_links=["https://github.com/eWaterCycle/bmi-python"],
       package_data=package_data,
       include_package_data=True,
       long_description=open("README.md").read(),
       entry_points={"console_scripts": [
           "run-bmi-server =  grpc4bmi.run_server:main"
       ]},
-      install_requires=["grpcio","protobuf","numpy","futures","docker"],
+      install_requires=["grpcio", "protobuf", "numpy", "futures", "docker"],
       classifiers=["Development Status :: 3 - Alpha",
                    "Intended Audience :: Science/Research",
                    "Programming Language :: Python",

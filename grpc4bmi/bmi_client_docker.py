@@ -7,7 +7,6 @@ from grpc4bmi.bmi_grpc_client import BmiClient
 
 
 class BmiClientDocker(BmiClient):
-
     """
     BMI GRPC client for dockerized server processes: the initialization launches the docker container which should have the
     run-bmi-server as its command. Also, it should expose the tcp port 50001 for communication with this client. Upon
@@ -19,7 +18,6 @@ class BmiClientDocker(BmiClient):
 
     def __init__(self, image, image_port=50051, host=None, input_dir=None, output_dir=None):
         port = BmiClient.get_unique_port()
-        super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
         client = docker.from_env()
         volumes = {}
         self.input_dir = None
@@ -33,9 +31,10 @@ class BmiClientDocker(BmiClient):
         self.container = client.containers.run(image, ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,
                                                detach=True)
+        super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
-        if hasattr(self,"container"):
+        if hasattr(self, "container"):
             self.container.stop()
 
     def initialize(self, filename):

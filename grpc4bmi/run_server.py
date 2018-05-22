@@ -13,7 +13,7 @@ import grpc
 from concurrent import futures
 
 from grpc4bmi import bmi_pb2_grpc
-from bmi_grpc_server import BmiServer
+from grpc4bmi.bmi_grpc_server import BmiServer
 
 """
 Run server script, turning a BMI implementation into an executable by looping indefinitely, until interrupt signals are

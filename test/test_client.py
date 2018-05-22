@@ -32,8 +32,7 @@ class ServerWrapper(object):
 
 
 def make_bmi_classes(init=False):
-    client = BmiClient()
-    client.stub = ServerWrapper(BmiServer("BmiHeat", "heat"))
+    client = BmiClient(stub=ServerWrapper(BmiServer("BmiHeat", "heat")))
     local = BmiHeat()
     if init:
         numpy.random.seed(0)

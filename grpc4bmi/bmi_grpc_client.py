@@ -13,18 +13,22 @@ log = logging.getLogger(__name__)
 
 
 class BmiClient(bmi.Bmi):
-
     """
     Client BMI interface, implementing BMI by forwarding every function call via GRPC to the server connected to the
     same port. A GRPC channel can be passed to the constructor; if not, it constructs an insecure channel on a free
-    port itself.
+    port itself. The timeout parameter indicates the model BMI startup timeout parameter (s).
     """
 
     occupied_ports = set()
 
-    def __init__(self, channel=None):
-        c = BmiClient.create_grpc_channel() if channel is None else channel
-        self.stub = bmi_pb2_grpc.BmiServiceStub(c)
+    def __init__(self, channel=None, timeout=None, stub=None):
+        if stub is None:
+            c = BmiClient.create_grpc_channel() if channel is None else channel
+            self.stub = bmi_pb2_grpc.BmiServiceStub(c)
+            future = grpc.channel_ready_future(c)
+            future.result(timeout=timeout)
+        else:
+            self.stub = stub
 
     def __del__(self):
         del self.stub

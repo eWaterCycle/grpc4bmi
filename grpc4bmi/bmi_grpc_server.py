@@ -110,7 +110,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         indices = request.indices
         index_size = request.index_size
         if index_size == 2:
-            num_indices = len(request.indices) / index_size
+            num_indices = int(len(request.indices) / index_size)
             indices = numpy.reshape(indices, (num_indices, index_size))
         vals = self.bmi_model_.get_value_at_indices(request.name, indices)
         if vals.dtype == numpy.int32:
@@ -139,7 +139,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def setValueAtIndices(self, request, context):
         index_size = request.index_size
-        num_indices = len(request.indices) / index_size
+        num_indices = int(len(request.indices) / index_size)
         index_array = numpy.reshape(request.indices, newshape=(num_indices, index_size))
         ints, floats, doubles = BmiServer.check_request_values(request)
         if ints:
