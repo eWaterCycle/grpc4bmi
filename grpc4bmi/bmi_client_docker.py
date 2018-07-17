@@ -16,7 +16,7 @@ class BmiClientDocker(BmiClient):
     input_mount_point = "/data/input"
     output_mount_point = "/data/output"
 
-    def __init__(self, image, image_port=50051, host=None, input_dir=None, output_dir=None):
+    def __init__(self, image, image_port=50051, host=None, input_dir=None, output_dir=None, user=os.getuid()):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
@@ -27,9 +27,17 @@ class BmiClientDocker(BmiClient):
         self.output_dir = None
         if output_dir is not None:
             self.output_dir = os.path.abspath(output_dir)
+            try:
+                # Create output dir ourselves, otherwise Docker will create it as root user, resulting in permission errors
+                os.mkdir(self.output_dir)
+            except FileExistsError:
+                pass
             volumes[self.output_dir] = {"bind": BmiClientDocker.output_mount_point, "mode": "rw"}
-        self.container = client.containers.run(image, ports={str(image_port) + "/tcp": port},
+        self.container = client.containers.run(image,
+                                               ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,
+                                               user=user,
+                                               remove=True,
                                                detach=True)
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
