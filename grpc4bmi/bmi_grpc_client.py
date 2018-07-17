@@ -3,7 +3,7 @@ import os
 import socket
 from contextlib import closing
 
-import bmi
+import basic_modeling_interface.bmi as bmi
 import grpc
 import numpy
 
