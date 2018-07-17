@@ -10,5 +10,3 @@ scipy
 docker
 pytest
 futures
-git+https://github.com/eWaterCycle/bmi-python.git
-git+https://github.com/csdms/standard_names.git
