@@ -133,11 +133,17 @@ class BmiClient(bmi.Bmi):
 
     def set_value(self, var_name, src):
         if src.dtype == numpy.int32:
-            request = bmi_pb2.SetValueRequest(name=var_name, values_int=src.flatten(), shape=src.shape)
+            request = bmi_pb2.SetValueRequest(name=var_name,
+                                              values_int=bmi_pb2.IntArrayMessage(values=src.flatten()),
+                                              shape=src.shape)
         elif src.dtype == numpy.float32:
-            request = bmi_pb2.SetValueRequest(name=var_name, values_float=src.flatten(), shape=src.shape)
+            request = bmi_pb2.SetValueRequest(name=var_name,
+                                              values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()),
+                                              shape=src.shape)
         elif src.dtype == numpy.float64:
-            request = bmi_pb2.SetValueRequest(name=var_name, values_double=src.flatten(), shape=src.shape)
+            request = bmi_pb2.SetValueRequest(name=var_name,
+                                              values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()),
+                                              shape=src.shape)
         else:
             raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
         self.stub.setValue(request)
@@ -153,13 +159,19 @@ class BmiClient(bmi.Bmi):
         else:
             raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
         if src.dtype == numpy.int32:
-            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_int=src,
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
+                                                       indices=index_array.flatten(),
+                                                       values_int=bmi_pb2.IntArrayMessage(values=src.flatten()),
                                                        index_size=index_size)
         elif src.dtype == numpy.float32:
-            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_float=src,
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
+                                                       indices=index_array.flatten(),
+                                                       values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()),
                                                        index_size=index_size)
         elif src.dtype == numpy.float64:
-            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name, indices=index_array.flatten(), values_double=src,
+            request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
+                                                       indices=index_array.flatten(),
+                                                       values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()),
                                                        index_size=index_size)
         else:
             raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
@@ -200,19 +212,10 @@ class BmiClient(bmi.Bmi):
 
     @staticmethod
     def make_array(response):
-        ints_in_buffer = any(response.values_int)
-        floats_in_buffer = any(response.values_float)
-        doubles_in_buffer = any(response.values_double)
-        code = (1 if ints_in_buffer else 0) + (1 if floats_in_buffer else 0) + (1 if doubles_in_buffer else 0)
-        if code == 0:
-            log.warning("No values found in server response buffer detected")
-            return numpy.array([])
-        if code > 1:
-            raise NotImplementedError("Multiple value types in single server response buffer detected")
         shape = response.shape
-        if ints_in_buffer:
-            return numpy.reshape(response.values_int, shape)
-        if floats_in_buffer:
-            return numpy.reshape(response.values_float, shape)
-        if doubles_in_buffer:
-            return numpy.reshape(response.values_double, shape)
+        if response.HasField("values_int"):
+            return numpy.reshape(response.values_int.values, shape)
+        if response.HasField("values_float"):
+            return numpy.reshape(response.values_float.values, shape)
+        if response.HasField("values_double"):
+            return numpy.reshape(response.values_double.values, shape)

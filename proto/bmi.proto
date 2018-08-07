@@ -79,11 +79,28 @@ message GetVarNBytesResponse
     int32 nbytes = 1;
 }
 
+message IntArrayMessage
+{
+    repeated int32 values = 1 [packed = true];
+}
+
+message FloatArrayMessage
+{
+    repeated float values = 1 [packed = true];
+}
+
+message DoubleArrayMessage
+{
+    repeated double values = 1 [packed = true];
+}
+
 message GetValueResponse
 {
-    repeated int32 values_int = 1 [packed = true];
-    repeated float values_float = 2 [packed = true];
-    repeated double values_double = 3 [packed = true];
+    oneof values {
+        IntArrayMessage values_int = 1;
+        FloatArrayMessage values_float = 2;
+        DoubleArrayMessage values_double = 3;
+    }
     repeated int32 shape = 4 [packed = true];
 }
 
@@ -96,18 +113,22 @@ message GetValueAtIndicesRequest
 
 message GetValueAtIndicesResponse
 {
-    repeated int32 values_int = 1 [packed = true];
-    repeated float values_float = 2 [packed = true];
-    repeated double values_double = 3 [packed = true];
+    oneof values {
+        IntArrayMessage values_int = 1;
+        FloatArrayMessage values_float = 2;
+        DoubleArrayMessage values_double = 3;
+    }
     repeated int32 shape = 4 [packed = true];
 }
 
 message SetValueRequest
 {
     string name = 1;
-    repeated int32 values_int = 2 [packed = true];
-    repeated float values_float = 3 [packed = true];
-    repeated double values_double = 4 [packed = true];
+    oneof values {
+        IntArrayMessage values_int = 2;
+        FloatArrayMessage values_float = 3;
+        DoubleArrayMessage values_double = 4;
+    }
     repeated int32 shape = 5 [packed = true];
 }
 
@@ -121,9 +142,11 @@ message SetValueAtIndicesRequest
 {
     string name = 1;
     repeated int32 indices = 2 [packed = true];
-    repeated int32 values_int = 3 [packed = true];
-    repeated float values_float = 4 [packed = true];
-    repeated double values_double = 5 [packed = true];
+    oneof values {
+        IntArrayMessage values_int = 3;
+        FloatArrayMessage values_float = 4;
+        DoubleArrayMessage values_double = 5;
+    }
     int32 index_size = 6;
 }
 

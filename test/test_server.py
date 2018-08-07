@@ -18,6 +18,14 @@ class RequestStub(object):
     def __init__(self):
         self.config_file = ""
 
+    def HasField(self, name):
+        return hasattr(self, name)
+
+
+class value_wrapper(object):
+    def __init__(self, vals):
+        self.values = vals.flatten()
+
 
 def make_string(obj):
     return '' if obj is None else str(obj)
@@ -166,7 +174,7 @@ def test_get_var_values():
     setattr(request, "name", varname)
     values = local.get_value(varname)
     assert tuple(server.getValue(request, None).shape) == values.shape
-    assert numpy.array_equal(numpy.reshape(server.getValue(request, None).values_double, values.shape), values)
+    assert numpy.array_equal(numpy.reshape(server.getValue(request, None).values_double.values, values.shape), values)
 
 
 def test_get_var_ptr():
@@ -187,7 +195,7 @@ def test_get_vals_indices():
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 1)
     values = local.get_value_at_indices(varname, indices)
-    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double, values.flatten())
+    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
 def test_get_vals_indices_2d():
@@ -199,7 +207,7 @@ def test_get_vals_indices_2d():
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 2)
     values = local.get_value_at_indices(varname, indices)
-    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double, values.flatten())
+    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
 def test_set_var_values():
@@ -208,17 +216,13 @@ def test_set_var_values():
     varname = local.get_output_var_names()[0]
     values = 0.123 * local.get_value(varname)
     setattr(request, "name", varname)
-    setattr(request, "values_double", values.flatten())
-    setattr(request, "values_float", [])
-    setattr(request, "values_int", [])
+    setattr(request, "values_double", value_wrapper(values))
     setattr(request, "shape", values.shape)
     server.setValue(request, None)
     delattr(request, "values_double")
-    delattr(request, "values_float")
-    delattr(request, "values_int")
     delattr(request, "shape")
     response = server.getValue(request, None)
-    values_copy = numpy.reshape(response.values_double, response.shape)
+    values_copy = numpy.reshape(response.values_double.values, response.shape)
     assert numpy.array_equal(values, values_copy)
 
 
@@ -229,17 +233,13 @@ def test_set_values_indices():
     indices = numpy.array([1, 11, 21])
     values = numpy.array([0.123, 4.567, 8.901])
     setattr(request, "name", varname)
-    setattr(request, "values_double", values.flatten())
-    setattr(request, "values_float", [])
-    setattr(request, "values_int", [])
+    setattr(request, "values_double", value_wrapper(values))
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 1)
     server.setValueAtIndices(request, None)
     delattr(request, "values_double")
-    delattr(request, "values_float")
-    delattr(request, "values_int")
     response = server.getValueAtIndices(request, None)
-    values_copy = numpy.array(response.values_double)
+    values_copy = numpy.array(response.values_double.values)
     assert numpy.array_equal(values, values_copy)
 
 
