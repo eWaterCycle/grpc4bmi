@@ -96,11 +96,14 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getValue(self, request, context):
         vals = self.bmi_model_.get_value(request.name)
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueResponse(shape=vals.shape, values_int=vals.flatten())
+            return bmi_pb2.GetValueResponse(shape=vals.shape,
+                                            values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
         if vals.dtype == numpy.float32:
-            return bmi_pb2.GetValueResponse(shape=vals.shape, values_float=vals.flatten())
+            return bmi_pb2.GetValueResponse(shape=vals.shape,
+                                            values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueResponse(shape=vals.shape, values_double=vals.flatten())
+            return bmi_pb2.GetValueResponse(shape=vals.shape,
+                                            values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     def getValuePtr(self, request, context):
@@ -114,23 +117,25 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             indices = numpy.reshape(indices, (num_indices, index_size))
         vals = self.bmi_model_.get_value_at_indices(request.name, indices)
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_int=vals.flatten(), shape=vals.shape)
+            return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()),
+                                                     shape=vals.shape)
         if vals.dtype == numpy.float32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_float=vals.flatten(), shape=vals.shape)
+            return bmi_pb2.GetValueAtIndicesResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()),
+                                                     shape=vals.shape)
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueAtIndicesResponse(values_double=vals.flatten(), shape=vals.shape)
+            return bmi_pb2.GetValueAtIndicesResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()),
+                                                     shape=vals.shape)
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     def setValue(self, request, context):
-        ints, floats, doubles = BmiServer.check_request_values(request)
-        if ints:
-            array = numpy.reshape(numpy.array(request.values_int, dtype=numpy.int32), request.shape)
+        if request.HasField("values_int"):
+            array = numpy.reshape(numpy.array(request.values_int.values, dtype=numpy.int32), request.shape)
             self.bmi_model_.set_value(request.name, array)
-        if floats:
-            array = numpy.reshape(numpy.array(request.values_float, dtype=numpy.float32), request.shape)
+        if request.HasField("values_float"):
+            array = numpy.reshape(numpy.array(request.values_float.values, dtype=numpy.float32), request.shape)
             self.bmi_model_.set_value(request.name, array)
-        if doubles:
-            array = numpy.reshape(numpy.array(request.values_double, dtype=numpy.float64), request.shape)
+        if request.HasField("values_double"):
+            array = numpy.reshape(numpy.array(request.values_double.values, dtype=numpy.float64), request.shape)
             self.bmi_model_.set_value(request.name, array)
         return bmi_pb2.Empty()
 
@@ -141,15 +146,14 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         index_size = request.index_size
         num_indices = int(len(request.indices) / index_size)
         index_array = numpy.reshape(request.indices, newshape=(num_indices, index_size))
-        ints, floats, doubles = BmiServer.check_request_values(request)
-        if ints:
-            array = numpy.array(request.values_int, dtype=numpy.int32)
+        if request.HasField("values_int"):
+            array = numpy.array(request.values_int.values, dtype=numpy.int32)
             self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
-        if floats:
-            array = numpy.array(request.values_int, dtype=numpy.float32)
+        if request.HasField("values_float"):
+            array = numpy.array(request.values_int.values, dtype=numpy.float32)
             self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
-        if doubles:
-            array = numpy.array(request.values_double, dtype=numpy.float64)
+        if request.HasField("values_double"):
+            array = numpy.array(request.values_double.values, dtype=numpy.float64)
             self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
         return bmi_pb2.Empty()
 
@@ -194,15 +198,3 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getGridOffset(self, request, context):
         return bmi_pb2.GetGridOffsetResponse(offsets=self.bmi_model_.get_grid_offset(request.grid_id))
-
-    @staticmethod
-    def check_request_values(request):
-        ints_in_buffer = any(request.values_int)
-        floats_in_buffer = any(request.values_float)
-        doubles_in_buffer = any(request.values_double)
-        code = (1 if ints_in_buffer else 0) + (1 if floats_in_buffer else 0) + (1 if doubles_in_buffer else 0)
-        if code == 0:
-            log.warning("No values found in message buffer detected")
-        if code > 1:
-            raise NotImplementedError("Multiple value types in single message buffer detected")
-        return ints_in_buffer, floats_in_buffer, doubles_in_buffer
