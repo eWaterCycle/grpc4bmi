@@ -12,7 +12,7 @@ def read(fname):
 
 package_data = {}
 
-directories = ["grpc4bmi"]
+directories = ["python/grpc4bmi"]
 for d in directories:
     files = [os.path.join(d, f) for f in os.listdir(d) if os.path.isfile(os.path.join(d, f))]
     package_data[d] = files
