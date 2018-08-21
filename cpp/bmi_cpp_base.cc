@@ -1,29 +1,12 @@
-#include <bmicppbase.h>
+#include <bmi_cpp_base.h>
 #include <algorithm>
 #include <locale>
 
 BmiCppBase::BmiCppBase(){}
 
-char BmiCppBase::find_type(const std::string& varname) const
+void BmiCppBase::runModel()
 {
-    std::locale loc;
-    std::string vartype = std::tolower(this->GetVarType(varname), loc);
-    std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
-    if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
-    {
-        return 'i';
-    }
-    std::vector<std::string>flttypes = {"float", "float32"};
-    if(std::find(flttypes.begin(), flttypes.end(), vartype) != flttypes.end())
-    {
-        return 'f';
-    }
-    std::vector<std::string>dbltypes = {"double", "float64"};
-    if(std::find(dbltypes.begin(), dbltypes.end(), vartype) != dbltypes.end())
-    {
-        return 'd';
-    }
-    throw std::invalid_argument("Could not match the variable type " + vartype + " of variable " + varname + "to integer, float or double");
+    this->UpdateUntil(this->GetEndTime());
 }
 
 template<> std::vector<int> BmiCppBase::GetValue(const std::string name) const
@@ -186,4 +169,26 @@ template<> void BmiCppBase::SetValueAtIndices(std::string name, const std::vecto
         this->SetValueDoubleAtIndices(name, indices, values);
     }
     throw std::invalid_argument("The value type of variable " + name + "is not double");
+}
+
+char BmiCppBase::find_type(const std::string& varname) const
+{
+    std::locale loc;
+    std::string vartype = std::tolower(this->GetVarType(varname), loc);
+    std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
+    if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
+    {
+        return 'i';
+    }
+    std::vector<std::string>flttypes = {"float", "float32"};
+    if(std::find(flttypes.begin(), flttypes.end(), vartype) != flttypes.end())
+    {
+        return 'f';
+    }
+    std::vector<std::string>dbltypes = {"double", "float64"};
+    if(std::find(dbltypes.begin(), dbltypes.end(), vartype) != dbltypes.end())
+    {
+        return 'd';
+    }
+    throw std::invalid_argument("Could not match the variable type " + vartype + " of variable " + varname + "to integer, float or double");
 }

@@ -14,6 +14,7 @@ class BmiCppBase {
     virtual void Update() = 0;
     virtual void UpdateUntil(double time) = 0;
     virtual void UpdateFrac(double time) = 0;
+    virtual void runModel();
     virtual void Finalize() = 0;
 
     virtual std::string GetComponentName() const = 0;
