@@ -58,12 +58,19 @@ class BmiCppBase {
         throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
     }
 
+    virtual int GetGridSize(int id) const = 0;
+    virtual int GetGridRank(int id) const = 0;
+    virtual int GetGridCellCount(int id) const = 0;
+    virtual int GetGridPointCount(int id) const = 0;
+    virtual int GetGridVertexCount(int id) const = 0;
     virtual std::string GetGridType(int id) const = 0;
     virtual std::vector<int> GetGridShape(int id) const = 0;
+    virtual std::vector<int> GetGridConnectivity(int id) const = 0;
     virtual std::vector<double> GetGridSpacing(int id) const = 0;
     virtual std::vector<double> GetGridOrigin(int id) const = 0;
     virtual std::vector<double> GetGridX(int id) const = 0;
     virtual std::vector<double> GetGridY(int id) const = 0;
+    virtual std::vector<double> GetGridZ(int id) const = 0;
 
   protected:
 
