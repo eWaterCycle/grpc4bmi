@@ -21,7 +21,8 @@ class BmiCppBase {
     virtual std::vector<std::string> GetInputVarNames() const = 0;
     virtual std::vector<std::string> GetOutputVarNames() const = 0;
     virtual std::string GetVarType(std::string name) const = 0;
-    virtual int GetVarItemsize(std::string name) const = 0;
+    virtual int GetVarGrid(std::string name) const = 0;
+    virtual int GetVarItemSize(std::string name) const = 0;
     virtual std::string GetVarUnits(std::string name) const = 0;
     virtual int GetVarRank(std::string name) const = 0;
     virtual int GetVarSize(std::string name) const = 0;
@@ -57,12 +58,12 @@ class BmiCppBase {
         throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
     }
 
-    virtual std::string GetGridType(std::string name) const = 0;
-    virtual std::vector<int> GetGridShape(std::string name) const = 0;
-    virtual std::vector<double> GetGridSpacing(std::string name) const = 0;
-    virtual std::vector<double> GetGridOrigin(std::string name) const = 0;
-    virtual std::vector<double> GetGridX(std::string name) const = 0;
-    virtual std::vector<double> GetGridY(std::string name) const = 0;
+    virtual std::string GetGridType(int id) const = 0;
+    virtual std::vector<int> GetGridShape(int id) const = 0;
+    virtual std::vector<double> GetGridSpacing(int id) const = 0;
+    virtual std::vector<double> GetGridOrigin(int id) const = 0;
+    virtual std::vector<double> GetGridX(int id) const = 0;
+    virtual std::vector<double> GetGridY(int id) const = 0;
 
   protected:
 
