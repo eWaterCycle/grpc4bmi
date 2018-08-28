@@ -49,16 +49,6 @@ class BmiServiceStub(object):
         request_serializer=bmi__pb2.Empty.SerializeToString,
         response_deserializer=bmi__pb2.GetComponentNameResponse.FromString,
         )
-    self.getInputVarNameCount = channel.unary_unary(
-        '/bmi.BmiService/getInputVarNameCount',
-        request_serializer=bmi__pb2.Empty.SerializeToString,
-        response_deserializer=bmi__pb2.GetVarNameCountResponse.FromString,
-        )
-    self.getOutputVarNameCount = channel.unary_unary(
-        '/bmi.BmiService/getOutputVarNameCount',
-        request_serializer=bmi__pb2.Empty.SerializeToString,
-        response_deserializer=bmi__pb2.GetVarNameCountResponse.FromString,
-        )
     self.getInputVarNames = channel.unary_unary(
         '/bmi.BmiService/getInputVarNames',
         request_serializer=bmi__pb2.Empty.SerializeToString,
@@ -124,11 +114,6 @@ class BmiServiceStub(object):
         request_serializer=bmi__pb2.GetVarRequest.SerializeToString,
         response_deserializer=bmi__pb2.GetValueResponse.FromString,
         )
-    self.getValuePtr = channel.unary_unary(
-        '/bmi.BmiService/getValuePtr',
-        request_serializer=bmi__pb2.GetVarRequest.SerializeToString,
-        response_deserializer=bmi__pb2.Empty.FromString,
-        )
     self.getValueAtIndices = channel.unary_unary(
         '/bmi.BmiService/getValueAtIndices',
         request_serializer=bmi__pb2.GetValueAtIndicesRequest.SerializeToString,
@@ -137,11 +122,6 @@ class BmiServiceStub(object):
     self.setValue = channel.unary_unary(
         '/bmi.BmiService/setValue',
         request_serializer=bmi__pb2.SetValueRequest.SerializeToString,
-        response_deserializer=bmi__pb2.Empty.FromString,
-        )
-    self.setValuePtr = channel.unary_unary(
-        '/bmi.BmiService/setValuePtr',
-        request_serializer=bmi__pb2.SetValuePtrRequest.SerializeToString,
         response_deserializer=bmi__pb2.Empty.FromString,
         )
     self.setValueAtIndices = channel.unary_unary(
@@ -193,21 +173,6 @@ class BmiServiceStub(object):
         '/bmi.BmiService/getGridZ',
         request_serializer=bmi__pb2.GridRequest.SerializeToString,
         response_deserializer=bmi__pb2.GetGridPointsResponse.FromString,
-        )
-    self.getGridCellCount = channel.unary_unary(
-        '/bmi.BmiService/getGridCellCount',
-        request_serializer=bmi__pb2.GridRequest.SerializeToString,
-        response_deserializer=bmi__pb2.GetCountResponse.FromString,
-        )
-    self.getGridPointCount = channel.unary_unary(
-        '/bmi.BmiService/getGridPointCount',
-        request_serializer=bmi__pb2.GridRequest.SerializeToString,
-        response_deserializer=bmi__pb2.GetCountResponse.FromString,
-        )
-    self.getGridVertexCount = channel.unary_unary(
-        '/bmi.BmiService/getGridVertexCount',
-        request_serializer=bmi__pb2.GridRequest.SerializeToString,
-        response_deserializer=bmi__pb2.GetCountResponse.FromString,
         )
     self.getGridConnectivity = channel.unary_unary(
         '/bmi.BmiService/getGridConnectivity',
@@ -268,20 +233,6 @@ class BmiServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def getComponentName(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def getInputVarNameCount(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def getOutputVarNameCount(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -379,13 +330,6 @@ class BmiServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def getValuePtr(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
   def getValueAtIndices(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -394,13 +338,6 @@ class BmiServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def setValue(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def setValuePtr(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -477,27 +414,6 @@ class BmiServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def getGridCellCount(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def getGridPointCount(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def getGridVertexCount(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
   def getGridConnectivity(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -549,16 +465,6 @@ def add_BmiServiceServicer_to_server(servicer, server):
           servicer.getComponentName,
           request_deserializer=bmi__pb2.Empty.FromString,
           response_serializer=bmi__pb2.GetComponentNameResponse.SerializeToString,
-      ),
-      'getInputVarNameCount': grpc.unary_unary_rpc_method_handler(
-          servicer.getInputVarNameCount,
-          request_deserializer=bmi__pb2.Empty.FromString,
-          response_serializer=bmi__pb2.GetVarNameCountResponse.SerializeToString,
-      ),
-      'getOutputVarNameCount': grpc.unary_unary_rpc_method_handler(
-          servicer.getOutputVarNameCount,
-          request_deserializer=bmi__pb2.Empty.FromString,
-          response_serializer=bmi__pb2.GetVarNameCountResponse.SerializeToString,
       ),
       'getInputVarNames': grpc.unary_unary_rpc_method_handler(
           servicer.getInputVarNames,
@@ -625,11 +531,6 @@ def add_BmiServiceServicer_to_server(servicer, server):
           request_deserializer=bmi__pb2.GetVarRequest.FromString,
           response_serializer=bmi__pb2.GetValueResponse.SerializeToString,
       ),
-      'getValuePtr': grpc.unary_unary_rpc_method_handler(
-          servicer.getValuePtr,
-          request_deserializer=bmi__pb2.GetVarRequest.FromString,
-          response_serializer=bmi__pb2.Empty.SerializeToString,
-      ),
       'getValueAtIndices': grpc.unary_unary_rpc_method_handler(
           servicer.getValueAtIndices,
           request_deserializer=bmi__pb2.GetValueAtIndicesRequest.FromString,
@@ -638,11 +539,6 @@ def add_BmiServiceServicer_to_server(servicer, server):
       'setValue': grpc.unary_unary_rpc_method_handler(
           servicer.setValue,
           request_deserializer=bmi__pb2.SetValueRequest.FromString,
-          response_serializer=bmi__pb2.Empty.SerializeToString,
-      ),
-      'setValuePtr': grpc.unary_unary_rpc_method_handler(
-          servicer.setValuePtr,
-          request_deserializer=bmi__pb2.SetValuePtrRequest.FromString,
           response_serializer=bmi__pb2.Empty.SerializeToString,
       ),
       'setValueAtIndices': grpc.unary_unary_rpc_method_handler(
@@ -694,21 +590,6 @@ def add_BmiServiceServicer_to_server(servicer, server):
           servicer.getGridZ,
           request_deserializer=bmi__pb2.GridRequest.FromString,
           response_serializer=bmi__pb2.GetGridPointsResponse.SerializeToString,
-      ),
-      'getGridCellCount': grpc.unary_unary_rpc_method_handler(
-          servicer.getGridCellCount,
-          request_deserializer=bmi__pb2.GridRequest.FromString,
-          response_serializer=bmi__pb2.GetCountResponse.SerializeToString,
-      ),
-      'getGridPointCount': grpc.unary_unary_rpc_method_handler(
-          servicer.getGridPointCount,
-          request_deserializer=bmi__pb2.GridRequest.FromString,
-          response_serializer=bmi__pb2.GetCountResponse.SerializeToString,
-      ),
-      'getGridVertexCount': grpc.unary_unary_rpc_method_handler(
-          servicer.getGridVertexCount,
-          request_deserializer=bmi__pb2.GridRequest.FromString,
-          response_serializer=bmi__pb2.GetCountResponse.SerializeToString,
       ),
       'getGridConnectivity': grpc.unary_unary_rpc_method_handler(
           servicer.getGridConnectivity,

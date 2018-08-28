@@ -47,8 +47,10 @@ will launch a docker container, assuming that a GRPC BMI server will start and e
 ## Development: generating the grpc code
 When developers change the proto-file, it is necessary to install grpc tools python packages in your python environment:
 ```bash
-pip install grpcio-tools
-pip install googleapis-common-protos
+pip install -r requirements.txt
+pip install -e .
+pip install -e .[R]
+
 ```
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
 After this, simply executing the `proto_gen.sh` script should do the job. 
