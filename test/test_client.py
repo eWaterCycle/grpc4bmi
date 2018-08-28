@@ -8,6 +8,7 @@ from heat import BmiHeat
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient
 
+
 logging.basicConfig(level=logging.DEBUG)
 
 """
@@ -32,7 +33,7 @@ class ServerWrapper(object):
 
 
 def make_bmi_classes(init=False):
-    client = BmiClient(stub=ServerWrapper(BmiServer("BmiHeat", "heat")))
+    client = BmiClient(stub=ServerWrapper(BmiServer(BmiHeat())))
     local = BmiHeat()
     if init:
         numpy.random.seed(0)

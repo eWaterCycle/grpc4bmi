@@ -69,33 +69,12 @@ class BmiService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> PrepareAsyncfinalize(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(PrepareAsyncfinalizeRaw(context, request, cq));
     }
-    virtual ::grpc::Status runModel(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> AsyncrunModel(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(AsyncrunModelRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> PrepareAsyncrunModel(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(PrepareAsyncrunModelRaw(context, request, cq));
-    }
     virtual ::grpc::Status getComponentName(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetComponentNameResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetComponentNameResponse>> AsyncgetComponentName(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetComponentNameResponse>>(AsyncgetComponentNameRaw(context, request, cq));
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetComponentNameResponse>> PrepareAsyncgetComponentName(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetComponentNameResponse>>(PrepareAsyncgetComponentNameRaw(context, request, cq));
-    }
-    virtual ::grpc::Status getInputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetVarNameCountResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>> AsyncgetInputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>>(AsyncgetInputVarNameCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>> PrepareAsyncgetInputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>>(PrepareAsyncgetInputVarNameCountRaw(context, request, cq));
-    }
-    virtual ::grpc::Status getOutputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetVarNameCountResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>> AsyncgetOutputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>>(AsyncgetOutputVarNameCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>> PrepareAsyncgetOutputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>>(PrepareAsyncgetOutputVarNameCountRaw(context, request, cq));
     }
     virtual ::grpc::Status getInputVarNames(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetVarNamesResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNamesResponse>> AsyncgetInputVarNames(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
@@ -188,13 +167,6 @@ class BmiService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueResponse>> PrepareAsyncgetValue(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueResponse>>(PrepareAsyncgetValueRaw(context, request, cq));
     }
-    virtual ::grpc::Status getValuePtr(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::bmi::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> AsyncgetValuePtr(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(AsyncgetValuePtrRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> PrepareAsyncgetValuePtr(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(PrepareAsyncgetValuePtrRaw(context, request, cq));
-    }
     virtual ::grpc::Status getValueAtIndices(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::bmi::GetValueAtIndicesResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueAtIndicesResponse>> AsyncgetValueAtIndices(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueAtIndicesResponse>>(AsyncgetValueAtIndicesRaw(context, request, cq));
@@ -208,13 +180,6 @@ class BmiService final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> PrepareAsyncsetValue(::grpc::ClientContext* context, const ::bmi::SetValueRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(PrepareAsyncsetValueRaw(context, request, cq));
-    }
-    virtual ::grpc::Status setValuePtr(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::bmi::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> AsyncsetValuePtr(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(AsyncsetValuePtrRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> PrepareAsyncsetValuePtr(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>>(PrepareAsyncsetValuePtrRaw(context, request, cq));
     }
     virtual ::grpc::Status setValueAtIndices(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::bmi::Empty* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>> AsyncsetValueAtIndices(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) {
@@ -286,27 +251,6 @@ class BmiService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridPointsResponse>> PrepareAsyncgetGridZ(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridPointsResponse>>(PrepareAsyncgetGridZRaw(context, request, cq));
     }
-    virtual ::grpc::Status getGridCellCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetCountResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>> AsyncgetGridCellCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>>(AsyncgetGridCellCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>> PrepareAsyncgetGridCellCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>>(PrepareAsyncgetGridCellCountRaw(context, request, cq));
-    }
-    virtual ::grpc::Status getGridPointCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetCountResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>> AsyncgetGridPointCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>>(AsyncgetGridPointCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>> PrepareAsyncgetGridPointCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>>(PrepareAsyncgetGridPointCountRaw(context, request, cq));
-    }
-    virtual ::grpc::Status getGridVertexCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetCountResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>> AsyncgetGridVertexCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>>(AsyncgetGridVertexCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>> PrepareAsyncgetGridVertexCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>>(PrepareAsyncgetGridVertexCountRaw(context, request, cq));
-    }
     virtual ::grpc::Status getGridConnectivity(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetGridConnectivityResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridConnectivityResponse>> AsyncgetGridConnectivity(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridConnectivityResponse>>(AsyncgetGridConnectivityRaw(context, request, cq));
@@ -332,14 +276,8 @@ class BmiService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncupdateFracRaw(::grpc::ClientContext* context, const ::bmi::UpdateFracRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* AsyncfinalizeRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncfinalizeRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* AsyncrunModelRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncrunModelRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetComponentNameResponse>* AsyncgetComponentNameRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetComponentNameResponse>* PrepareAsyncgetComponentNameRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>* AsyncgetInputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>* PrepareAsyncgetInputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>* AsyncgetOutputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNameCountResponse>* PrepareAsyncgetOutputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNamesResponse>* AsyncgetInputVarNamesRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNamesResponse>* PrepareAsyncgetInputVarNamesRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNamesResponse>* AsyncgetOutputVarNamesRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) = 0;
@@ -366,14 +304,10 @@ class BmiService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetVarNBytesResponse>* PrepareAsyncgetVarNBytesRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueResponse>* AsyncgetValueRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueResponse>* PrepareAsyncgetValueRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* AsyncgetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncgetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueAtIndicesResponse>* AsyncgetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetValueAtIndicesResponse>* PrepareAsyncgetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* AsyncsetValueRaw(::grpc::ClientContext* context, const ::bmi::SetValueRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncsetValueRaw(::grpc::ClientContext* context, const ::bmi::SetValueRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* AsyncsetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncsetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* AsyncsetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::Empty>* PrepareAsyncsetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridSizeResponse>* AsyncgetGridSizeRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -394,12 +328,6 @@ class BmiService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridPointsResponse>* PrepareAsyncgetGridYRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridPointsResponse>* AsyncgetGridZRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridPointsResponse>* PrepareAsyncgetGridZRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>* AsyncgetGridCellCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>* PrepareAsyncgetGridCellCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>* AsyncgetGridPointCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>* PrepareAsyncgetGridPointCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>* AsyncgetGridVertexCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetCountResponse>* PrepareAsyncgetGridVertexCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridConnectivityResponse>* AsyncgetGridConnectivityRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridConnectivityResponse>* PrepareAsyncgetGridConnectivityRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::bmi::GetGridOffsetResponse>* AsyncgetGridOffsetRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -443,33 +371,12 @@ class BmiService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> PrepareAsyncfinalize(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(PrepareAsyncfinalizeRaw(context, request, cq));
     }
-    ::grpc::Status runModel(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> AsyncrunModel(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(AsyncrunModelRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> PrepareAsyncrunModel(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(PrepareAsyncrunModelRaw(context, request, cq));
-    }
     ::grpc::Status getComponentName(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetComponentNameResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetComponentNameResponse>> AsyncgetComponentName(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetComponentNameResponse>>(AsyncgetComponentNameRaw(context, request, cq));
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetComponentNameResponse>> PrepareAsyncgetComponentName(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetComponentNameResponse>>(PrepareAsyncgetComponentNameRaw(context, request, cq));
-    }
-    ::grpc::Status getInputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetVarNameCountResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>> AsyncgetInputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>>(AsyncgetInputVarNameCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>> PrepareAsyncgetInputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>>(PrepareAsyncgetInputVarNameCountRaw(context, request, cq));
-    }
-    ::grpc::Status getOutputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetVarNameCountResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>> AsyncgetOutputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>>(AsyncgetOutputVarNameCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>> PrepareAsyncgetOutputVarNameCount(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>>(PrepareAsyncgetOutputVarNameCountRaw(context, request, cq));
     }
     ::grpc::Status getInputVarNames(::grpc::ClientContext* context, const ::bmi::Empty& request, ::bmi::GetVarNamesResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNamesResponse>> AsyncgetInputVarNames(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) {
@@ -562,13 +469,6 @@ class BmiService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetValueResponse>> PrepareAsyncgetValue(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetValueResponse>>(PrepareAsyncgetValueRaw(context, request, cq));
     }
-    ::grpc::Status getValuePtr(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::bmi::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> AsyncgetValuePtr(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(AsyncgetValuePtrRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> PrepareAsyncgetValuePtr(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(PrepareAsyncgetValuePtrRaw(context, request, cq));
-    }
     ::grpc::Status getValueAtIndices(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::bmi::GetValueAtIndicesResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetValueAtIndicesResponse>> AsyncgetValueAtIndices(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetValueAtIndicesResponse>>(AsyncgetValueAtIndicesRaw(context, request, cq));
@@ -582,13 +482,6 @@ class BmiService final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> PrepareAsyncsetValue(::grpc::ClientContext* context, const ::bmi::SetValueRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(PrepareAsyncsetValueRaw(context, request, cq));
-    }
-    ::grpc::Status setValuePtr(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::bmi::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> AsyncsetValuePtr(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(AsyncsetValuePtrRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> PrepareAsyncsetValuePtr(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>>(PrepareAsyncsetValuePtrRaw(context, request, cq));
     }
     ::grpc::Status setValueAtIndices(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::bmi::Empty* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::Empty>> AsyncsetValueAtIndices(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) {
@@ -660,27 +553,6 @@ class BmiService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetGridPointsResponse>> PrepareAsyncgetGridZ(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetGridPointsResponse>>(PrepareAsyncgetGridZRaw(context, request, cq));
     }
-    ::grpc::Status getGridCellCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetCountResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>> AsyncgetGridCellCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>>(AsyncgetGridCellCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>> PrepareAsyncgetGridCellCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>>(PrepareAsyncgetGridCellCountRaw(context, request, cq));
-    }
-    ::grpc::Status getGridPointCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetCountResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>> AsyncgetGridPointCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>>(AsyncgetGridPointCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>> PrepareAsyncgetGridPointCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>>(PrepareAsyncgetGridPointCountRaw(context, request, cq));
-    }
-    ::grpc::Status getGridVertexCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetCountResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>> AsyncgetGridVertexCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>>(AsyncgetGridVertexCountRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>> PrepareAsyncgetGridVertexCount(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>>(PrepareAsyncgetGridVertexCountRaw(context, request, cq));
-    }
     ::grpc::Status getGridConnectivity(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::bmi::GetGridConnectivityResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetGridConnectivityResponse>> AsyncgetGridConnectivity(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::bmi::GetGridConnectivityResponse>>(AsyncgetGridConnectivityRaw(context, request, cq));
@@ -708,14 +580,8 @@ class BmiService final {
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncupdateFracRaw(::grpc::ClientContext* context, const ::bmi::UpdateFracRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* AsyncfinalizeRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncfinalizeRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* AsyncrunModelRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncrunModelRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetComponentNameResponse>* AsyncgetComponentNameRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetComponentNameResponse>* PrepareAsyncgetComponentNameRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>* AsyncgetInputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>* PrepareAsyncgetInputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>* AsyncgetOutputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNameCountResponse>* PrepareAsyncgetOutputVarNameCountRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNamesResponse>* AsyncgetInputVarNamesRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNamesResponse>* PrepareAsyncgetInputVarNamesRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNamesResponse>* AsyncgetOutputVarNamesRaw(::grpc::ClientContext* context, const ::bmi::Empty& request, ::grpc::CompletionQueue* cq) override;
@@ -742,14 +608,10 @@ class BmiService final {
     ::grpc::ClientAsyncResponseReader< ::bmi::GetVarNBytesResponse>* PrepareAsyncgetVarNBytesRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetValueResponse>* AsyncgetValueRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetValueResponse>* PrepareAsyncgetValueRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* AsyncgetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncgetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::GetVarRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetValueAtIndicesResponse>* AsyncgetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetValueAtIndicesResponse>* PrepareAsyncgetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::GetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* AsyncsetValueRaw(::grpc::ClientContext* context, const ::bmi::SetValueRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncsetValueRaw(::grpc::ClientContext* context, const ::bmi::SetValueRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* AsyncsetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncsetValuePtrRaw(::grpc::ClientContext* context, const ::bmi::SetValuePtrRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* AsyncsetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::Empty>* PrepareAsyncsetValueAtIndicesRaw(::grpc::ClientContext* context, const ::bmi::SetValueAtIndicesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridSizeResponse>* AsyncgetGridSizeRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -770,12 +632,6 @@ class BmiService final {
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridPointsResponse>* PrepareAsyncgetGridYRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridPointsResponse>* AsyncgetGridZRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridPointsResponse>* PrepareAsyncgetGridZRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>* AsyncgetGridCellCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>* PrepareAsyncgetGridCellCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>* AsyncgetGridPointCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>* PrepareAsyncgetGridPointCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>* AsyncgetGridVertexCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::bmi::GetCountResponse>* PrepareAsyncgetGridVertexCountRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridConnectivityResponse>* AsyncgetGridConnectivityRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridConnectivityResponse>* PrepareAsyncgetGridConnectivityRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::bmi::GetGridOffsetResponse>* AsyncgetGridOffsetRaw(::grpc::ClientContext* context, const ::bmi::GridRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -785,10 +641,7 @@ class BmiService final {
     const ::grpc::internal::RpcMethod rpcmethod_updateUntil_;
     const ::grpc::internal::RpcMethod rpcmethod_updateFrac_;
     const ::grpc::internal::RpcMethod rpcmethod_finalize_;
-    const ::grpc::internal::RpcMethod rpcmethod_runModel_;
     const ::grpc::internal::RpcMethod rpcmethod_getComponentName_;
-    const ::grpc::internal::RpcMethod rpcmethod_getInputVarNameCount_;
-    const ::grpc::internal::RpcMethod rpcmethod_getOutputVarNameCount_;
     const ::grpc::internal::RpcMethod rpcmethod_getInputVarNames_;
     const ::grpc::internal::RpcMethod rpcmethod_getOutputVarNames_;
     const ::grpc::internal::RpcMethod rpcmethod_getTimeUnits_;
@@ -802,10 +655,8 @@ class BmiService final {
     const ::grpc::internal::RpcMethod rpcmethod_getVarUnits_;
     const ::grpc::internal::RpcMethod rpcmethod_getVarNBytes_;
     const ::grpc::internal::RpcMethod rpcmethod_getValue_;
-    const ::grpc::internal::RpcMethod rpcmethod_getValuePtr_;
     const ::grpc::internal::RpcMethod rpcmethod_getValueAtIndices_;
     const ::grpc::internal::RpcMethod rpcmethod_setValue_;
-    const ::grpc::internal::RpcMethod rpcmethod_setValuePtr_;
     const ::grpc::internal::RpcMethod rpcmethod_setValueAtIndices_;
     const ::grpc::internal::RpcMethod rpcmethod_getGridSize_;
     const ::grpc::internal::RpcMethod rpcmethod_getGridType_;
@@ -816,9 +667,6 @@ class BmiService final {
     const ::grpc::internal::RpcMethod rpcmethod_getGridX_;
     const ::grpc::internal::RpcMethod rpcmethod_getGridY_;
     const ::grpc::internal::RpcMethod rpcmethod_getGridZ_;
-    const ::grpc::internal::RpcMethod rpcmethod_getGridCellCount_;
-    const ::grpc::internal::RpcMethod rpcmethod_getGridPointCount_;
-    const ::grpc::internal::RpcMethod rpcmethod_getGridVertexCount_;
     const ::grpc::internal::RpcMethod rpcmethod_getGridConnectivity_;
     const ::grpc::internal::RpcMethod rpcmethod_getGridOffset_;
   };
@@ -833,10 +681,7 @@ class BmiService final {
     virtual ::grpc::Status updateUntil(::grpc::ServerContext* context, const ::bmi::UpdateUntilRequest* request, ::bmi::Empty* response);
     virtual ::grpc::Status updateFrac(::grpc::ServerContext* context, const ::bmi::UpdateFracRequest* request, ::bmi::Empty* response);
     virtual ::grpc::Status finalize(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::Empty* response);
-    virtual ::grpc::Status runModel(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::Empty* response);
     virtual ::grpc::Status getComponentName(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetComponentNameResponse* response);
-    virtual ::grpc::Status getInputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response);
-    virtual ::grpc::Status getOutputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response);
     virtual ::grpc::Status getInputVarNames(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNamesResponse* response);
     virtual ::grpc::Status getOutputVarNames(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNamesResponse* response);
     virtual ::grpc::Status getTimeUnits(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetTimeUnitsResponse* response);
@@ -850,10 +695,8 @@ class BmiService final {
     virtual ::grpc::Status getVarUnits(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::GetVarUnitsResponse* response);
     virtual ::grpc::Status getVarNBytes(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::GetVarNBytesResponse* response);
     virtual ::grpc::Status getValue(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::GetValueResponse* response);
-    virtual ::grpc::Status getValuePtr(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::Empty* response);
     virtual ::grpc::Status getValueAtIndices(::grpc::ServerContext* context, const ::bmi::GetValueAtIndicesRequest* request, ::bmi::GetValueAtIndicesResponse* response);
     virtual ::grpc::Status setValue(::grpc::ServerContext* context, const ::bmi::SetValueRequest* request, ::bmi::Empty* response);
-    virtual ::grpc::Status setValuePtr(::grpc::ServerContext* context, const ::bmi::SetValuePtrRequest* request, ::bmi::Empty* response);
     virtual ::grpc::Status setValueAtIndices(::grpc::ServerContext* context, const ::bmi::SetValueAtIndicesRequest* request, ::bmi::Empty* response);
     virtual ::grpc::Status getGridSize(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridSizeResponse* response);
     virtual ::grpc::Status getGridType(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridTypeResponse* response);
@@ -864,9 +707,6 @@ class BmiService final {
     virtual ::grpc::Status getGridX(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridPointsResponse* response);
     virtual ::grpc::Status getGridY(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridPointsResponse* response);
     virtual ::grpc::Status getGridZ(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridPointsResponse* response);
-    virtual ::grpc::Status getGridCellCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response);
-    virtual ::grpc::Status getGridPointCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response);
-    virtual ::grpc::Status getGridVertexCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response);
     virtual ::grpc::Status getGridConnectivity(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridConnectivityResponse* response);
     virtual ::grpc::Status getGridOffset(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetGridOffsetResponse* response);
   };
@@ -971,32 +811,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_runModel : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_runModel() {
-      ::grpc::Service::MarkMethodAsync(5);
-    }
-    ~WithAsyncMethod_runModel() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status runModel(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestrunModel(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
   class WithAsyncMethod_getComponentName : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getComponentName() {
-      ::grpc::Service::MarkMethodAsync(6);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_getComponentName() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1007,47 +827,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetComponentName(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetComponentNameResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_getInputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_getInputVarNameCount() {
-      ::grpc::Service::MarkMethodAsync(7);
-    }
-    ~WithAsyncMethod_getInputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getInputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetInputVarNameCount(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarNameCountResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_getOutputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_getOutputVarNameCount() {
-      ::grpc::Service::MarkMethodAsync(8);
-    }
-    ~WithAsyncMethod_getOutputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getOutputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetOutputVarNameCount(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarNameCountResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1056,7 +836,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getInputVarNames() {
-      ::grpc::Service::MarkMethodAsync(9);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_getInputVarNames() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1067,7 +847,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetInputVarNames(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarNamesResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1076,7 +856,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getOutputVarNames() {
-      ::grpc::Service::MarkMethodAsync(10);
+      ::grpc::Service::MarkMethodAsync(7);
     }
     ~WithAsyncMethod_getOutputVarNames() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1087,7 +867,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetOutputVarNames(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarNamesResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1096,7 +876,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getTimeUnits() {
-      ::grpc::Service::MarkMethodAsync(11);
+      ::grpc::Service::MarkMethodAsync(8);
     }
     ~WithAsyncMethod_getTimeUnits() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1107,7 +887,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetTimeUnits(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetTimeUnitsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1116,7 +896,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getTimeStep() {
-      ::grpc::Service::MarkMethodAsync(12);
+      ::grpc::Service::MarkMethodAsync(9);
     }
     ~WithAsyncMethod_getTimeStep() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1127,7 +907,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetTimeStep(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetTimeStepResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1136,7 +916,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getCurrentTime() {
-      ::grpc::Service::MarkMethodAsync(13);
+      ::grpc::Service::MarkMethodAsync(10);
     }
     ~WithAsyncMethod_getCurrentTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1147,7 +927,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetCurrentTime(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetTimeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1156,7 +936,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getStartTime() {
-      ::grpc::Service::MarkMethodAsync(14);
+      ::grpc::Service::MarkMethodAsync(11);
     }
     ~WithAsyncMethod_getStartTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1167,7 +947,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetStartTime(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetTimeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1176,7 +956,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getEndTime() {
-      ::grpc::Service::MarkMethodAsync(15);
+      ::grpc::Service::MarkMethodAsync(12);
     }
     ~WithAsyncMethod_getEndTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1187,7 +967,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetEndTime(::grpc::ServerContext* context, ::bmi::Empty* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetTimeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1196,7 +976,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getVarGrid() {
-      ::grpc::Service::MarkMethodAsync(16);
+      ::grpc::Service::MarkMethodAsync(13);
     }
     ~WithAsyncMethod_getVarGrid() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1207,7 +987,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarGrid(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarGridResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1216,7 +996,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getVarType() {
-      ::grpc::Service::MarkMethodAsync(17);
+      ::grpc::Service::MarkMethodAsync(14);
     }
     ~WithAsyncMethod_getVarType() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1227,7 +1007,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarType(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarTypeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1236,7 +1016,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getVarItemSize() {
-      ::grpc::Service::MarkMethodAsync(18);
+      ::grpc::Service::MarkMethodAsync(15);
     }
     ~WithAsyncMethod_getVarItemSize() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1247,7 +1027,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarItemSize(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarItemSizeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1256,7 +1036,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getVarUnits() {
-      ::grpc::Service::MarkMethodAsync(19);
+      ::grpc::Service::MarkMethodAsync(16);
     }
     ~WithAsyncMethod_getVarUnits() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1267,7 +1047,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarUnits(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarUnitsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1276,7 +1056,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getVarNBytes() {
-      ::grpc::Service::MarkMethodAsync(20);
+      ::grpc::Service::MarkMethodAsync(17);
     }
     ~WithAsyncMethod_getVarNBytes() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1287,7 +1067,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarNBytes(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetVarNBytesResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1296,7 +1076,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getValue() {
-      ::grpc::Service::MarkMethodAsync(21);
+      ::grpc::Service::MarkMethodAsync(18);
     }
     ~WithAsyncMethod_getValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1307,27 +1087,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetValue(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetValueResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_getValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_getValuePtr() {
-      ::grpc::Service::MarkMethodAsync(22);
-    }
-    ~WithAsyncMethod_getValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getValuePtr(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetValuePtr(::grpc::ServerContext* context, ::bmi::GetVarRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1336,7 +1096,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getValueAtIndices() {
-      ::grpc::Service::MarkMethodAsync(23);
+      ::grpc::Service::MarkMethodAsync(19);
     }
     ~WithAsyncMethod_getValueAtIndices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1347,7 +1107,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetValueAtIndices(::grpc::ServerContext* context, ::bmi::GetValueAtIndicesRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetValueAtIndicesResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1356,7 +1116,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_setValue() {
-      ::grpc::Service::MarkMethodAsync(24);
+      ::grpc::Service::MarkMethodAsync(20);
     }
     ~WithAsyncMethod_setValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1367,27 +1127,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestsetValue(::grpc::ServerContext* context, ::bmi::SetValueRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_setValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_setValuePtr() {
-      ::grpc::Service::MarkMethodAsync(25);
-    }
-    ~WithAsyncMethod_setValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status setValuePtr(::grpc::ServerContext* context, const ::bmi::SetValuePtrRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestsetValuePtr(::grpc::ServerContext* context, ::bmi::SetValuePtrRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1396,7 +1136,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_setValueAtIndices() {
-      ::grpc::Service::MarkMethodAsync(26);
+      ::grpc::Service::MarkMethodAsync(21);
     }
     ~WithAsyncMethod_setValueAtIndices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1407,7 +1147,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestsetValueAtIndices(::grpc::ServerContext* context, ::bmi::SetValueAtIndicesRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1416,7 +1156,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridSize() {
-      ::grpc::Service::MarkMethodAsync(27);
+      ::grpc::Service::MarkMethodAsync(22);
     }
     ~WithAsyncMethod_getGridSize() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1427,7 +1167,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridSize(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridSizeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1436,7 +1176,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridType() {
-      ::grpc::Service::MarkMethodAsync(28);
+      ::grpc::Service::MarkMethodAsync(23);
     }
     ~WithAsyncMethod_getGridType() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1447,7 +1187,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridType(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridTypeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1456,7 +1196,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridRank() {
-      ::grpc::Service::MarkMethodAsync(29);
+      ::grpc::Service::MarkMethodAsync(24);
     }
     ~WithAsyncMethod_getGridRank() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1467,7 +1207,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridRank(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridRankResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1476,7 +1216,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridShape() {
-      ::grpc::Service::MarkMethodAsync(30);
+      ::grpc::Service::MarkMethodAsync(25);
     }
     ~WithAsyncMethod_getGridShape() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1487,7 +1227,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridShape(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridShapeResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1496,7 +1236,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridSpacing() {
-      ::grpc::Service::MarkMethodAsync(31);
+      ::grpc::Service::MarkMethodAsync(26);
     }
     ~WithAsyncMethod_getGridSpacing() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1507,7 +1247,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridSpacing(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridSpacingResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1516,7 +1256,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridOrigin() {
-      ::grpc::Service::MarkMethodAsync(32);
+      ::grpc::Service::MarkMethodAsync(27);
     }
     ~WithAsyncMethod_getGridOrigin() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1527,7 +1267,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridOrigin(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridOriginResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1536,7 +1276,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridX() {
-      ::grpc::Service::MarkMethodAsync(33);
+      ::grpc::Service::MarkMethodAsync(28);
     }
     ~WithAsyncMethod_getGridX() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1547,7 +1287,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridX(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridPointsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1556,7 +1296,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridY() {
-      ::grpc::Service::MarkMethodAsync(34);
+      ::grpc::Service::MarkMethodAsync(29);
     }
     ~WithAsyncMethod_getGridY() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1567,7 +1307,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridY(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridPointsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1576,7 +1316,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridZ() {
-      ::grpc::Service::MarkMethodAsync(35);
+      ::grpc::Service::MarkMethodAsync(30);
     }
     ~WithAsyncMethod_getGridZ() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1587,67 +1327,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridZ(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridPointsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_getGridCellCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_getGridCellCount() {
-      ::grpc::Service::MarkMethodAsync(36);
-    }
-    ~WithAsyncMethod_getGridCellCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridCellCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetGridCellCount(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetCountResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_getGridPointCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_getGridPointCount() {
-      ::grpc::Service::MarkMethodAsync(37);
-    }
-    ~WithAsyncMethod_getGridPointCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridPointCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetGridPointCount(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetCountResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(37, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_getGridVertexCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithAsyncMethod_getGridVertexCount() {
-      ::grpc::Service::MarkMethodAsync(38);
-    }
-    ~WithAsyncMethod_getGridVertexCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridVertexCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetGridVertexCount(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetCountResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(38, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1656,7 +1336,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridConnectivity() {
-      ::grpc::Service::MarkMethodAsync(39);
+      ::grpc::Service::MarkMethodAsync(31);
     }
     ~WithAsyncMethod_getGridConnectivity() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1667,7 +1347,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridConnectivity(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridConnectivityResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(39, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1676,7 +1356,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithAsyncMethod_getGridOffset() {
-      ::grpc::Service::MarkMethodAsync(40);
+      ::grpc::Service::MarkMethodAsync(32);
     }
     ~WithAsyncMethod_getGridOffset() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1687,10 +1367,10 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridOffset(::grpc::ServerContext* context, ::bmi::GridRequest* request, ::grpc::ServerAsyncResponseWriter< ::bmi::GetGridOffsetResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(40, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_initialize<WithAsyncMethod_update<WithAsyncMethod_updateUntil<WithAsyncMethod_updateFrac<WithAsyncMethod_finalize<WithAsyncMethod_runModel<WithAsyncMethod_getComponentName<WithAsyncMethod_getInputVarNameCount<WithAsyncMethod_getOutputVarNameCount<WithAsyncMethod_getInputVarNames<WithAsyncMethod_getOutputVarNames<WithAsyncMethod_getTimeUnits<WithAsyncMethod_getTimeStep<WithAsyncMethod_getCurrentTime<WithAsyncMethod_getStartTime<WithAsyncMethod_getEndTime<WithAsyncMethod_getVarGrid<WithAsyncMethod_getVarType<WithAsyncMethod_getVarItemSize<WithAsyncMethod_getVarUnits<WithAsyncMethod_getVarNBytes<WithAsyncMethod_getValue<WithAsyncMethod_getValuePtr<WithAsyncMethod_getValueAtIndices<WithAsyncMethod_setValue<WithAsyncMethod_setValuePtr<WithAsyncMethod_setValueAtIndices<WithAsyncMethod_getGridSize<WithAsyncMethod_getGridType<WithAsyncMethod_getGridRank<WithAsyncMethod_getGridShape<WithAsyncMethod_getGridSpacing<WithAsyncMethod_getGridOrigin<WithAsyncMethod_getGridX<WithAsyncMethod_getGridY<WithAsyncMethod_getGridZ<WithAsyncMethod_getGridCellCount<WithAsyncMethod_getGridPointCount<WithAsyncMethod_getGridVertexCount<WithAsyncMethod_getGridConnectivity<WithAsyncMethod_getGridOffset<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_initialize<WithAsyncMethod_update<WithAsyncMethod_updateUntil<WithAsyncMethod_updateFrac<WithAsyncMethod_finalize<WithAsyncMethod_getComponentName<WithAsyncMethod_getInputVarNames<WithAsyncMethod_getOutputVarNames<WithAsyncMethod_getTimeUnits<WithAsyncMethod_getTimeStep<WithAsyncMethod_getCurrentTime<WithAsyncMethod_getStartTime<WithAsyncMethod_getEndTime<WithAsyncMethod_getVarGrid<WithAsyncMethod_getVarType<WithAsyncMethod_getVarItemSize<WithAsyncMethod_getVarUnits<WithAsyncMethod_getVarNBytes<WithAsyncMethod_getValue<WithAsyncMethod_getValueAtIndices<WithAsyncMethod_setValue<WithAsyncMethod_setValueAtIndices<WithAsyncMethod_getGridSize<WithAsyncMethod_getGridType<WithAsyncMethod_getGridRank<WithAsyncMethod_getGridShape<WithAsyncMethod_getGridSpacing<WithAsyncMethod_getGridOrigin<WithAsyncMethod_getGridX<WithAsyncMethod_getGridY<WithAsyncMethod_getGridZ<WithAsyncMethod_getGridConnectivity<WithAsyncMethod_getGridOffset<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithGenericMethod_initialize : public BaseClass {
    private:
@@ -1777,29 +1457,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_runModel : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_runModel() {
-      ::grpc::Service::MarkMethodGeneric(5);
-    }
-    ~WithGenericMethod_runModel() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status runModel(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_getComponentName : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getComponentName() {
-      ::grpc::Service::MarkMethodGeneric(6);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_getComponentName() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1811,46 +1474,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_getInputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_getInputVarNameCount() {
-      ::grpc::Service::MarkMethodGeneric(7);
-    }
-    ~WithGenericMethod_getInputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getInputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_getOutputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_getOutputVarNameCount() {
-      ::grpc::Service::MarkMethodGeneric(8);
-    }
-    ~WithGenericMethod_getOutputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getOutputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_getInputVarNames : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getInputVarNames() {
-      ::grpc::Service::MarkMethodGeneric(9);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_getInputVarNames() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1867,7 +1496,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getOutputVarNames() {
-      ::grpc::Service::MarkMethodGeneric(10);
+      ::grpc::Service::MarkMethodGeneric(7);
     }
     ~WithGenericMethod_getOutputVarNames() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1884,7 +1513,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getTimeUnits() {
-      ::grpc::Service::MarkMethodGeneric(11);
+      ::grpc::Service::MarkMethodGeneric(8);
     }
     ~WithGenericMethod_getTimeUnits() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1901,7 +1530,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getTimeStep() {
-      ::grpc::Service::MarkMethodGeneric(12);
+      ::grpc::Service::MarkMethodGeneric(9);
     }
     ~WithGenericMethod_getTimeStep() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1918,7 +1547,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getCurrentTime() {
-      ::grpc::Service::MarkMethodGeneric(13);
+      ::grpc::Service::MarkMethodGeneric(10);
     }
     ~WithGenericMethod_getCurrentTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1935,7 +1564,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getStartTime() {
-      ::grpc::Service::MarkMethodGeneric(14);
+      ::grpc::Service::MarkMethodGeneric(11);
     }
     ~WithGenericMethod_getStartTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1952,7 +1581,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getEndTime() {
-      ::grpc::Service::MarkMethodGeneric(15);
+      ::grpc::Service::MarkMethodGeneric(12);
     }
     ~WithGenericMethod_getEndTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1969,7 +1598,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getVarGrid() {
-      ::grpc::Service::MarkMethodGeneric(16);
+      ::grpc::Service::MarkMethodGeneric(13);
     }
     ~WithGenericMethod_getVarGrid() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1986,7 +1615,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getVarType() {
-      ::grpc::Service::MarkMethodGeneric(17);
+      ::grpc::Service::MarkMethodGeneric(14);
     }
     ~WithGenericMethod_getVarType() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2003,7 +1632,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getVarItemSize() {
-      ::grpc::Service::MarkMethodGeneric(18);
+      ::grpc::Service::MarkMethodGeneric(15);
     }
     ~WithGenericMethod_getVarItemSize() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2020,7 +1649,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getVarUnits() {
-      ::grpc::Service::MarkMethodGeneric(19);
+      ::grpc::Service::MarkMethodGeneric(16);
     }
     ~WithGenericMethod_getVarUnits() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2037,7 +1666,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getVarNBytes() {
-      ::grpc::Service::MarkMethodGeneric(20);
+      ::grpc::Service::MarkMethodGeneric(17);
     }
     ~WithGenericMethod_getVarNBytes() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2054,7 +1683,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getValue() {
-      ::grpc::Service::MarkMethodGeneric(21);
+      ::grpc::Service::MarkMethodGeneric(18);
     }
     ~WithGenericMethod_getValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2066,29 +1695,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_getValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_getValuePtr() {
-      ::grpc::Service::MarkMethodGeneric(22);
-    }
-    ~WithGenericMethod_getValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getValuePtr(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_getValueAtIndices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getValueAtIndices() {
-      ::grpc::Service::MarkMethodGeneric(23);
+      ::grpc::Service::MarkMethodGeneric(19);
     }
     ~WithGenericMethod_getValueAtIndices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2105,7 +1717,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_setValue() {
-      ::grpc::Service::MarkMethodGeneric(24);
+      ::grpc::Service::MarkMethodGeneric(20);
     }
     ~WithGenericMethod_setValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2117,29 +1729,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_setValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_setValuePtr() {
-      ::grpc::Service::MarkMethodGeneric(25);
-    }
-    ~WithGenericMethod_setValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status setValuePtr(::grpc::ServerContext* context, const ::bmi::SetValuePtrRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_setValueAtIndices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_setValueAtIndices() {
-      ::grpc::Service::MarkMethodGeneric(26);
+      ::grpc::Service::MarkMethodGeneric(21);
     }
     ~WithGenericMethod_setValueAtIndices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2156,7 +1751,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridSize() {
-      ::grpc::Service::MarkMethodGeneric(27);
+      ::grpc::Service::MarkMethodGeneric(22);
     }
     ~WithGenericMethod_getGridSize() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2173,7 +1768,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridType() {
-      ::grpc::Service::MarkMethodGeneric(28);
+      ::grpc::Service::MarkMethodGeneric(23);
     }
     ~WithGenericMethod_getGridType() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2190,7 +1785,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridRank() {
-      ::grpc::Service::MarkMethodGeneric(29);
+      ::grpc::Service::MarkMethodGeneric(24);
     }
     ~WithGenericMethod_getGridRank() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2207,7 +1802,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridShape() {
-      ::grpc::Service::MarkMethodGeneric(30);
+      ::grpc::Service::MarkMethodGeneric(25);
     }
     ~WithGenericMethod_getGridShape() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2224,7 +1819,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridSpacing() {
-      ::grpc::Service::MarkMethodGeneric(31);
+      ::grpc::Service::MarkMethodGeneric(26);
     }
     ~WithGenericMethod_getGridSpacing() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2241,7 +1836,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridOrigin() {
-      ::grpc::Service::MarkMethodGeneric(32);
+      ::grpc::Service::MarkMethodGeneric(27);
     }
     ~WithGenericMethod_getGridOrigin() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2258,7 +1853,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridX() {
-      ::grpc::Service::MarkMethodGeneric(33);
+      ::grpc::Service::MarkMethodGeneric(28);
     }
     ~WithGenericMethod_getGridX() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2275,7 +1870,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridY() {
-      ::grpc::Service::MarkMethodGeneric(34);
+      ::grpc::Service::MarkMethodGeneric(29);
     }
     ~WithGenericMethod_getGridY() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2292,7 +1887,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridZ() {
-      ::grpc::Service::MarkMethodGeneric(35);
+      ::grpc::Service::MarkMethodGeneric(30);
     }
     ~WithGenericMethod_getGridZ() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2304,63 +1899,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_getGridCellCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_getGridCellCount() {
-      ::grpc::Service::MarkMethodGeneric(36);
-    }
-    ~WithGenericMethod_getGridCellCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridCellCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_getGridPointCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_getGridPointCount() {
-      ::grpc::Service::MarkMethodGeneric(37);
-    }
-    ~WithGenericMethod_getGridPointCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridPointCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_getGridVertexCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithGenericMethod_getGridVertexCount() {
-      ::grpc::Service::MarkMethodGeneric(38);
-    }
-    ~WithGenericMethod_getGridVertexCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridVertexCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_getGridConnectivity : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridConnectivity() {
-      ::grpc::Service::MarkMethodGeneric(39);
+      ::grpc::Service::MarkMethodGeneric(31);
     }
     ~WithGenericMethod_getGridConnectivity() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2377,7 +1921,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithGenericMethod_getGridOffset() {
-      ::grpc::Service::MarkMethodGeneric(40);
+      ::grpc::Service::MarkMethodGeneric(32);
     }
     ~WithGenericMethod_getGridOffset() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2489,32 +2033,12 @@ class BmiService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_runModel : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_runModel() {
-      ::grpc::Service::MarkMethodRaw(5);
-    }
-    ~WithRawMethod_runModel() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status runModel(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestrunModel(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
   class WithRawMethod_getComponentName : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getComponentName() {
-      ::grpc::Service::MarkMethodRaw(6);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_getComponentName() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2525,47 +2049,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetComponentName(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_getInputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_getInputVarNameCount() {
-      ::grpc::Service::MarkMethodRaw(7);
-    }
-    ~WithRawMethod_getInputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getInputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetInputVarNameCount(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_getOutputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_getOutputVarNameCount() {
-      ::grpc::Service::MarkMethodRaw(8);
-    }
-    ~WithRawMethod_getOutputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getOutputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetOutputVarNameCount(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2574,7 +2058,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getInputVarNames() {
-      ::grpc::Service::MarkMethodRaw(9);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_getInputVarNames() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2585,7 +2069,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetInputVarNames(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2594,7 +2078,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getOutputVarNames() {
-      ::grpc::Service::MarkMethodRaw(10);
+      ::grpc::Service::MarkMethodRaw(7);
     }
     ~WithRawMethod_getOutputVarNames() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2605,7 +2089,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetOutputVarNames(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2614,7 +2098,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getTimeUnits() {
-      ::grpc::Service::MarkMethodRaw(11);
+      ::grpc::Service::MarkMethodRaw(8);
     }
     ~WithRawMethod_getTimeUnits() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2625,7 +2109,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetTimeUnits(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2634,7 +2118,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getTimeStep() {
-      ::grpc::Service::MarkMethodRaw(12);
+      ::grpc::Service::MarkMethodRaw(9);
     }
     ~WithRawMethod_getTimeStep() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2645,7 +2129,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetTimeStep(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2654,7 +2138,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getCurrentTime() {
-      ::grpc::Service::MarkMethodRaw(13);
+      ::grpc::Service::MarkMethodRaw(10);
     }
     ~WithRawMethod_getCurrentTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2665,7 +2149,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetCurrentTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2674,7 +2158,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getStartTime() {
-      ::grpc::Service::MarkMethodRaw(14);
+      ::grpc::Service::MarkMethodRaw(11);
     }
     ~WithRawMethod_getStartTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2685,7 +2169,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetStartTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2694,7 +2178,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getEndTime() {
-      ::grpc::Service::MarkMethodRaw(15);
+      ::grpc::Service::MarkMethodRaw(12);
     }
     ~WithRawMethod_getEndTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2705,7 +2189,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetEndTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2714,7 +2198,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getVarGrid() {
-      ::grpc::Service::MarkMethodRaw(16);
+      ::grpc::Service::MarkMethodRaw(13);
     }
     ~WithRawMethod_getVarGrid() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2725,7 +2209,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarGrid(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2734,7 +2218,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getVarType() {
-      ::grpc::Service::MarkMethodRaw(17);
+      ::grpc::Service::MarkMethodRaw(14);
     }
     ~WithRawMethod_getVarType() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2745,7 +2229,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarType(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2754,7 +2238,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getVarItemSize() {
-      ::grpc::Service::MarkMethodRaw(18);
+      ::grpc::Service::MarkMethodRaw(15);
     }
     ~WithRawMethod_getVarItemSize() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2765,7 +2249,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarItemSize(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2774,7 +2258,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getVarUnits() {
-      ::grpc::Service::MarkMethodRaw(19);
+      ::grpc::Service::MarkMethodRaw(16);
     }
     ~WithRawMethod_getVarUnits() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2785,7 +2269,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarUnits(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2794,7 +2278,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getVarNBytes() {
-      ::grpc::Service::MarkMethodRaw(20);
+      ::grpc::Service::MarkMethodRaw(17);
     }
     ~WithRawMethod_getVarNBytes() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2805,7 +2289,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetVarNBytes(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2814,7 +2298,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getValue() {
-      ::grpc::Service::MarkMethodRaw(21);
+      ::grpc::Service::MarkMethodRaw(18);
     }
     ~WithRawMethod_getValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2825,27 +2309,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetValue(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_getValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_getValuePtr() {
-      ::grpc::Service::MarkMethodRaw(22);
-    }
-    ~WithRawMethod_getValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getValuePtr(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetValuePtr(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2854,7 +2318,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getValueAtIndices() {
-      ::grpc::Service::MarkMethodRaw(23);
+      ::grpc::Service::MarkMethodRaw(19);
     }
     ~WithRawMethod_getValueAtIndices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2865,7 +2329,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetValueAtIndices(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2874,7 +2338,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_setValue() {
-      ::grpc::Service::MarkMethodRaw(24);
+      ::grpc::Service::MarkMethodRaw(20);
     }
     ~WithRawMethod_setValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2885,27 +2349,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestsetValue(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_setValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_setValuePtr() {
-      ::grpc::Service::MarkMethodRaw(25);
-    }
-    ~WithRawMethod_setValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status setValuePtr(::grpc::ServerContext* context, const ::bmi::SetValuePtrRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestsetValuePtr(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2914,7 +2358,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_setValueAtIndices() {
-      ::grpc::Service::MarkMethodRaw(26);
+      ::grpc::Service::MarkMethodRaw(21);
     }
     ~WithRawMethod_setValueAtIndices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2925,7 +2369,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestsetValueAtIndices(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2934,7 +2378,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridSize() {
-      ::grpc::Service::MarkMethodRaw(27);
+      ::grpc::Service::MarkMethodRaw(22);
     }
     ~WithRawMethod_getGridSize() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2945,7 +2389,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridSize(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2954,7 +2398,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridType() {
-      ::grpc::Service::MarkMethodRaw(28);
+      ::grpc::Service::MarkMethodRaw(23);
     }
     ~WithRawMethod_getGridType() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2965,7 +2409,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridType(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2974,7 +2418,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridRank() {
-      ::grpc::Service::MarkMethodRaw(29);
+      ::grpc::Service::MarkMethodRaw(24);
     }
     ~WithRawMethod_getGridRank() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2985,7 +2429,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridRank(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2994,7 +2438,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridShape() {
-      ::grpc::Service::MarkMethodRaw(30);
+      ::grpc::Service::MarkMethodRaw(25);
     }
     ~WithRawMethod_getGridShape() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3005,7 +2449,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridShape(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3014,7 +2458,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridSpacing() {
-      ::grpc::Service::MarkMethodRaw(31);
+      ::grpc::Service::MarkMethodRaw(26);
     }
     ~WithRawMethod_getGridSpacing() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3025,7 +2469,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridSpacing(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3034,7 +2478,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridOrigin() {
-      ::grpc::Service::MarkMethodRaw(32);
+      ::grpc::Service::MarkMethodRaw(27);
     }
     ~WithRawMethod_getGridOrigin() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3045,7 +2489,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridOrigin(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3054,7 +2498,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridX() {
-      ::grpc::Service::MarkMethodRaw(33);
+      ::grpc::Service::MarkMethodRaw(28);
     }
     ~WithRawMethod_getGridX() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3065,7 +2509,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridX(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3074,7 +2518,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridY() {
-      ::grpc::Service::MarkMethodRaw(34);
+      ::grpc::Service::MarkMethodRaw(29);
     }
     ~WithRawMethod_getGridY() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3085,7 +2529,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridY(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3094,7 +2538,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridZ() {
-      ::grpc::Service::MarkMethodRaw(35);
+      ::grpc::Service::MarkMethodRaw(30);
     }
     ~WithRawMethod_getGridZ() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3105,67 +2549,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridZ(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_getGridCellCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_getGridCellCount() {
-      ::grpc::Service::MarkMethodRaw(36);
-    }
-    ~WithRawMethod_getGridCellCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridCellCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetGridCellCount(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_getGridPointCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_getGridPointCount() {
-      ::grpc::Service::MarkMethodRaw(37);
-    }
-    ~WithRawMethod_getGridPointCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridPointCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetGridPointCount(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(37, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_getGridVertexCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_getGridVertexCount() {
-      ::grpc::Service::MarkMethodRaw(38);
-    }
-    ~WithRawMethod_getGridVertexCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status getGridVertexCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestgetGridVertexCount(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(38, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3174,7 +2558,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridConnectivity() {
-      ::grpc::Service::MarkMethodRaw(39);
+      ::grpc::Service::MarkMethodRaw(31);
     }
     ~WithRawMethod_getGridConnectivity() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3185,7 +2569,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridConnectivity(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(39, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3194,7 +2578,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithRawMethod_getGridOffset() {
-      ::grpc::Service::MarkMethodRaw(40);
+      ::grpc::Service::MarkMethodRaw(32);
     }
     ~WithRawMethod_getGridOffset() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3205,7 +2589,7 @@ class BmiService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestgetGridOffset(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(40, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3309,32 +2693,12 @@ class BmiService final {
     virtual ::grpc::Status Streamedfinalize(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::Empty,::bmi::Empty>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_runModel : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_runModel() {
-      ::grpc::Service::MarkMethodStreamed(5,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::Empty>(std::bind(&WithStreamedUnaryMethod_runModel<BaseClass>::StreamedrunModel, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_runModel() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status runModel(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedrunModel(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::Empty,::bmi::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_getComponentName : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getComponentName() {
-      ::grpc::Service::MarkMethodStreamed(6,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetComponentNameResponse>(std::bind(&WithStreamedUnaryMethod_getComponentName<BaseClass>::StreamedgetComponentName, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getComponentName() override {
@@ -3349,52 +2713,12 @@ class BmiService final {
     virtual ::grpc::Status StreamedgetComponentName(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::Empty,::bmi::GetComponentNameResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_getInputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_getInputVarNameCount() {
-      ::grpc::Service::MarkMethodStreamed(7,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetVarNameCountResponse>(std::bind(&WithStreamedUnaryMethod_getInputVarNameCount<BaseClass>::StreamedgetInputVarNameCount, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_getInputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status getInputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetInputVarNameCount(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::Empty,::bmi::GetVarNameCountResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_getOutputVarNameCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_getOutputVarNameCount() {
-      ::grpc::Service::MarkMethodStreamed(8,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetVarNameCountResponse>(std::bind(&WithStreamedUnaryMethod_getOutputVarNameCount<BaseClass>::StreamedgetOutputVarNameCount, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_getOutputVarNameCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status getOutputVarNameCount(::grpc::ServerContext* context, const ::bmi::Empty* request, ::bmi::GetVarNameCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetOutputVarNameCount(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::Empty,::bmi::GetVarNameCountResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_getInputVarNames : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getInputVarNames() {
-      ::grpc::Service::MarkMethodStreamed(9,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetVarNamesResponse>(std::bind(&WithStreamedUnaryMethod_getInputVarNames<BaseClass>::StreamedgetInputVarNames, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getInputVarNames() override {
@@ -3414,7 +2738,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getOutputVarNames() {
-      ::grpc::Service::MarkMethodStreamed(10,
+      ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetVarNamesResponse>(std::bind(&WithStreamedUnaryMethod_getOutputVarNames<BaseClass>::StreamedgetOutputVarNames, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getOutputVarNames() override {
@@ -3434,7 +2758,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getTimeUnits() {
-      ::grpc::Service::MarkMethodStreamed(11,
+      ::grpc::Service::MarkMethodStreamed(8,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetTimeUnitsResponse>(std::bind(&WithStreamedUnaryMethod_getTimeUnits<BaseClass>::StreamedgetTimeUnits, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getTimeUnits() override {
@@ -3454,7 +2778,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getTimeStep() {
-      ::grpc::Service::MarkMethodStreamed(12,
+      ::grpc::Service::MarkMethodStreamed(9,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetTimeStepResponse>(std::bind(&WithStreamedUnaryMethod_getTimeStep<BaseClass>::StreamedgetTimeStep, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getTimeStep() override {
@@ -3474,7 +2798,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getCurrentTime() {
-      ::grpc::Service::MarkMethodStreamed(13,
+      ::grpc::Service::MarkMethodStreamed(10,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetTimeResponse>(std::bind(&WithStreamedUnaryMethod_getCurrentTime<BaseClass>::StreamedgetCurrentTime, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getCurrentTime() override {
@@ -3494,7 +2818,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getStartTime() {
-      ::grpc::Service::MarkMethodStreamed(14,
+      ::grpc::Service::MarkMethodStreamed(11,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetTimeResponse>(std::bind(&WithStreamedUnaryMethod_getStartTime<BaseClass>::StreamedgetStartTime, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getStartTime() override {
@@ -3514,7 +2838,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getEndTime() {
-      ::grpc::Service::MarkMethodStreamed(15,
+      ::grpc::Service::MarkMethodStreamed(12,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::Empty, ::bmi::GetTimeResponse>(std::bind(&WithStreamedUnaryMethod_getEndTime<BaseClass>::StreamedgetEndTime, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getEndTime() override {
@@ -3534,7 +2858,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getVarGrid() {
-      ::grpc::Service::MarkMethodStreamed(16,
+      ::grpc::Service::MarkMethodStreamed(13,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::GetVarGridResponse>(std::bind(&WithStreamedUnaryMethod_getVarGrid<BaseClass>::StreamedgetVarGrid, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getVarGrid() override {
@@ -3554,7 +2878,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getVarType() {
-      ::grpc::Service::MarkMethodStreamed(17,
+      ::grpc::Service::MarkMethodStreamed(14,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::GetVarTypeResponse>(std::bind(&WithStreamedUnaryMethod_getVarType<BaseClass>::StreamedgetVarType, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getVarType() override {
@@ -3574,7 +2898,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getVarItemSize() {
-      ::grpc::Service::MarkMethodStreamed(18,
+      ::grpc::Service::MarkMethodStreamed(15,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::GetVarItemSizeResponse>(std::bind(&WithStreamedUnaryMethod_getVarItemSize<BaseClass>::StreamedgetVarItemSize, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getVarItemSize() override {
@@ -3594,7 +2918,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getVarUnits() {
-      ::grpc::Service::MarkMethodStreamed(19,
+      ::grpc::Service::MarkMethodStreamed(16,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::GetVarUnitsResponse>(std::bind(&WithStreamedUnaryMethod_getVarUnits<BaseClass>::StreamedgetVarUnits, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getVarUnits() override {
@@ -3614,7 +2938,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getVarNBytes() {
-      ::grpc::Service::MarkMethodStreamed(20,
+      ::grpc::Service::MarkMethodStreamed(17,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::GetVarNBytesResponse>(std::bind(&WithStreamedUnaryMethod_getVarNBytes<BaseClass>::StreamedgetVarNBytes, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getVarNBytes() override {
@@ -3634,7 +2958,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getValue() {
-      ::grpc::Service::MarkMethodStreamed(21,
+      ::grpc::Service::MarkMethodStreamed(18,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::GetValueResponse>(std::bind(&WithStreamedUnaryMethod_getValue<BaseClass>::StreamedgetValue, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getValue() override {
@@ -3649,32 +2973,12 @@ class BmiService final {
     virtual ::grpc::Status StreamedgetValue(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GetVarRequest,::bmi::GetValueResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_getValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_getValuePtr() {
-      ::grpc::Service::MarkMethodStreamed(22,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetVarRequest, ::bmi::Empty>(std::bind(&WithStreamedUnaryMethod_getValuePtr<BaseClass>::StreamedgetValuePtr, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_getValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status getValuePtr(::grpc::ServerContext* context, const ::bmi::GetVarRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetValuePtr(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GetVarRequest,::bmi::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_getValueAtIndices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getValueAtIndices() {
-      ::grpc::Service::MarkMethodStreamed(23,
+      ::grpc::Service::MarkMethodStreamed(19,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GetValueAtIndicesRequest, ::bmi::GetValueAtIndicesResponse>(std::bind(&WithStreamedUnaryMethod_getValueAtIndices<BaseClass>::StreamedgetValueAtIndices, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getValueAtIndices() override {
@@ -3694,7 +2998,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_setValue() {
-      ::grpc::Service::MarkMethodStreamed(24,
+      ::grpc::Service::MarkMethodStreamed(20,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::SetValueRequest, ::bmi::Empty>(std::bind(&WithStreamedUnaryMethod_setValue<BaseClass>::StreamedsetValue, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_setValue() override {
@@ -3709,32 +3013,12 @@ class BmiService final {
     virtual ::grpc::Status StreamedsetValue(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::SetValueRequest,::bmi::Empty>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_setValuePtr : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_setValuePtr() {
-      ::grpc::Service::MarkMethodStreamed(25,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::SetValuePtrRequest, ::bmi::Empty>(std::bind(&WithStreamedUnaryMethod_setValuePtr<BaseClass>::StreamedsetValuePtr, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_setValuePtr() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status setValuePtr(::grpc::ServerContext* context, const ::bmi::SetValuePtrRequest* request, ::bmi::Empty* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedsetValuePtr(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::SetValuePtrRequest,::bmi::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_setValueAtIndices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_setValueAtIndices() {
-      ::grpc::Service::MarkMethodStreamed(26,
+      ::grpc::Service::MarkMethodStreamed(21,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::SetValueAtIndicesRequest, ::bmi::Empty>(std::bind(&WithStreamedUnaryMethod_setValueAtIndices<BaseClass>::StreamedsetValueAtIndices, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_setValueAtIndices() override {
@@ -3754,7 +3038,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridSize() {
-      ::grpc::Service::MarkMethodStreamed(27,
+      ::grpc::Service::MarkMethodStreamed(22,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridSizeResponse>(std::bind(&WithStreamedUnaryMethod_getGridSize<BaseClass>::StreamedgetGridSize, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridSize() override {
@@ -3774,7 +3058,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridType() {
-      ::grpc::Service::MarkMethodStreamed(28,
+      ::grpc::Service::MarkMethodStreamed(23,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridTypeResponse>(std::bind(&WithStreamedUnaryMethod_getGridType<BaseClass>::StreamedgetGridType, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridType() override {
@@ -3794,7 +3078,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridRank() {
-      ::grpc::Service::MarkMethodStreamed(29,
+      ::grpc::Service::MarkMethodStreamed(24,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridRankResponse>(std::bind(&WithStreamedUnaryMethod_getGridRank<BaseClass>::StreamedgetGridRank, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridRank() override {
@@ -3814,7 +3098,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridShape() {
-      ::grpc::Service::MarkMethodStreamed(30,
+      ::grpc::Service::MarkMethodStreamed(25,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridShapeResponse>(std::bind(&WithStreamedUnaryMethod_getGridShape<BaseClass>::StreamedgetGridShape, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridShape() override {
@@ -3834,7 +3118,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridSpacing() {
-      ::grpc::Service::MarkMethodStreamed(31,
+      ::grpc::Service::MarkMethodStreamed(26,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridSpacingResponse>(std::bind(&WithStreamedUnaryMethod_getGridSpacing<BaseClass>::StreamedgetGridSpacing, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridSpacing() override {
@@ -3854,7 +3138,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridOrigin() {
-      ::grpc::Service::MarkMethodStreamed(32,
+      ::grpc::Service::MarkMethodStreamed(27,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridOriginResponse>(std::bind(&WithStreamedUnaryMethod_getGridOrigin<BaseClass>::StreamedgetGridOrigin, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridOrigin() override {
@@ -3874,7 +3158,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridX() {
-      ::grpc::Service::MarkMethodStreamed(33,
+      ::grpc::Service::MarkMethodStreamed(28,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridPointsResponse>(std::bind(&WithStreamedUnaryMethod_getGridX<BaseClass>::StreamedgetGridX, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridX() override {
@@ -3894,7 +3178,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridY() {
-      ::grpc::Service::MarkMethodStreamed(34,
+      ::grpc::Service::MarkMethodStreamed(29,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridPointsResponse>(std::bind(&WithStreamedUnaryMethod_getGridY<BaseClass>::StreamedgetGridY, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridY() override {
@@ -3914,7 +3198,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridZ() {
-      ::grpc::Service::MarkMethodStreamed(35,
+      ::grpc::Service::MarkMethodStreamed(30,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridPointsResponse>(std::bind(&WithStreamedUnaryMethod_getGridZ<BaseClass>::StreamedgetGridZ, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridZ() override {
@@ -3929,72 +3213,12 @@ class BmiService final {
     virtual ::grpc::Status StreamedgetGridZ(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GridRequest,::bmi::GetGridPointsResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_getGridCellCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_getGridCellCount() {
-      ::grpc::Service::MarkMethodStreamed(36,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetCountResponse>(std::bind(&WithStreamedUnaryMethod_getGridCellCount<BaseClass>::StreamedgetGridCellCount, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_getGridCellCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status getGridCellCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetGridCellCount(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GridRequest,::bmi::GetCountResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_getGridPointCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_getGridPointCount() {
-      ::grpc::Service::MarkMethodStreamed(37,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetCountResponse>(std::bind(&WithStreamedUnaryMethod_getGridPointCount<BaseClass>::StreamedgetGridPointCount, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_getGridPointCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status getGridPointCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetGridPointCount(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GridRequest,::bmi::GetCountResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_getGridVertexCount : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithStreamedUnaryMethod_getGridVertexCount() {
-      ::grpc::Service::MarkMethodStreamed(38,
-        new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetCountResponse>(std::bind(&WithStreamedUnaryMethod_getGridVertexCount<BaseClass>::StreamedgetGridVertexCount, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_getGridVertexCount() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status getGridVertexCount(::grpc::ServerContext* context, const ::bmi::GridRequest* request, ::bmi::GetCountResponse* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetGridVertexCount(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GridRequest,::bmi::GetCountResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_getGridConnectivity : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridConnectivity() {
-      ::grpc::Service::MarkMethodStreamed(39,
+      ::grpc::Service::MarkMethodStreamed(31,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridConnectivityResponse>(std::bind(&WithStreamedUnaryMethod_getGridConnectivity<BaseClass>::StreamedgetGridConnectivity, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridConnectivity() override {
@@ -4014,7 +3238,7 @@ class BmiService final {
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
     WithStreamedUnaryMethod_getGridOffset() {
-      ::grpc::Service::MarkMethodStreamed(40,
+      ::grpc::Service::MarkMethodStreamed(32,
         new ::grpc::internal::StreamedUnaryHandler< ::bmi::GridRequest, ::bmi::GetGridOffsetResponse>(std::bind(&WithStreamedUnaryMethod_getGridOffset<BaseClass>::StreamedgetGridOffset, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_getGridOffset() override {
@@ -4028,9 +3252,9 @@ class BmiService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedgetGridOffset(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::bmi::GridRequest,::bmi::GetGridOffsetResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_initialize<WithStreamedUnaryMethod_update<WithStreamedUnaryMethod_updateUntil<WithStreamedUnaryMethod_updateFrac<WithStreamedUnaryMethod_finalize<WithStreamedUnaryMethod_runModel<WithStreamedUnaryMethod_getComponentName<WithStreamedUnaryMethod_getInputVarNameCount<WithStreamedUnaryMethod_getOutputVarNameCount<WithStreamedUnaryMethod_getInputVarNames<WithStreamedUnaryMethod_getOutputVarNames<WithStreamedUnaryMethod_getTimeUnits<WithStreamedUnaryMethod_getTimeStep<WithStreamedUnaryMethod_getCurrentTime<WithStreamedUnaryMethod_getStartTime<WithStreamedUnaryMethod_getEndTime<WithStreamedUnaryMethod_getVarGrid<WithStreamedUnaryMethod_getVarType<WithStreamedUnaryMethod_getVarItemSize<WithStreamedUnaryMethod_getVarUnits<WithStreamedUnaryMethod_getVarNBytes<WithStreamedUnaryMethod_getValue<WithStreamedUnaryMethod_getValuePtr<WithStreamedUnaryMethod_getValueAtIndices<WithStreamedUnaryMethod_setValue<WithStreamedUnaryMethod_setValuePtr<WithStreamedUnaryMethod_setValueAtIndices<WithStreamedUnaryMethod_getGridSize<WithStreamedUnaryMethod_getGridType<WithStreamedUnaryMethod_getGridRank<WithStreamedUnaryMethod_getGridShape<WithStreamedUnaryMethod_getGridSpacing<WithStreamedUnaryMethod_getGridOrigin<WithStreamedUnaryMethod_getGridX<WithStreamedUnaryMethod_getGridY<WithStreamedUnaryMethod_getGridZ<WithStreamedUnaryMethod_getGridCellCount<WithStreamedUnaryMethod_getGridPointCount<WithStreamedUnaryMethod_getGridVertexCount<WithStreamedUnaryMethod_getGridConnectivity<WithStreamedUnaryMethod_getGridOffset<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_initialize<WithStreamedUnaryMethod_update<WithStreamedUnaryMethod_updateUntil<WithStreamedUnaryMethod_updateFrac<WithStreamedUnaryMethod_finalize<WithStreamedUnaryMethod_getComponentName<WithStreamedUnaryMethod_getInputVarNames<WithStreamedUnaryMethod_getOutputVarNames<WithStreamedUnaryMethod_getTimeUnits<WithStreamedUnaryMethod_getTimeStep<WithStreamedUnaryMethod_getCurrentTime<WithStreamedUnaryMethod_getStartTime<WithStreamedUnaryMethod_getEndTime<WithStreamedUnaryMethod_getVarGrid<WithStreamedUnaryMethod_getVarType<WithStreamedUnaryMethod_getVarItemSize<WithStreamedUnaryMethod_getVarUnits<WithStreamedUnaryMethod_getVarNBytes<WithStreamedUnaryMethod_getValue<WithStreamedUnaryMethod_getValueAtIndices<WithStreamedUnaryMethod_setValue<WithStreamedUnaryMethod_setValueAtIndices<WithStreamedUnaryMethod_getGridSize<WithStreamedUnaryMethod_getGridType<WithStreamedUnaryMethod_getGridRank<WithStreamedUnaryMethod_getGridShape<WithStreamedUnaryMethod_getGridSpacing<WithStreamedUnaryMethod_getGridOrigin<WithStreamedUnaryMethod_getGridX<WithStreamedUnaryMethod_getGridY<WithStreamedUnaryMethod_getGridZ<WithStreamedUnaryMethod_getGridConnectivity<WithStreamedUnaryMethod_getGridOffset<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_initialize<WithStreamedUnaryMethod_update<WithStreamedUnaryMethod_updateUntil<WithStreamedUnaryMethod_updateFrac<WithStreamedUnaryMethod_finalize<WithStreamedUnaryMethod_runModel<WithStreamedUnaryMethod_getComponentName<WithStreamedUnaryMethod_getInputVarNameCount<WithStreamedUnaryMethod_getOutputVarNameCount<WithStreamedUnaryMethod_getInputVarNames<WithStreamedUnaryMethod_getOutputVarNames<WithStreamedUnaryMethod_getTimeUnits<WithStreamedUnaryMethod_getTimeStep<WithStreamedUnaryMethod_getCurrentTime<WithStreamedUnaryMethod_getStartTime<WithStreamedUnaryMethod_getEndTime<WithStreamedUnaryMethod_getVarGrid<WithStreamedUnaryMethod_getVarType<WithStreamedUnaryMethod_getVarItemSize<WithStreamedUnaryMethod_getVarUnits<WithStreamedUnaryMethod_getVarNBytes<WithStreamedUnaryMethod_getValue<WithStreamedUnaryMethod_getValuePtr<WithStreamedUnaryMethod_getValueAtIndices<WithStreamedUnaryMethod_setValue<WithStreamedUnaryMethod_setValuePtr<WithStreamedUnaryMethod_setValueAtIndices<WithStreamedUnaryMethod_getGridSize<WithStreamedUnaryMethod_getGridType<WithStreamedUnaryMethod_getGridRank<WithStreamedUnaryMethod_getGridShape<WithStreamedUnaryMethod_getGridSpacing<WithStreamedUnaryMethod_getGridOrigin<WithStreamedUnaryMethod_getGridX<WithStreamedUnaryMethod_getGridY<WithStreamedUnaryMethod_getGridZ<WithStreamedUnaryMethod_getGridCellCount<WithStreamedUnaryMethod_getGridPointCount<WithStreamedUnaryMethod_getGridVertexCount<WithStreamedUnaryMethod_getGridConnectivity<WithStreamedUnaryMethod_getGridOffset<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_initialize<WithStreamedUnaryMethod_update<WithStreamedUnaryMethod_updateUntil<WithStreamedUnaryMethod_updateFrac<WithStreamedUnaryMethod_finalize<WithStreamedUnaryMethod_getComponentName<WithStreamedUnaryMethod_getInputVarNames<WithStreamedUnaryMethod_getOutputVarNames<WithStreamedUnaryMethod_getTimeUnits<WithStreamedUnaryMethod_getTimeStep<WithStreamedUnaryMethod_getCurrentTime<WithStreamedUnaryMethod_getStartTime<WithStreamedUnaryMethod_getEndTime<WithStreamedUnaryMethod_getVarGrid<WithStreamedUnaryMethod_getVarType<WithStreamedUnaryMethod_getVarItemSize<WithStreamedUnaryMethod_getVarUnits<WithStreamedUnaryMethod_getVarNBytes<WithStreamedUnaryMethod_getValue<WithStreamedUnaryMethod_getValueAtIndices<WithStreamedUnaryMethod_setValue<WithStreamedUnaryMethod_setValueAtIndices<WithStreamedUnaryMethod_getGridSize<WithStreamedUnaryMethod_getGridType<WithStreamedUnaryMethod_getGridRank<WithStreamedUnaryMethod_getGridShape<WithStreamedUnaryMethod_getGridSpacing<WithStreamedUnaryMethod_getGridOrigin<WithStreamedUnaryMethod_getGridX<WithStreamedUnaryMethod_getGridY<WithStreamedUnaryMethod_getGridZ<WithStreamedUnaryMethod_getGridConnectivity<WithStreamedUnaryMethod_getGridOffset<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace bmi

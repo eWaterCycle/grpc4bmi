@@ -40,7 +40,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiServer("BmiHeat", "heat"), BmiHeat()
+    server, local = BmiServer(BmiHeat()), BmiHeat()
     local = BmiHeat()
     if init:
         req = RequestStub()
@@ -60,13 +60,6 @@ def test_server_start():
 def test_component_name():
     server, local = make_bmi_classes()
     assert server.getComponentName(None, None).name == local.get_component_name()
-    del server
-
-
-def test_varname_counts():
-    server, local = make_bmi_classes()
-    assert server.getInputVarNameCount(None, None).count == len(local.get_input_var_names())
-    assert server.getOutputVarNameCount(None, None).count == len(local.get_output_var_names())
     del server
 
 
