@@ -48,8 +48,8 @@ will launch a docker container, assuming that a GRPC BMI server will start and e
 When developers change the proto-file, it is necessary to install grpc tools python packages in your python environment:
 ```bash
 pip install -r requirements.txt
-pip install -e .
-pip install -e .[R]
+pip install .
+pip install .[R]
 
 ```
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
