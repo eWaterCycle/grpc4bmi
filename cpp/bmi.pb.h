@@ -35,18 +35,120 @@
 #define PROTOBUF_INTERNAL_EXPORT_bmi_2eproto
 
 // Internal implementation detail -- do not use these members.
-struct TableStruct_bmi_2eproto {
-  static const ::google::protobuf::internal::ParseTableField entries[]
-    GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
-    GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::ParseTable schema[36]
-    GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold);
+struct TableStruct {
+  static const ::google::protobuf::internal::ParseTableField entries[];
+  static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
+  static const ::google::protobuf::internal::ParseTable schema[34];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
 };
-void AddDescriptors_bmi_2eproto();
+void AddDescriptors();
+void InitDefaultsEmptyImpl();
+void InitDefaultsEmpty();
+void InitDefaultsInitializeRequestImpl();
+void InitDefaultsInitializeRequest();
+void InitDefaultsUpdateUntilRequestImpl();
+void InitDefaultsUpdateUntilRequest();
+void InitDefaultsUpdateFracRequestImpl();
+void InitDefaultsUpdateFracRequest();
+void InitDefaultsGetComponentNameResponseImpl();
+void InitDefaultsGetComponentNameResponse();
+void InitDefaultsGetVarNamesResponseImpl();
+void InitDefaultsGetVarNamesResponse();
+void InitDefaultsGetTimeUnitsResponseImpl();
+void InitDefaultsGetTimeUnitsResponse();
+void InitDefaultsGetTimeStepResponseImpl();
+void InitDefaultsGetTimeStepResponse();
+void InitDefaultsGetTimeResponseImpl();
+void InitDefaultsGetTimeResponse();
+void InitDefaultsGetVarRequestImpl();
+void InitDefaultsGetVarRequest();
+void InitDefaultsGetVarGridResponseImpl();
+void InitDefaultsGetVarGridResponse();
+void InitDefaultsGetVarTypeResponseImpl();
+void InitDefaultsGetVarTypeResponse();
+void InitDefaultsGetVarItemSizeResponseImpl();
+void InitDefaultsGetVarItemSizeResponse();
+void InitDefaultsGetVarUnitsResponseImpl();
+void InitDefaultsGetVarUnitsResponse();
+void InitDefaultsGetVarNBytesResponseImpl();
+void InitDefaultsGetVarNBytesResponse();
+void InitDefaultsIntArrayMessageImpl();
+void InitDefaultsIntArrayMessage();
+void InitDefaultsFloatArrayMessageImpl();
+void InitDefaultsFloatArrayMessage();
+void InitDefaultsDoubleArrayMessageImpl();
+void InitDefaultsDoubleArrayMessage();
+void InitDefaultsGetValueResponseImpl();
+void InitDefaultsGetValueResponse();
+void InitDefaultsGetValueAtIndicesRequestImpl();
+void InitDefaultsGetValueAtIndicesRequest();
+void InitDefaultsGetValueAtIndicesResponseImpl();
+void InitDefaultsGetValueAtIndicesResponse();
+void InitDefaultsSetValueRequestImpl();
+void InitDefaultsSetValueRequest();
+void InitDefaultsSetValuePtrRequestImpl();
+void InitDefaultsSetValuePtrRequest();
+void InitDefaultsSetValueAtIndicesRequestImpl();
+void InitDefaultsSetValueAtIndicesRequest();
+void InitDefaultsGridRequestImpl();
+void InitDefaultsGridRequest();
+void InitDefaultsGetGridSizeResponseImpl();
+void InitDefaultsGetGridSizeResponse();
+void InitDefaultsGetGridRankResponseImpl();
+void InitDefaultsGetGridRankResponse();
+void InitDefaultsGetGridTypeResponseImpl();
+void InitDefaultsGetGridTypeResponse();
+void InitDefaultsGetGridShapeResponseImpl();
+void InitDefaultsGetGridShapeResponse();
+void InitDefaultsGetGridSpacingResponseImpl();
+void InitDefaultsGetGridSpacingResponse();
+void InitDefaultsGetGridOriginResponseImpl();
+void InitDefaultsGetGridOriginResponse();
+void InitDefaultsGetGridPointsResponseImpl();
+void InitDefaultsGetGridPointsResponse();
+void InitDefaultsGetGridConnectivityResponseImpl();
+void InitDefaultsGetGridConnectivityResponse();
+void InitDefaultsGetGridOffsetResponseImpl();
+void InitDefaultsGetGridOffsetResponse();
+inline void InitDefaults() {
+  InitDefaultsEmpty();
+  InitDefaultsInitializeRequest();
+  InitDefaultsUpdateUntilRequest();
+  InitDefaultsUpdateFracRequest();
+  InitDefaultsGetComponentNameResponse();
+  InitDefaultsGetVarNamesResponse();
+  InitDefaultsGetTimeUnitsResponse();
+  InitDefaultsGetTimeStepResponse();
+  InitDefaultsGetTimeResponse();
+  InitDefaultsGetVarRequest();
+  InitDefaultsGetVarGridResponse();
+  InitDefaultsGetVarTypeResponse();
+  InitDefaultsGetVarItemSizeResponse();
+  InitDefaultsGetVarUnitsResponse();
+  InitDefaultsGetVarNBytesResponse();
+  InitDefaultsIntArrayMessage();
+  InitDefaultsFloatArrayMessage();
+  InitDefaultsDoubleArrayMessage();
+  InitDefaultsGetValueResponse();
+  InitDefaultsGetValueAtIndicesRequest();
+  InitDefaultsGetValueAtIndicesResponse();
+  InitDefaultsSetValueRequest();
+  InitDefaultsSetValuePtrRequest();
+  InitDefaultsSetValueAtIndicesRequest();
+  InitDefaultsGridRequest();
+  InitDefaultsGetGridSizeResponse();
+  InitDefaultsGetGridRankResponse();
+  InitDefaultsGetGridTypeResponse();
+  InitDefaultsGetGridShapeResponse();
+  InitDefaultsGetGridSpacingResponse();
+  InitDefaultsGetGridOriginResponse();
+  InitDefaultsGetGridPointsResponse();
+  InitDefaultsGetGridConnectivityResponse();
+  InitDefaultsGetGridOffsetResponse();
+}
+}  // namespace protobuf_bmi_2eproto
 namespace bmi {
 class DoubleArrayMessage;
 class DoubleArrayMessageDefaultTypeInternal;
@@ -60,9 +162,6 @@ extern FloatArrayMessageDefaultTypeInternal _FloatArrayMessage_default_instance_
 class GetComponentNameResponse;
 class GetComponentNameResponseDefaultTypeInternal;
 extern GetComponentNameResponseDefaultTypeInternal _GetComponentNameResponse_default_instance_;
-class GetCountResponse;
-class GetCountResponseDefaultTypeInternal;
-extern GetCountResponseDefaultTypeInternal _GetCountResponse_default_instance_;
 class GetGridConnectivityResponse;
 class GetGridConnectivityResponseDefaultTypeInternal;
 extern GetGridConnectivityResponseDefaultTypeInternal _GetGridConnectivityResponse_default_instance_;
@@ -117,9 +216,6 @@ extern GetVarItemSizeResponseDefaultTypeInternal _GetVarItemSizeResponse_default
 class GetVarNBytesResponse;
 class GetVarNBytesResponseDefaultTypeInternal;
 extern GetVarNBytesResponseDefaultTypeInternal _GetVarNBytesResponse_default_instance_;
-class GetVarNameCountResponse;
-class GetVarNameCountResponseDefaultTypeInternal;
-extern GetVarNameCountResponseDefaultTypeInternal _GetVarNameCountResponse_default_instance_;
 class GetVarNamesResponse;
 class GetVarNamesResponseDefaultTypeInternal;
 extern GetVarNamesResponseDefaultTypeInternal _GetVarNamesResponse_default_instance_;
@@ -765,117 +861,6 @@ class GetComponentNameResponse : public ::google::protobuf::Message /* @@protoc_
 };
 // -------------------------------------------------------------------
 
-class GetVarNameCountResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:bmi.GetVarNameCountResponse) */ {
- public:
-  GetVarNameCountResponse();
-  virtual ~GetVarNameCountResponse();
-
-  GetVarNameCountResponse(const GetVarNameCountResponse& from);
-
-  inline GetVarNameCountResponse& operator=(const GetVarNameCountResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  GetVarNameCountResponse(GetVarNameCountResponse&& from) noexcept
-    : GetVarNameCountResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline GetVarNameCountResponse& operator=(GetVarNameCountResponse&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const GetVarNameCountResponse& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const GetVarNameCountResponse* internal_default_instance() {
-    return reinterpret_cast<const GetVarNameCountResponse*>(
-               &_GetVarNameCountResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    5;
-
-  void Swap(GetVarNameCountResponse* other);
-  friend void swap(GetVarNameCountResponse& a, GetVarNameCountResponse& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline GetVarNameCountResponse* New() const final {
-    return CreateMaybeMessage<GetVarNameCountResponse>(NULL);
-  }
-
-  GetVarNameCountResponse* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<GetVarNameCountResponse>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const GetVarNameCountResponse& from);
-  void MergeFrom(const GetVarNameCountResponse& from);
-  void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(GetVarNameCountResponse* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // int32 count = 1;
-  void clear_count();
-  static const int kCountFieldNumber = 1;
-  ::google::protobuf::int32 count() const;
-  void set_count(::google::protobuf::int32 value);
-
-  // @@protoc_insertion_point(class_scope:bmi.GetVarNameCountResponse)
- private:
-  class HasBitSetters;
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::int32 count_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_bmi_2eproto;
-};
-// -------------------------------------------------------------------
-
 class GetVarNamesResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:bmi.GetVarNamesResponse) */ {
  public:
   GetVarNamesResponse();
@@ -912,8 +897,8 @@ class GetVarNamesResponse : public ::google::protobuf::Message /* @@protoc_inser
     return reinterpret_cast<const GetVarNamesResponse*>(
                &_GetVarNamesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    6;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    5;
 
   void Swap(GetVarNamesResponse* other);
   friend void swap(GetVarNamesResponse& a, GetVarNamesResponse& b) {
@@ -1039,8 +1024,8 @@ class GetTimeUnitsResponse : public ::google::protobuf::Message /* @@protoc_inse
     return reinterpret_cast<const GetTimeUnitsResponse*>(
                &_GetTimeUnitsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    7;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    6;
 
   void Swap(GetTimeUnitsResponse* other);
   friend void swap(GetTimeUnitsResponse& a, GetTimeUnitsResponse& b) {
@@ -1158,8 +1143,8 @@ class GetTimeStepResponse : public ::google::protobuf::Message /* @@protoc_inser
     return reinterpret_cast<const GetTimeStepResponse*>(
                &_GetTimeStepResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    8;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    7;
 
   void Swap(GetTimeStepResponse* other);
   friend void swap(GetTimeStepResponse& a, GetTimeStepResponse& b) {
@@ -1269,8 +1254,8 @@ class GetTimeResponse : public ::google::protobuf::Message /* @@protoc_insertion
     return reinterpret_cast<const GetTimeResponse*>(
                &_GetTimeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    9;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    8;
 
   void Swap(GetTimeResponse* other);
   friend void swap(GetTimeResponse& a, GetTimeResponse& b) {
@@ -1380,8 +1365,8 @@ class GetVarRequest : public ::google::protobuf::Message /* @@protoc_insertion_p
     return reinterpret_cast<const GetVarRequest*>(
                &_GetVarRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    10;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    9;
 
   void Swap(GetVarRequest* other);
   friend void swap(GetVarRequest& a, GetVarRequest& b) {
@@ -1499,8 +1484,8 @@ class GetVarGridResponse : public ::google::protobuf::Message /* @@protoc_insert
     return reinterpret_cast<const GetVarGridResponse*>(
                &_GetVarGridResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    11;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    10;
 
   void Swap(GetVarGridResponse* other);
   friend void swap(GetVarGridResponse& a, GetVarGridResponse& b) {
@@ -1610,8 +1595,8 @@ class GetVarTypeResponse : public ::google::protobuf::Message /* @@protoc_insert
     return reinterpret_cast<const GetVarTypeResponse*>(
                &_GetVarTypeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    12;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    11;
 
   void Swap(GetVarTypeResponse* other);
   friend void swap(GetVarTypeResponse& a, GetVarTypeResponse& b) {
@@ -1729,8 +1714,8 @@ class GetVarItemSizeResponse : public ::google::protobuf::Message /* @@protoc_in
     return reinterpret_cast<const GetVarItemSizeResponse*>(
                &_GetVarItemSizeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    13;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    12;
 
   void Swap(GetVarItemSizeResponse* other);
   friend void swap(GetVarItemSizeResponse& a, GetVarItemSizeResponse& b) {
@@ -1840,8 +1825,8 @@ class GetVarUnitsResponse : public ::google::protobuf::Message /* @@protoc_inser
     return reinterpret_cast<const GetVarUnitsResponse*>(
                &_GetVarUnitsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    14;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    13;
 
   void Swap(GetVarUnitsResponse* other);
   friend void swap(GetVarUnitsResponse& a, GetVarUnitsResponse& b) {
@@ -1959,8 +1944,8 @@ class GetVarNBytesResponse : public ::google::protobuf::Message /* @@protoc_inse
     return reinterpret_cast<const GetVarNBytesResponse*>(
                &_GetVarNBytesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    15;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    14;
 
   void Swap(GetVarNBytesResponse* other);
   friend void swap(GetVarNBytesResponse& a, GetVarNBytesResponse& b) {
@@ -2070,8 +2055,8 @@ class IntArrayMessage : public ::google::protobuf::Message /* @@protoc_insertion
     return reinterpret_cast<const IntArrayMessage*>(
                &_IntArrayMessage_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    16;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    15;
 
   void Swap(IntArrayMessage* other);
   friend void swap(IntArrayMessage& a, IntArrayMessage& b) {
@@ -2188,8 +2173,8 @@ class FloatArrayMessage : public ::google::protobuf::Message /* @@protoc_inserti
     return reinterpret_cast<const FloatArrayMessage*>(
                &_FloatArrayMessage_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    17;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    16;
 
   void Swap(FloatArrayMessage* other);
   friend void swap(FloatArrayMessage& a, FloatArrayMessage& b) {
@@ -2306,8 +2291,8 @@ class DoubleArrayMessage : public ::google::protobuf::Message /* @@protoc_insert
     return reinterpret_cast<const DoubleArrayMessage*>(
                &_DoubleArrayMessage_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    18;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    17;
 
   void Swap(DoubleArrayMessage* other);
   friend void swap(DoubleArrayMessage& a, DoubleArrayMessage& b) {
@@ -2431,8 +2416,8 @@ class GetValueResponse : public ::google::protobuf::Message /* @@protoc_insertio
     return reinterpret_cast<const GetValueResponse*>(
                &_GetValueResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    19;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    18;
 
   void Swap(GetValueResponse* other);
   friend void swap(GetValueResponse& a, GetValueResponse& b) {
@@ -2489,18 +2474,6 @@ class GetValueResponse : public ::google::protobuf::Message /* @@protoc_insertio
 
   // accessors -------------------------------------------------------
 
-  // repeated int32 shape = 4 [packed = true];
-  int shape_size() const;
-  void clear_shape();
-  static const int kShapeFieldNumber = 4;
-  ::google::protobuf::int32 shape(int index) const;
-  void set_shape(int index, ::google::protobuf::int32 value);
-  void add_shape(::google::protobuf::int32 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      shape() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_shape();
-
   // .bmi.IntArrayMessage values_int = 1;
   bool has_values_int() const;
   void clear_values_int();
@@ -2541,8 +2514,6 @@ class GetValueResponse : public ::google::protobuf::Message /* @@protoc_insertio
   inline void clear_has_values();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > shape_;
-  mutable std::atomic<int> _shape_cached_byte_size_;
   union ValuesUnion {
     ValuesUnion() {}
     ::bmi::IntArrayMessage* values_int_;
@@ -2592,8 +2563,8 @@ class GetValueAtIndicesRequest : public ::google::protobuf::Message /* @@protoc_
     return reinterpret_cast<const GetValueAtIndicesRequest*>(
                &_GetValueAtIndicesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    20;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    19;
 
   void Swap(GetValueAtIndicesRequest* other);
   friend void swap(GetValueAtIndicesRequest& a, GetValueAtIndicesRequest& b) {
@@ -2676,12 +2647,6 @@ class GetValueAtIndicesRequest : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
-  // int32 index_size = 3;
-  void clear_index_size();
-  static const int kIndexSizeFieldNumber = 3;
-  ::google::protobuf::int32 index_size() const;
-  void set_index_size(::google::protobuf::int32 value);
-
   // @@protoc_insertion_point(class_scope:bmi.GetValueAtIndicesRequest)
  private:
   class HasBitSetters;
@@ -2690,9 +2655,9 @@ class GetValueAtIndicesRequest : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > indices_;
   mutable std::atomic<int> _indices_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr name_;
-  ::google::protobuf::int32 index_size_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_bmi_2eproto;
+  mutable int _cached_size_;
+  friend struct ::protobuf_bmi_2eproto::TableStruct;
+  friend void ::protobuf_bmi_2eproto::InitDefaultsGetValueAtIndicesRequestImpl();
 };
 // -------------------------------------------------------------------
 
@@ -2739,8 +2704,8 @@ class GetValueAtIndicesResponse : public ::google::protobuf::Message /* @@protoc
     return reinterpret_cast<const GetValueAtIndicesResponse*>(
                &_GetValueAtIndicesResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    21;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    20;
 
   void Swap(GetValueAtIndicesResponse* other);
   friend void swap(GetValueAtIndicesResponse& a, GetValueAtIndicesResponse& b) {
@@ -2797,18 +2762,6 @@ class GetValueAtIndicesResponse : public ::google::protobuf::Message /* @@protoc
 
   // accessors -------------------------------------------------------
 
-  // repeated int32 shape = 4 [packed = true];
-  int shape_size() const;
-  void clear_shape();
-  static const int kShapeFieldNumber = 4;
-  ::google::protobuf::int32 shape(int index) const;
-  void set_shape(int index, ::google::protobuf::int32 value);
-  void add_shape(::google::protobuf::int32 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      shape() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_shape();
-
   // .bmi.IntArrayMessage values_int = 1;
   bool has_values_int() const;
   void clear_values_int();
@@ -2849,8 +2802,6 @@ class GetValueAtIndicesResponse : public ::google::protobuf::Message /* @@protoc
   inline void clear_has_values();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > shape_;
-  mutable std::atomic<int> _shape_cached_byte_size_;
   union ValuesUnion {
     ValuesUnion() {}
     ::bmi::IntArrayMessage* values_int_;
@@ -2907,8 +2858,8 @@ class SetValueRequest : public ::google::protobuf::Message /* @@protoc_insertion
     return reinterpret_cast<const SetValueRequest*>(
                &_SetValueRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    22;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    21;
 
   void Swap(SetValueRequest* other);
   friend void swap(SetValueRequest& a, SetValueRequest& b) {
@@ -2965,18 +2916,6 @@ class SetValueRequest : public ::google::protobuf::Message /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // repeated int32 shape = 5 [packed = true];
-  int shape_size() const;
-  void clear_shape();
-  static const int kShapeFieldNumber = 5;
-  ::google::protobuf::int32 shape(int index) const;
-  void set_shape(int index, ::google::protobuf::int32 value);
-  void add_shape(::google::protobuf::int32 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      shape() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_shape();
-
   // string name = 1;
   void clear_name();
   static const int kNameFieldNumber = 1;
@@ -3031,8 +2970,6 @@ class SetValueRequest : public ::google::protobuf::Message /* @@protoc_insertion
   inline void clear_has_values();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > shape_;
-  mutable std::atomic<int> _shape_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   union ValuesUnion {
     ValuesUnion() {}
@@ -3083,8 +3020,8 @@ class SetValuePtrRequest : public ::google::protobuf::Message /* @@protoc_insert
     return reinterpret_cast<const SetValuePtrRequest*>(
                &_SetValuePtrRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    23;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    22;
 
   void Swap(SetValuePtrRequest* other);
   friend void swap(SetValuePtrRequest& a, SetValuePtrRequest& b) {
@@ -3216,8 +3153,8 @@ class SetValueAtIndicesRequest : public ::google::protobuf::Message /* @@protoc_
     return reinterpret_cast<const SetValueAtIndicesRequest*>(
                &_SetValueAtIndicesRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    24;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    23;
 
   void Swap(SetValueAtIndicesRequest* other);
   friend void swap(SetValueAtIndicesRequest& a, SetValueAtIndicesRequest& b) {
@@ -3300,12 +3237,6 @@ class SetValueAtIndicesRequest : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
-  // int32 index_size = 6;
-  void clear_index_size();
-  static const int kIndexSizeFieldNumber = 6;
-  ::google::protobuf::int32 index_size() const;
-  void set_index_size(::google::protobuf::int32 value);
-
   // .bmi.IntArrayMessage values_int = 3;
   bool has_values_int() const;
   void clear_values_int();
@@ -3349,7 +3280,6 @@ class SetValueAtIndicesRequest : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > indices_;
   mutable std::atomic<int> _indices_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr name_;
-  ::google::protobuf::int32 index_size_;
   union ValuesUnion {
     ValuesUnion() {}
     ::bmi::IntArrayMessage* values_int_;
@@ -3399,8 +3329,8 @@ class GridRequest : public ::google::protobuf::Message /* @@protoc_insertion_poi
     return reinterpret_cast<const GridRequest*>(
                &_GridRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    25;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    24;
 
   void Swap(GridRequest* other);
   friend void swap(GridRequest& a, GridRequest& b) {
@@ -3510,8 +3440,8 @@ class GetGridSizeResponse : public ::google::protobuf::Message /* @@protoc_inser
     return reinterpret_cast<const GetGridSizeResponse*>(
                &_GetGridSizeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    26;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    25;
 
   void Swap(GetGridSizeResponse* other);
   friend void swap(GetGridSizeResponse& a, GetGridSizeResponse& b) {
@@ -3621,8 +3551,8 @@ class GetGridRankResponse : public ::google::protobuf::Message /* @@protoc_inser
     return reinterpret_cast<const GetGridRankResponse*>(
                &_GetGridRankResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    27;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    26;
 
   void Swap(GetGridRankResponse* other);
   friend void swap(GetGridRankResponse& a, GetGridRankResponse& b) {
@@ -3732,8 +3662,8 @@ class GetGridTypeResponse : public ::google::protobuf::Message /* @@protoc_inser
     return reinterpret_cast<const GetGridTypeResponse*>(
                &_GetGridTypeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    28;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    27;
 
   void Swap(GetGridTypeResponse* other);
   friend void swap(GetGridTypeResponse& a, GetGridTypeResponse& b) {
@@ -3851,8 +3781,8 @@ class GetGridShapeResponse : public ::google::protobuf::Message /* @@protoc_inse
     return reinterpret_cast<const GetGridShapeResponse*>(
                &_GetGridShapeResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    29;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    28;
 
   void Swap(GetGridShapeResponse* other);
   friend void swap(GetGridShapeResponse& a, GetGridShapeResponse& b) {
@@ -3969,8 +3899,8 @@ class GetGridSpacingResponse : public ::google::protobuf::Message /* @@protoc_in
     return reinterpret_cast<const GetGridSpacingResponse*>(
                &_GetGridSpacingResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    30;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    29;
 
   void Swap(GetGridSpacingResponse* other);
   friend void swap(GetGridSpacingResponse& a, GetGridSpacingResponse& b) {
@@ -4087,8 +4017,8 @@ class GetGridOriginResponse : public ::google::protobuf::Message /* @@protoc_ins
     return reinterpret_cast<const GetGridOriginResponse*>(
                &_GetGridOriginResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    31;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    30;
 
   void Swap(GetGridOriginResponse* other);
   friend void swap(GetGridOriginResponse& a, GetGridOriginResponse& b) {
@@ -4205,8 +4135,8 @@ class GetGridPointsResponse : public ::google::protobuf::Message /* @@protoc_ins
     return reinterpret_cast<const GetGridPointsResponse*>(
                &_GetGridPointsResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    32;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    31;
 
   void Swap(GetGridPointsResponse* other);
   friend void swap(GetGridPointsResponse& a, GetGridPointsResponse& b) {
@@ -4287,117 +4217,6 @@ class GetGridPointsResponse : public ::google::protobuf::Message /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class GetCountResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:bmi.GetCountResponse) */ {
- public:
-  GetCountResponse();
-  virtual ~GetCountResponse();
-
-  GetCountResponse(const GetCountResponse& from);
-
-  inline GetCountResponse& operator=(const GetCountResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  GetCountResponse(GetCountResponse&& from) noexcept
-    : GetCountResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline GetCountResponse& operator=(GetCountResponse&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const GetCountResponse& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const GetCountResponse* internal_default_instance() {
-    return reinterpret_cast<const GetCountResponse*>(
-               &_GetCountResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    33;
-
-  void Swap(GetCountResponse* other);
-  friend void swap(GetCountResponse& a, GetCountResponse& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline GetCountResponse* New() const final {
-    return CreateMaybeMessage<GetCountResponse>(NULL);
-  }
-
-  GetCountResponse* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<GetCountResponse>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const GetCountResponse& from);
-  void MergeFrom(const GetCountResponse& from);
-  void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(GetCountResponse* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // int32 count = 1;
-  void clear_count();
-  static const int kCountFieldNumber = 1;
-  ::google::protobuf::int32 count() const;
-  void set_count(::google::protobuf::int32 value);
-
-  // @@protoc_insertion_point(class_scope:bmi.GetCountResponse)
- private:
-  class HasBitSetters;
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::int32 count_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_bmi_2eproto;
-};
-// -------------------------------------------------------------------
-
 class GetGridConnectivityResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:bmi.GetGridConnectivityResponse) */ {
  public:
   GetGridConnectivityResponse();
@@ -4434,8 +4253,8 @@ class GetGridConnectivityResponse : public ::google::protobuf::Message /* @@prot
     return reinterpret_cast<const GetGridConnectivityResponse*>(
                &_GetGridConnectivityResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    34;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    32;
 
   void Swap(GetGridConnectivityResponse* other);
   friend void swap(GetGridConnectivityResponse& a, GetGridConnectivityResponse& b) {
@@ -4552,8 +4371,8 @@ class GetGridOffsetResponse : public ::google::protobuf::Message /* @@protoc_ins
     return reinterpret_cast<const GetGridOffsetResponse*>(
                &_GetGridOffsetResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages =
-    35;
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    33;
 
   void Swap(GetGridOffsetResponse* other);
   friend void swap(GetGridOffsetResponse& a, GetGridOffsetResponse& b) {
@@ -4791,24 +4610,6 @@ inline void GetComponentNameResponse::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
   // @@protoc_insertion_point(field_set_allocated:bmi.GetComponentNameResponse.name)
-}
-
-// -------------------------------------------------------------------
-
-// GetVarNameCountResponse
-
-// int32 count = 1;
-inline void GetVarNameCountResponse::clear_count() {
-  count_ = 0;
-}
-inline ::google::protobuf::int32 GetVarNameCountResponse::count() const {
-  // @@protoc_insertion_point(field_get:bmi.GetVarNameCountResponse.count)
-  return count_;
-}
-inline void GetVarNameCountResponse::set_count(::google::protobuf::int32 value) {
-  
-  count_ = value;
-  // @@protoc_insertion_point(field_set:bmi.GetVarNameCountResponse.count)
 }
 
 // -------------------------------------------------------------------
@@ -5431,36 +5232,6 @@ inline ::bmi::DoubleArrayMessage* GetValueResponse::mutable_values_double() {
   return values_.values_double_;
 }
 
-// repeated int32 shape = 4 [packed = true];
-inline int GetValueResponse::shape_size() const {
-  return shape_.size();
-}
-inline void GetValueResponse::clear_shape() {
-  shape_.Clear();
-}
-inline ::google::protobuf::int32 GetValueResponse::shape(int index) const {
-  // @@protoc_insertion_point(field_get:bmi.GetValueResponse.shape)
-  return shape_.Get(index);
-}
-inline void GetValueResponse::set_shape(int index, ::google::protobuf::int32 value) {
-  shape_.Set(index, value);
-  // @@protoc_insertion_point(field_set:bmi.GetValueResponse.shape)
-}
-inline void GetValueResponse::add_shape(::google::protobuf::int32 value) {
-  shape_.Add(value);
-  // @@protoc_insertion_point(field_add:bmi.GetValueResponse.shape)
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GetValueResponse::shape() const {
-  // @@protoc_insertion_point(field_list:bmi.GetValueResponse.shape)
-  return shape_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GetValueResponse::mutable_shape() {
-  // @@protoc_insertion_point(field_mutable_list:bmi.GetValueResponse.shape)
-  return &shape_;
-}
-
 inline bool GetValueResponse::has_values() const {
   return values_case() != VALUES_NOT_SET;
 }
@@ -5555,20 +5326,6 @@ inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 GetValueAtIndicesRequest::mutable_indices() {
   // @@protoc_insertion_point(field_mutable_list:bmi.GetValueAtIndicesRequest.indices)
   return &indices_;
-}
-
-// int32 index_size = 3;
-inline void GetValueAtIndicesRequest::clear_index_size() {
-  index_size_ = 0;
-}
-inline ::google::protobuf::int32 GetValueAtIndicesRequest::index_size() const {
-  // @@protoc_insertion_point(field_get:bmi.GetValueAtIndicesRequest.index_size)
-  return index_size_;
-}
-inline void GetValueAtIndicesRequest::set_index_size(::google::protobuf::int32 value) {
-  
-  index_size_ = value;
-  // @@protoc_insertion_point(field_set:bmi.GetValueAtIndicesRequest.index_size)
 }
 
 // -------------------------------------------------------------------
@@ -5696,36 +5453,6 @@ inline ::bmi::DoubleArrayMessage* GetValueAtIndicesResponse::mutable_values_doub
   }
   // @@protoc_insertion_point(field_mutable:bmi.GetValueAtIndicesResponse.values_double)
   return values_.values_double_;
-}
-
-// repeated int32 shape = 4 [packed = true];
-inline int GetValueAtIndicesResponse::shape_size() const {
-  return shape_.size();
-}
-inline void GetValueAtIndicesResponse::clear_shape() {
-  shape_.Clear();
-}
-inline ::google::protobuf::int32 GetValueAtIndicesResponse::shape(int index) const {
-  // @@protoc_insertion_point(field_get:bmi.GetValueAtIndicesResponse.shape)
-  return shape_.Get(index);
-}
-inline void GetValueAtIndicesResponse::set_shape(int index, ::google::protobuf::int32 value) {
-  shape_.Set(index, value);
-  // @@protoc_insertion_point(field_set:bmi.GetValueAtIndicesResponse.shape)
-}
-inline void GetValueAtIndicesResponse::add_shape(::google::protobuf::int32 value) {
-  shape_.Add(value);
-  // @@protoc_insertion_point(field_add:bmi.GetValueAtIndicesResponse.shape)
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GetValueAtIndicesResponse::shape() const {
-  // @@protoc_insertion_point(field_list:bmi.GetValueAtIndicesResponse.shape)
-  return shape_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GetValueAtIndicesResponse::mutable_shape() {
-  // @@protoc_insertion_point(field_mutable_list:bmi.GetValueAtIndicesResponse.shape)
-  return &shape_;
 }
 
 inline bool GetValueAtIndicesResponse::has_values() const {
@@ -5915,36 +5642,6 @@ inline ::bmi::DoubleArrayMessage* SetValueRequest::mutable_values_double() {
   }
   // @@protoc_insertion_point(field_mutable:bmi.SetValueRequest.values_double)
   return values_.values_double_;
-}
-
-// repeated int32 shape = 5 [packed = true];
-inline int SetValueRequest::shape_size() const {
-  return shape_.size();
-}
-inline void SetValueRequest::clear_shape() {
-  shape_.Clear();
-}
-inline ::google::protobuf::int32 SetValueRequest::shape(int index) const {
-  // @@protoc_insertion_point(field_get:bmi.SetValueRequest.shape)
-  return shape_.Get(index);
-}
-inline void SetValueRequest::set_shape(int index, ::google::protobuf::int32 value) {
-  shape_.Set(index, value);
-  // @@protoc_insertion_point(field_set:bmi.SetValueRequest.shape)
-}
-inline void SetValueRequest::add_shape(::google::protobuf::int32 value) {
-  shape_.Add(value);
-  // @@protoc_insertion_point(field_add:bmi.SetValueRequest.shape)
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-SetValueRequest::shape() const {
-  // @@protoc_insertion_point(field_list:bmi.SetValueRequest.shape)
-  return shape_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-SetValueRequest::mutable_shape() {
-  // @@protoc_insertion_point(field_mutable_list:bmi.SetValueRequest.shape)
-  return &shape_;
 }
 
 inline bool SetValueRequest::has_values() const {
@@ -6237,20 +5934,6 @@ inline ::bmi::DoubleArrayMessage* SetValueAtIndicesRequest::mutable_values_doubl
   return values_.values_double_;
 }
 
-// int32 index_size = 6;
-inline void SetValueAtIndicesRequest::clear_index_size() {
-  index_size_ = 0;
-}
-inline ::google::protobuf::int32 SetValueAtIndicesRequest::index_size() const {
-  // @@protoc_insertion_point(field_get:bmi.SetValueAtIndicesRequest.index_size)
-  return index_size_;
-}
-inline void SetValueAtIndicesRequest::set_index_size(::google::protobuf::int32 value) {
-  
-  index_size_ = value;
-  // @@protoc_insertion_point(field_set:bmi.SetValueAtIndicesRequest.index_size)
-}
-
 inline bool SetValueAtIndicesRequest::has_values() const {
   return values_case() != VALUES_NOT_SET;
 }
@@ -6509,24 +6192,6 @@ GetGridPointsResponse::mutable_coordinates() {
 
 // -------------------------------------------------------------------
 
-// GetCountResponse
-
-// int32 count = 1;
-inline void GetCountResponse::clear_count() {
-  count_ = 0;
-}
-inline ::google::protobuf::int32 GetCountResponse::count() const {
-  // @@protoc_insertion_point(field_get:bmi.GetCountResponse.count)
-  return count_;
-}
-inline void GetCountResponse::set_count(::google::protobuf::int32 value) {
-  
-  count_ = value;
-  // @@protoc_insertion_point(field_set:bmi.GetCountResponse.count)
-}
-
-// -------------------------------------------------------------------
-
 // GetGridConnectivityResponse
 
 // repeated int32 links = 1 [packed = true];
@@ -6596,10 +6261,6 @@ GetGridOffsetResponse::mutable_offsets() {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

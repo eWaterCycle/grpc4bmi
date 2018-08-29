@@ -1,5 +1,8 @@
 setuptools
+googleapis-common-protos
 grpcio
+grpcio-tools
+grpcio-reflection
 numpy
 docutils
 protobuf

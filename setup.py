@@ -11,14 +11,13 @@ def read(fname):
 
 
 setup(name="grpc4bmi",
-      version="0.1.3",
+      version="0.1.4",
       author="Gijs van den Oord",
       author_email="g.vandenoord@esciencecenter.nl",
       description="Run your BMI implementation in a separate process and expose it as BMI-python with GRPC",
       license="Apache License, Version 2.0",
       url="https://github.com/eWaterCycle/grpc4bmi",
       packages=find_packages(),
-      package_data=package_data,
       include_package_data=True,
       long_description=read("README.md"),
       entry_points={"console_scripts": [
@@ -26,12 +25,16 @@ setup(name="grpc4bmi",
       ]},
       install_requires=[
           "grpcio",
+          "grpcio-reflection",
           "protobuf",
           "numpy",
           'futures; python_version == "2.7"',
           "docker",
           "basic-modeling-interface",
       ],
+      extras_require={
+          'R': ['rpy2'],
+      },
       classifiers=["Development Status :: 3 - Alpha",
                    "Intended Audience :: Science/Research",
                    "Programming Language :: Python",

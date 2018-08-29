@@ -7,7 +7,7 @@ import basic_modeling_interface.bmi as bmi
 import grpc
 import numpy
 
-from grpc4bmi import bmi_pb2, bmi_pb2_grpc
+from . import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
@@ -120,30 +120,20 @@ class BmiClient(bmi.Bmi):
         index_array = indices
         if indices is list:
             index_array = numpy.array(indices)
-        if len(index_array.shape) == 1:
-            index_size = 1
-        elif len(index_array.shape) == 2:
-            index_size = index_array.shape[1]
-        else:
-            raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
         response = self.stub.getValueAtIndices(bmi_pb2.GetValueAtIndicesRequest(name=var_name,
-                                                                                indices=index_array.flatten(),
-                                                                                index_size=index_size))
+                                                                                indices=index_array.flatten()))
         return BmiClient.make_array(response)
 
     def set_value(self, var_name, src):
         if src.dtype == numpy.int32:
             request = bmi_pb2.SetValueRequest(name=var_name,
-                                              values_int=bmi_pb2.IntArrayMessage(values=src.flatten()),
-                                              shape=src.shape)
+                                              values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
         elif src.dtype == numpy.float32:
             request = bmi_pb2.SetValueRequest(name=var_name,
-                                              values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()),
-                                              shape=src.shape)
+                                              values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()))
         elif src.dtype == numpy.float64:
             request = bmi_pb2.SetValueRequest(name=var_name,
-                                              values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()),
-                                              shape=src.shape)
+                                              values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()))
         else:
             raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
         self.stub.setValue(request)
@@ -152,27 +142,18 @@ class BmiClient(bmi.Bmi):
         index_array = indices
         if indices is list:
             index_array = numpy.array(indices)
-        if len(index_array.shape) == 1:
-            index_size = 1
-        elif len(index_array.shape) == 2:
-            index_size = index_array.shape[1]
-        else:
-            raise NotImplementedError("Index arrays should be either 1 or 2-dimensional, row-major ordering")
         if src.dtype == numpy.int32:
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
                                                        indices=index_array.flatten(),
-                                                       values_int=bmi_pb2.IntArrayMessage(values=src.flatten()),
-                                                       index_size=index_size)
+                                                       values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
         elif src.dtype == numpy.float32:
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
                                                        indices=index_array.flatten(),
-                                                       values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()),
-                                                       index_size=index_size)
+                                                       values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()))
         elif src.dtype == numpy.float64:
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
                                                        indices=index_array.flatten(),
-                                                       values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()),
-                                                       index_size=index_size)
+                                                       values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()))
         else:
             raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
         self.stub.setValueAtIndices(request)
@@ -212,10 +193,9 @@ class BmiClient(bmi.Bmi):
 
     @staticmethod
     def make_array(response):
-        shape = response.shape
         if response.HasField("values_int"):
-            return numpy.reshape(response.values_int.values, shape)
+            return response.values_int.values
         if response.HasField("values_float"):
-            return numpy.reshape(response.values_float.values, shape)
+            return response.values_float.values
         if response.HasField("values_double"):
-            return numpy.reshape(response.values_double.values, shape)
+            return response.values_double.values

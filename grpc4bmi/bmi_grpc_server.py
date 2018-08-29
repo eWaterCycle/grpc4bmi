@@ -1,9 +1,9 @@
 import logging
-import importlib
 
 import numpy
+from basic_modeling_interface import Bmi
 
-from grpc4bmi import bmi_pb2, bmi_pb2_grpc
+from . import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
@@ -15,11 +15,10 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     implementation by assuming a default constructor with no arguments.
     """
 
-    def __init__(self, class_name, module_name, package_name=None):
+    def __init__(self, model):
+        # type: (BmiServer, Bmi) -> None
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
-        log.info("Starting BMI class %s in module %s..." % (module_name, class_name))
-        class_ = getattr(importlib.import_module(module_name, package_name), class_name)
-        self.bmi_model_ = class_()
+        self.bmi_model_ = model
 
     def initialize(self, request, context):
         ifile = str(request.config_file)
@@ -44,18 +43,8 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         self.bmi_model_.finalize()
         return bmi_pb2.Empty()
 
-    def runModel(self, request, context):
-        self.bmi_model_.run_model()
-        return bmi_pb2.Empty()
-
     def getComponentName(self, request, context):
         return bmi_pb2.GetComponentNameResponse(name=self.bmi_model_.get_component_name())
-
-    def getInputVarNameCount(self, request, context):
-        return bmi_pb2.GetVarNameCountResponse(count=len(self.bmi_model_.get_input_var_names()))
-
-    def getOutputVarNameCount(self, request, context):
-        return bmi_pb2.GetVarNameCountResponse(count=len(self.bmi_model_.get_output_var_names()))
 
     def getInputVarNames(self, request, context):
         return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_input_var_names())
@@ -96,14 +85,11 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getValue(self, request, context):
         vals = self.bmi_model_.get_value(request.name)
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueResponse(shape=vals.shape,
-                                            values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
+            return bmi_pb2.GetValueResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
         if vals.dtype == numpy.float32:
-            return bmi_pb2.GetValueResponse(shape=vals.shape,
-                                            values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
+            return bmi_pb2.GetValueResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueResponse(shape=vals.shape,
-                                            values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
+            return bmi_pb2.GetValueResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     def getValuePtr(self, request, context):
@@ -111,41 +97,29 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getValueAtIndices(self, request, context):
         indices = request.indices
-        index_size = request.index_size
-        if index_size == 2:
-            num_indices = int(len(request.indices) / index_size)
-            indices = numpy.reshape(indices, (num_indices, index_size))
         vals = self.bmi_model_.get_value_at_indices(request.name, indices)
         if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()),
-                                                     shape=vals.shape)
+            return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
         if vals.dtype == numpy.float32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()),
-                                                     shape=vals.shape)
+            return bmi_pb2.GetValueAtIndicesResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
         if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueAtIndicesResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()),
-                                                     shape=vals.shape)
+            return bmi_pb2.GetValueAtIndicesResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
         raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
 
     def setValue(self, request, context):
         if request.HasField("values_int"):
-            array = numpy.reshape(numpy.array(request.values_int.values, dtype=numpy.int32), request.shape)
-            self.bmi_model_.set_value(request.name, array)
+            self.bmi_model_.set_value(request.name, request.values_int.values)
         if request.HasField("values_float"):
-            array = numpy.reshape(numpy.array(request.values_float.values, dtype=numpy.float32), request.shape)
-            self.bmi_model_.set_value(request.name, array)
+            self.bmi_model_.set_value(request.name, request.values_float.values)
         if request.HasField("values_double"):
-            array = numpy.reshape(numpy.array(request.values_double.values, dtype=numpy.float64), request.shape)
-            self.bmi_model_.set_value(request.name, array)
+            self.bmi_model_.set_value(request.name, request.values_double.values)
         return bmi_pb2.Empty()
 
     def setValuePtr(self, request, context):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def setValueAtIndices(self, request, context):
-        index_size = request.index_size
-        num_indices = int(len(request.indices) / index_size)
-        index_array = numpy.reshape(request.indices, newshape=(num_indices, index_size))
+        index_array = request.indices
         if request.HasField("values_int"):
             array = numpy.array(request.values_int.values, dtype=numpy.int32)
             self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
@@ -183,15 +157,6 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getGridZ(self, request, context):
         return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_z(request.grid_id))
-
-    # def getGridCellCount(self, request, context):
-    #     return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_cell_count(request.grid_id))
-    #
-    # def getGridPointCount(self, request, context):
-    #     return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_point_count(request.grid_id))
-    #
-    # def getGridVertexCount(self, request, context):
-    #     return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_vertex_count(request.grid_id))
 
     def getGridConnectivity(self, request, context):
         return bmi_pb2.GetGridConnectivityResponse(links=self.bmi_model_.get_grid_connectivity(request.grid_id))

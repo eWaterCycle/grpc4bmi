@@ -24,11 +24,6 @@ message GetComponentNameResponse
     string name = 1;
 }
 
-message GetVarNameCountResponse
-{
-    int32 count = 1;
-}
-
 message GetVarNamesResponse
 {
     repeated string names = 1;
@@ -101,14 +96,12 @@ message GetValueResponse
         FloatArrayMessage values_float = 2;
         DoubleArrayMessage values_double = 3;
     }
-    repeated int32 shape = 4 [packed = true];
 }
 
 message GetValueAtIndicesRequest
 {
     string name = 1;
     repeated int32 indices = 2 [packed = true];
-    int32 index_size = 3;
 }
 
 message GetValueAtIndicesResponse
@@ -118,7 +111,6 @@ message GetValueAtIndicesResponse
         FloatArrayMessage values_float = 2;
         DoubleArrayMessage values_double = 3;
     }
-    repeated int32 shape = 4 [packed = true];
 }
 
 message SetValueRequest
@@ -129,7 +121,6 @@ message SetValueRequest
         FloatArrayMessage values_float = 3;
         DoubleArrayMessage values_double = 4;
     }
-    repeated int32 shape = 5 [packed = true];
 }
 
 message SetValuePtrRequest
@@ -147,7 +138,6 @@ message SetValueAtIndicesRequest
         FloatArrayMessage values_float = 4;
         DoubleArrayMessage values_double = 5;
     }
-    int32 index_size = 6;
 }
 
 message GridRequest
@@ -190,11 +180,6 @@ message GetGridPointsResponse
     repeated double coordinates = 1 [packed = true];
 }
 
-message GetCountResponse
-{
-    int32 count = 1;
-}
-
 message GetGridConnectivityResponse
 {
     repeated int32 links = 1 [packed = true];
@@ -212,11 +197,8 @@ service BmiService {
     rpc updateUntil(UpdateUntilRequest) returns(Empty) {}
     rpc updateFrac(UpdateFracRequest) returns(Empty) {}
     rpc finalize(Empty) returns(Empty) {}
-    rpc runModel(Empty) returns(Empty) {}
-    
+
     rpc getComponentName(Empty) returns(GetComponentNameResponse) {}
-    rpc getInputVarNameCount(Empty) returns(GetVarNameCountResponse) {}
-    rpc getOutputVarNameCount(Empty) returns(GetVarNameCountResponse) {}
     rpc getInputVarNames(Empty) returns(GetVarNamesResponse) {}
     rpc getOutputVarNames(Empty) returns(GetVarNamesResponse) {}
 
@@ -233,11 +215,9 @@ service BmiService {
     rpc getVarNBytes(GetVarRequest) returns(GetVarNBytesResponse) {}
 
     rpc getValue(GetVarRequest) returns(GetValueResponse) {}
-    rpc getValuePtr(GetVarRequest) returns(Empty) {}
     rpc getValueAtIndices(GetValueAtIndicesRequest) returns(GetValueAtIndicesResponse) {}
 
     rpc setValue(SetValueRequest) returns(Empty) {}
-    rpc setValuePtr(SetValuePtrRequest) returns(Empty) {}
     rpc setValueAtIndices(SetValueAtIndicesRequest) returns(Empty) {}
 
     rpc getGridSize(GridRequest) returns(GetGridSizeResponse) {}
@@ -249,9 +229,6 @@ service BmiService {
     rpc getGridX(GridRequest) returns(GetGridPointsResponse) {}
     rpc getGridY(GridRequest) returns(GetGridPointsResponse) {}
     rpc getGridZ(GridRequest) returns(GetGridPointsResponse) {}
-    rpc getGridCellCount(GridRequest) returns(GetCountResponse) {}
-    rpc getGridPointCount(GridRequest) returns(GetCountResponse) {}
-    rpc getGridVertexCount(GridRequest) returns(GetCountResponse) {}
     rpc getGridConnectivity(GridRequest) returns(GetGridConnectivityResponse) {}
     rpc getGridOffset(GridRequest) returns(GetGridOffsetResponse) {}
 }
