@@ -90,18 +90,19 @@ class BmiR(Bmi):
 
     # setter
     def set_value(self, var_name, src):
-        # TODO rethrow R exception so grpc also throws up, now it is silently ignored
-        if src.dtype == np.int32:
-            rsrc = robjects.IntVector(src)
+        val = np.array(src)
+        if val.dtype == np.int32:
+            rsrc = robjects.IntVector(val)
         else:
-            rsrc = robjects.FloatVector(src)
+            rsrc = robjects.FloatVector(val)
         self.model['setValue'](var_name, rsrc)
 
     def set_value_at_indices(self, var_name, indices, src):
-        if src.dtype == np.int32:
-            rsrc = robjects.IntVector(src)
+        val = np.array(src)
+        if val.dtype == np.int32:
+            rsrc = robjects.IntVector(val)
         else:
-            rsrc = robjects.FloatVector(src)
+            rsrc = robjects.FloatVector(val)
         rindices = robjects.IntVector(indices)
         self.model['setValueAtIndices'](var_name, rindices, rsrc)
 
