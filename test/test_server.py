@@ -3,9 +3,10 @@ import logging
 import numpy
 import numpy.random
 import pytest
-from heat import BmiHeat
+
 
 from grpc4bmi.bmi_grpc_server import BmiServer
+from test.flatbmiheat import FlatBmiHeat
 
 """
 Unit tests for the BMI server class. Every test performs cross-checking with a local instance of the BMI heat toy model.
@@ -40,8 +41,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiServer("BmiHeat", "heat"), BmiHeat()
-    local = BmiHeat()
+    server, local = BmiServer(FlatBmiHeat()), FlatBmiHeat()
     if init:
         req = RequestStub()
         numpy.random.seed(0)
@@ -60,13 +60,6 @@ def test_server_start():
 def test_component_name():
     server, local = make_bmi_classes()
     assert server.getComponentName(None, None).name == local.get_component_name()
-    del server
-
-
-def test_varname_counts():
-    server, local = make_bmi_classes()
-    assert server.getInputVarNameCount(None, None).count == len(local.get_input_var_names())
-    assert server.getOutputVarNameCount(None, None).count == len(local.get_output_var_names())
     del server
 
 
@@ -173,8 +166,7 @@ def test_get_var_values():
     varname = local.get_output_var_names()[0]
     setattr(request, "name", varname)
     values = local.get_value(varname)
-    assert tuple(server.getValue(request, None).shape) == values.shape
-    assert numpy.array_equal(numpy.reshape(server.getValue(request, None).values_double.values, values.shape), values)
+    numpy.testing.assert_allclose(numpy.reshape(server.getValue(request, None).values_double.values, values.shape), values)
 
 
 def test_get_var_ptr():
@@ -195,7 +187,7 @@ def test_get_vals_indices():
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 1)
     values = local.get_value_at_indices(varname, indices)
-    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double.values, values.flatten())
+    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
 def test_get_vals_indices_2d():
@@ -207,7 +199,7 @@ def test_get_vals_indices_2d():
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 2)
     values = local.get_value_at_indices(varname, indices)
-    assert numpy.array_equal(server.getValueAtIndices(request, None).values_double.values, values.flatten())
+    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
 def test_set_var_values():
@@ -222,8 +214,7 @@ def test_set_var_values():
     delattr(request, "values_double")
     delattr(request, "shape")
     response = server.getValue(request, None)
-    values_copy = numpy.reshape(response.values_double.values, response.shape)
-    assert numpy.array_equal(values, values_copy)
+    numpy.testing.assert_allclose(values, response.values_double.values)
 
 
 def test_set_values_indices():
@@ -240,7 +231,7 @@ def test_set_values_indices():
     delattr(request, "values_double")
     response = server.getValueAtIndices(request, None)
     values_copy = numpy.array(response.values_double.values)
-    assert numpy.array_equal(values, values_copy)
+    numpy.testing.assert_allclose(values, values_copy)
 
 
 def test_get_grid_size():

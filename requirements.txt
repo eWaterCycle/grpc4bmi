@@ -1,5 +1,8 @@
 setuptools
+googleapis-common-protos
 grpcio
+grpcio-tools
+grpcio-reflection
 numpy
 docutils
 protobuf
@@ -10,5 +13,4 @@ scipy
 docker
 pytest
 futures
-git+https://github.com/eWaterCycle/bmi-python.git
-git+https://github.com/csdms/standard_names.git
+https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
