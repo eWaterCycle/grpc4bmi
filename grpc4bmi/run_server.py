@@ -45,13 +45,15 @@ def interrupt(signum, frame):
     kill_server = True
 
 
-def build(class_name, module_name, package_name) -> Bmi:
+def build(class_name, module_name, package_name):
+    # type: (str, str, str) -> Bmi
     """Build a model based on it's location and name"""
     class_ = getattr(importlib.import_module(module_name, package_name), class_name)
     return class_()
 
 
-def build_r(class_name, module_name) -> Bmi:
+def build_r(class_name, module_name):
+    # type: (str, str) -> Bmi
     """"""
     return BmiR(class_name, module_name)
 

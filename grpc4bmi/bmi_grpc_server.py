@@ -15,7 +15,8 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     implementation by assuming a default constructor with no arguments.
     """
 
-    def __init__(self, model: Bmi):
+    def __init__(self, model):
+        # type: (BmiServer, Bmi) -> None
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         self.bmi_model_ = model
 
