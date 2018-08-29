@@ -45,17 +45,36 @@ def interrupt(signum, frame):
     kill_server = True
 
 
-def build(class_name, module_name, package_name):
-    # type: (str, str, str) -> Bmi
+def build(name, path):
+    # type: (str, str) -> Bmi
     """Build a model based on it's location and name"""
+    if path is not None:
+        sys.path.append(path)
+    parts = "" if name is None else name.split('.')
+    class_name = parts[-1] if len(parts) > 0 else ""
+    if not class_name:
+        class_name = os.environ.get(ENV_BMI_CLASS, "")
+    if not class_name:
+        raise ValueError("Missing bmi implementation: class could not be derived from name input %s or environment "
+                         "variable %s" % (name, ENV_BMI_CLASS))
+    module_name = parts[-2] if len(parts) > 1 else ""
+    if not module_name:
+        module_name = os.environ.get(ENV_BMI_MODULE, "")
+    if not module_name:
+        raise ValueError("Missing module name: module could not be derived from name input %s or environment "
+                         "variable %s" % (name, ENV_BMI_MODULE))
+    package_name = '.'.join(parts[:-2]) if len(parts) > 2 else None
+
     class_ = getattr(importlib.import_module(module_name, package_name), class_name)
     return class_()
 
 
-def build_r(class_name, module_name):
+def build_r(class_name, source_fn):
     # type: (str, str) -> Bmi
     """"""
-    return BmiR(class_name, module_name)
+    if not BmiR:
+        raise ValueError('Missing R dependencies, install with `pip install grpc4bmi[R]')
+    return BmiR(class_name, source_fn)
 
 
 def serve(model, port):
@@ -98,31 +117,11 @@ def main():
                         help="Language in which BMI implementation class is written")
 
     args = parser.parse_args()
-    if args.path is not None:
-        sys.path.append(args.path)
-
-    parts = "" if args.name is None else args.name.split('.')
-    class_name = parts[-1] if len(parts) > 0 else ""
-    if not class_name:
-        class_name = os.environ.get(ENV_BMI_CLASS, "")
-    if not class_name:
-        raise ValueError("Missing bmi implementation: class could not be derived from name input %s or environment "
-                         "variable %s" % (args.name, ENV_BMI_CLASS))
-    module_name = parts[-2] if len(parts) > 1 else ""
-    if not module_name:
-        module_name = os.environ.get(ENV_BMI_MODULE, "")
-    if not module_name:
-        raise ValueError("Missing module name: module could not be derived from name input %s or environment "
-                         "variable %s" % (args.name, ENV_BMI_MODULE))
-    package_name = '.'.join(parts[:-2]) if len(parts) > 2 else None
 
     if args.language == "R":
-        if BmiR:
-            model = build_r(class_name, module_name)
-        else:
-            raise ValueError('Missing R dependencies, install with `pip install grpc4bmi[R]')
+        model = build_r(args.name, args.path)
     else:
-        model = build(class_name, module_name, package_name)
+        model = build(args.name, args.path)
 
     port = args.port
     if port == 0:

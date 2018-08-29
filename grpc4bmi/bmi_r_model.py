@@ -3,22 +3,22 @@ import rpy2.robjects as robjects
 import numpy as np
 
 
-def build_model(class_name, module=""):
+def build_model(class_name, source_fn=None):
     robjects.r('''
-        build_model = function(class, module="") {
-            if (module != "") {
-            source(module)
+        build_model = function(class, source_fn=NULL) {
+            if (!is.null(source_fn)) {
+                source(source_fn)
             }
             return(get(class)$new())
         }
     ''')
-    return robjects.r['build_model'](class_name, module)
+    return robjects.r['build_model'](class_name, source_fn)
 
 
 class BmiR(Bmi):
     """Python Wrapper of a R based sub class of bmi::AbstractBmi"""
-    def __init__(self, class_name, module=""):
-        self.model = build_model(class_name, module + '.r')
+    def __init__(self, class_name, source_fn=None):
+        self.model = build_model(class_name, source_fn)
 
     # base
     def initialize(self, filename):
