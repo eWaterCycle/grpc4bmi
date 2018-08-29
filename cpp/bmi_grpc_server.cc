@@ -1,156 +1,275 @@
 #include "bmi_grpc_server.h"
 
 
-BmiGRPCService::BmiGRPCService(BmiCppBase* const bmi_):bmi(bmi_){}
+BmiGRPCService::BmiGRPCService(Bmi* const bmi_):bmi(bmi_){}
 
 BmiGRPCService::~BmiGRPCService(){}
 
 grpc::Status BmiGRPCService::initialize(grpc::ServerContext* context, const bmi::InitializeRequest* request, bmi::Empty* response)
 {
-    this->bmi->Initialize(request->config_file());
-    return grpc::Status::OK;
+    return BmiGRPCService::translate_status(this->bmi->initialize(request->config_file().c_str()));
 }
 
 grpc::Status BmiGRPCService::update(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response)
 {
-    this->bmi->Update();
-    return grpc::Status::OK;
+    return BmiGRPCService::translate_status(this->bmi->update());
 }
 
 grpc::Status BmiGRPCService::updateUntil(grpc::ServerContext* context, const bmi::UpdateUntilRequest* request, bmi::Empty* response)
 {
-    this->bmi->UpdateUntil(request->until());
-    return grpc::Status::OK;
+    return BmiGRPCService::translate_status(this->bmi->update_until(request->until()));
 }
 
 grpc::Status BmiGRPCService::updateFrac(grpc::ServerContext* context, const bmi::UpdateFracRequest* request, bmi::Empty* response)
 {
-    this->bmi->UpdateFrac(request->frac());
-    return grpc::Status::OK;
+    return BmiGRPCService::translate_status(this->bmi->update_frac(request->frac()));
 }
 
 grpc::Status BmiGRPCService::runModel(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response)
 {
-    this->bmi->runModel();
-    return grpc::Status::OK;
+    return BmiGRPCService::translate_status(this->bmi->run_model());
 }
 
 grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) const
 {
-    response->set_name(this->bmi->GetComponentName());
-    return grpc::Status::OK;
+    char name[2048];
+    int status = this->bmi->get_component_name(name);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_name(std::string(name));
+    return BmiGRPCService::translate_status(status);
 }
 
 grpc::Status BmiGRPCService::getInputVarNameCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNameCountResponse* response) const
 {
-    response->set_count(this->bmi->GetInputVarNames().size());
+    // to be removed...
     return grpc::Status::OK;
 }
 
 grpc::Status BmiGRPCService::getOutputVarNameCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNameCountResponse* response) const
 {
-    response->set_count(this->bmi->GetOutputVarNames().size());
+    // to be removed...
     return grpc::Status::OK;
 }
 
 grpc::Status BmiGRPCService::getInputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const
 {
-    std::vector<std::string> input_vars = this->bmi->GetInputVarNames();
-    for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); it++)
+    int count;
+    int status = this->bmi->get_input_var_name_count(&count);
+    if(status == BMI_FAILURE)
     {
-        response->add_names(*it);
+        return BmiGRPCService::translate_status(status);
     }
-    return grpc::Status::OK;
+    char** input_var_names = (char**)malloc(sizeof(char*) * count);
+    char* data = (char*)malloc(sizeof(char) * count * 2048);
+    for(int i = 0; i < count; i++)
+    {
+        input_var_names[i] = data + i * 2048;
+    }
+    status = this->bmi->get_input_var_names(input_var_names);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    for(int i = 0; i < count; i++)
+    {
+        response->add_names(std::string(input_var_names[i]));
+    }
+    free(data);
+    free(input_var_names);
+    return BmiGRPCService::translate_status(status);
 }
 
 grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const
 {
-    std::vector<std::string> output_vars = this->bmi->GetOutputVarNames();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); it++)
+    int count;
+    int status = this->bmi->get_output_var_name_count(&count);
+    if(status == BMI_FAILURE)
     {
-        response->add_names(*it);
+        return BmiGRPCService::translate_status(status);
     }
-    return grpc::Status::OK;
+    char** output_var_names = (char**)malloc(sizeof(char*) * count);
+    char* data = (char*)malloc(sizeof(char) * count * 2048);
+    for(int i = 0; i < count; i++)
+    {
+        output_var_names[i] = data + i * 2048;
+    }
+    status = this->bmi->get_output_var_names(output_var_names);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    for(int i = 0; i < count; i++)
+    {
+        response->add_names(std::string(output_var_names[i]));
+    }
+    free(data);
+    free(output_var_names);
+    return BmiGRPCService::translate_status(status);
 }
 
 grpc::Status BmiGRPCService::getTimeUnits(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeUnitsResponse* response) const
 {
-    response->set_units(this->bmi->GetTimeUnits());
-    return grpc::Status::OK;
+    char units[2048];
+    int status = this->bmi->get_time_units(units);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_units(std::string(units));
+    return BmiGRPCService::translate_status(status);
 }
 
 grpc::Status BmiGRPCService::getTimeStep(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeStepResponse* response) const
 {
-    response->set_interval(this->bmi->GetTimeStep());
-    return grpc::Status::OK;
+    double step;
+    int status = this->bmi->get_time_step(&step);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_interval(step);
+    return BmiGRPCService::translate_status(status);
 }
 
 grpc::Status BmiGRPCService::getCurrentTime(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeResponse* response) const
 {
-    response->set_time(this->bmi->GetCurrentTime());
-    return grpc::Status::OK;
+    double time;
+    int status = this->bmi->get_current_time(&time);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_time(time);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getStartTime(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeResponse* response) const
 {
-    response->set_time(this->bmi->GetStartTime());
-    return grpc::Status::OK;
+    double time;
+    int status = this->bmi->get_start_time(&time);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_time(time);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getEndTime(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeResponse* response) const
 {
-    response->set_time(this->bmi->GetEndTime());
-    return grpc::Status::OK;
+    double time;
+    int status = this->bmi->get_end_time(&time);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_time(time);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getVarGrid(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarGridResponse* response) const
 {
-    response->set_grid_id(this->bmi->GetVarGrid(request->name()));
-    return grpc::Status::OK;
+    int grid_id;
+    int status = this->bmi->get_var_grid(request->name().c_str(), &grid_id);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_grid_id(grid_id);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getVarType(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarTypeResponse* response) const
 {
-    response->set_type(this->bmi->GetVarType(request->name()));
-    return grpc::Status::OK;
+    char type[2048];
+    int status = this->bmi->get_var_type(request->name().c_str(), type);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_type(std::string(type));
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getVarItemSize(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarItemSizeResponse* response) const
 {
-    response->set_size(this->bmi->GetVarItemSize(request->name()));
-    return grpc::Status::OK;
+    int size;
+    int status = this->bmi->get_var_itemsize(request->name().c_str(), &size);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_size(size);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getVarUnits(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarUnitsResponse* response) const
 {
-    response->set_units(this->bmi->GetVarUnits(request->name()));
-    return grpc::Status::OK;
+    char units[2048];
+    int status = this->bmi->get_var_units(request->name().c_str(), units);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_units(std::string(units));
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getVarNBytes(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarNBytesResponse* response) const
 {
-    response->set_nbytes(this->bmi->GetVarNbytes(request->name()));
-    return grpc::Status::OK;
+    int nbytes;
+    int status = this->bmi->get_var_nbytes(request->name().c_str(), &nbytes);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_nbytes(nbytes);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getValue(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetValueResponse* response) const
 {
     char typechar = this->find_type(request->name());
+    int nbytes;
+    int status = this->bmi->get_var_nbytes(request->name().c_str(), &nbytes);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    void* vals = malloc(nbytes);
+    status = this->bmi->get_value(request->name().c_str(), vals);
+    if(status == BMI_FAILURE)
+    {
+        free(vals);
+        return BmiGRPCService::translate_status(status);
+    }
     if (typechar == 'i')
     {
-        std::vector<int> values = this->bmi->GetValue<int>(request->name());
-        response->mutable_values_int()->mutable_values()->Resize(values.size(),0);
-        std::copy(values.begin(), values.end(),response->mutable_values_int()->mutable_values()->begin());
+        int size = nbytes/sizeof(int);
+        response->mutable_values_int()->mutable_values()->Resize(size,(int)0);
+        std::copy((int*)vals, (int*)vals + size, response->mutable_values_int()->mutable_values()->begin());
     }
     if (typechar == 'f')
     {
-        std::vector<float> values = this->bmi->GetValue<float>(request->name());
-        response->mutable_values_float()->mutable_values()->Resize(values.size(),0);
-        std::copy(values.begin(), values.end(),response->mutable_values_float()->mutable_values()->begin());
+        int size = nbytes/sizeof(float);
+        response->mutable_values_float()->mutable_values()->Resize(size,(float)0);
+        std::copy((float*)vals, (float*)vals + size, response->mutable_values_float()->mutable_values()->begin());
     }
     if (typechar == 'd')
     {
-        std::vector<double> values = this->bmi->GetValue<double>(request->name());
-        response->mutable_values_double()->mutable_values()->Resize(values.size(),0);
-        std::copy(values.begin(), values.end(),response->mutable_values_double()->mutable_values()->begin());
+        int size = nbytes/sizeof(double);
+        response->mutable_values_double()->mutable_values()->Resize(size,(double)0);
+        std::copy((double*)vals, (double*)vals + size, response->mutable_values_double()->mutable_values()->begin());
     }
-    return grpc::Status::OK;
+    free(vals);
+    return BmiGRPCService::translate_status(status);
 }
 grpc::Status BmiGRPCService::getValuePtr(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::Empty* response)
 {
-    throw std::exception();
+    return grpc::Status(grpc::StatusCode::NOTIMPLEMENTED);
 }
 grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext* context, const bmi::GetValueAtIndicesRequest* request, bmi::GetValueAtIndicesResponse* response) const
 {
@@ -342,4 +461,17 @@ char BmiGRPCService::find_type(const std::string& varname) const
         return 'd';
     }
     throw std::invalid_argument("Could not match the variable type " + vartype + " of variable " + varname + "to integer, float or double");
+}
+
+grpc::Status BmiGRPCService::translate_status(int status)
+{
+    if(status == BMI_SUCCESS)
+    {
+        return grpc::Status::OK;
+    }
+    if(status == BMI_FAILURE)
+    {
+        return grpc::Status::CANCELLED;
+    }
+    return grpc::Status::UNKNOWN;
 }

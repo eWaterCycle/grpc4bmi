@@ -2,12 +2,12 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
-#include "bmi_cpp_base.h"
+#include "bmi.h"
 
 class BmiGRPCService final: public grpc::Service
 {
     public:
-        BmiGRPCService(BmiCppBase* const bmi_);
+        BmiGRPCService(Bmi* const bmi_);
         ~BmiGRPCService();
         grpc::Status initialize(grpc::ServerContext* context, const bmi::InitializeRequest* request, bmi::Empty* response);
         grpc::Status update(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response);
@@ -50,8 +50,9 @@ class BmiGRPCService final: public grpc::Service
         grpc::Status getGridConnectivity(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridConnectivityResponse* response) const;
         grpc::Status getGridOffset(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridOffsetResponse* response) const;
     private:
-        BmiCppBase* const bmi;
+        Bmi* const bmi;
         char find_type(const std::string& varname) const;
+        static grpc::Status translate_status(int);
 };
 
 #endif
