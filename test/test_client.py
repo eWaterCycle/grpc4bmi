@@ -3,11 +3,10 @@ import logging
 import numpy
 import numpy.random
 import pytest
-from heat import BmiHeat
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient
-
+from test.flatbmiheat import FlatBmiHeat
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -33,8 +32,8 @@ class ServerWrapper(object):
 
 
 def make_bmi_classes(init=False):
-    client = BmiClient(stub=ServerWrapper(BmiServer(BmiHeat())))
-    local = BmiHeat()
+    client = BmiClient(stub=ServerWrapper(BmiServer(FlatBmiHeat())))
+    local = FlatBmiHeat()
     if init:
         numpy.random.seed(0)
         client.initialize(None)
@@ -147,7 +146,9 @@ def test_get_var_nbytes():
 def test_get_var_values():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
-    assert numpy.array_equal(client.get_value(varname), local.get_value(varname))
+    actual = client.get_value(varname)
+    desired = local.get_value(varname)
+    numpy.testing.assert_allclose(actual, desired)
     del client
 
 
@@ -162,16 +163,16 @@ def test_get_vals_indices():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     indices = numpy.array([29, 8, 19, 81])
-    assert numpy.array_equal(client.get_value_at_indices(varname, indices),
-                             local.get_value_at_indices(varname, indices))
+    numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices),
+                                  local.get_value_at_indices(varname, indices))
 
 
 def test_get_vals_indices_2d():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     indices = numpy.array([[0, 1], [1, 0], [2, 2]])
-    assert numpy.array_equal(client.get_value_at_indices(varname, indices),
-                             local.get_value_at_indices(varname, indices))
+    numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices),
+                                  local.get_value_at_indices(varname, indices))
 
 
 def test_set_var_values():
@@ -179,7 +180,7 @@ def test_set_var_values():
     varname = local.get_output_var_names()[0]
     values = 0.123 * local.get_value(varname)
     client.set_value(varname, values)
-    assert numpy.array_equal(client.get_value(varname), values)
+    numpy.testing.assert_allclose(client.get_value(varname), values)
 
 
 def test_set_values_indices():
@@ -188,7 +189,7 @@ def test_set_values_indices():
     indices = numpy.array([1, 11, 21])
     values = numpy.array([0.123, 4.567, 8.901])
     client.set_value_at_indices(varname, indices, values)
-    assert numpy.array_equal(client.get_value_at_indices(varname, indices), values)
+    assert numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices), values)
 
 
 def test_get_grid_size():

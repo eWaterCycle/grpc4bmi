@@ -3,7 +3,7 @@ import logging
 import numpy
 import numpy.random
 import pytest
-from heat import BmiHeat
+from test.flatbmiheat import FlatBmiHeat
 
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 
@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 def make_bmi_classes(init=False):
     numpy.random.seed(0)
     client = BmiClientSubProcess("heat.BmiHeat")
-    local = BmiHeat()
+    local = FlatBmiHeat()
     if init:
         client.initialize(None)
         local.initialize(None)
