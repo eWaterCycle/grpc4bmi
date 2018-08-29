@@ -249,196 +249,347 @@ grpc::Status BmiGRPCService::getValue(grpc::ServerContext* context, const bmi::G
     if (typechar == 'i')
     {
         int size = nbytes/sizeof(int);
-        response->mutable_values_int()->mutable_values()->Resize(size,(int)0);
+        response->mutable_values_int()->mutable_values()->Resize(size, (int)0);
         std::copy((int*)vals, (int*)vals + size, response->mutable_values_int()->mutable_values()->begin());
     }
     if (typechar == 'f')
     {
         int size = nbytes/sizeof(float);
-        response->mutable_values_float()->mutable_values()->Resize(size,(float)0);
+        response->mutable_values_float()->mutable_values()->Resize(size, (float)0);
         std::copy((float*)vals, (float*)vals + size, response->mutable_values_float()->mutable_values()->begin());
     }
     if (typechar == 'd')
     {
         int size = nbytes/sizeof(double);
-        response->mutable_values_double()->mutable_values()->Resize(size,(double)0);
+        response->mutable_values_double()->mutable_values()->Resize(size, (double)0);
         std::copy((double*)vals, (double*)vals + size, response->mutable_values_double()->mutable_values()->begin());
     }
     free(vals);
     return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getValuePtr(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::Empty* response)
 {
     return grpc::Status(grpc::StatusCode::NOTIMPLEMENTED);
 }
+
 grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext* context, const bmi::GetValueAtIndicesRequest* request, bmi::GetValueAtIndicesResponse* response) const
 {
     char typechar = this->find_type(request->name());
     std::vector<int> indices(request->indices().begin(),request->indices().end());
     if (typechar == 'i')
     {
-        std::vector<int> values = this->bmi->GetValueAtIndices<int>(request->name(), indices);
+        std::vector<int> values(indices.size());
+        this->bmi->get_value_at_indices(request->name().c_str(), (void*)values.data(), indices.data(), indices.size());
         response->mutable_values_int()->mutable_values()->Resize(values.size(), 0);
         std::copy(values.begin(), values.end(),response->mutable_values_int()->mutable_values()->begin());
     }
     if (typechar == 'f')
     {
-        std::vector<float> values = this->bmi->GetValueAtIndices<float>(request->name(), indices);
-        response->mutable_values_float()->mutable_values()->Resize(values.size(), 0);
-        std::copy(values.begin(), values.end(),response->mutable_values_float()->mutable_values()->begin());
-    }
-    if (typechar == 'd')
-    {
-        std::vector<double> values = this->bmi->GetValueAtIndices<double>(request->name(), indices);
-        response->mutable_values_double()->mutable_values()->Resize(values.size(), 0);
-        std::copy(values.begin(), values.end(),response->mutable_values_double()->mutable_values()->begin());
-    }
-    return grpc::Status::OK;
-}
-grpc::Status BmiGRPCService::setValue(grpc::ServerContext* context, const bmi::SetValueRequest* request, bmi::Empty* response)
-{
-    char typechar = this->find_type(request->name());
-    if (typechar == 'i')
-    {
-        std::vector<int> values(request->values_int().values().size());
-        std::copy(request->values_int().values().begin(),request->values_int().values().end(),values.begin());
-        this->bmi->SetValue<int>(request->name(), values);
-    }
-    if (typechar == 'f')
-    {
-        std::vector<float> values(request->values_float().values().size());
-        std::copy(request->values_float().values().begin(), request->values_float().values().end(),values.begin());
-        this->bmi->SetValue<float>(request->name(), values);
-    }
-    if (typechar == 'd')
-    {
-        std::vector<double> values(request->values_double().values().size());
-        std::copy(request->values_double().values().begin(), request->values_double().values().end(),values.begin());
-        this->bmi->SetValue<double>(request->name(), values);
-    }
-    return grpc::Status::OK;
-}
-grpc::Status BmiGRPCService::setValuePtr(grpc::ServerContext* context, const bmi::SetValuePtrRequest* request, bmi::Empty* response)
-{
-    throw std::exception();
-}
-grpc::Status BmiGRPCService::setValueAtIndices(grpc::ServerContext* context, const bmi::SetValueAtIndicesRequest* request, bmi::Empty* response)
-{
-    char typechar = this->find_type(request->name());
-    std::vector<int> indices(request->indices().begin(),request->indices().end());
-    if (typechar == 'i')
-    {
-        std::vector<int> values(indices.size());
-        std::copy(request->values_int().values().begin(), request->values_int().values().end(),values.begin());
-        this->bmi->SetValueAtIndices<int>(request->name(), indices, values);
-    }
-    if (typechar == 'f')
-    {
         std::vector<float> values(indices.size());
-        std::copy(request->values_float().values().begin(), request->values_float().values().end(),values.begin());
-        this->bmi->SetValueAtIndices<float>(request->name(), indices, values);
+        this->bmi->get_value_at_indices(request->name().c_str(), (void*)values.data(), indices.data(), indices.size());
+        response->mutable_values_float()->mutable_values()->Resize(values.size(), 0);
+        std::copy(values.begin(), values.end(),response->mutable_values_int()->mutable_values()->begin());
     }
     if (typechar == 'd')
     {
         std::vector<double> values(indices.size());
-        std::copy(request->values_double().values().begin(), request->values_double().values().end(),values.begin());
-        this->bmi->SetValueAtIndices<double>(request->name(), indices, values);
+        this->bmi->get_value_at_indices(request->name().c_str(), (void*)values.data(), indices.data(), indices.size());
+        response->mutable_values_double()->mutable_values()->Resize(values.size(), 0);
+        std::copy(values.begin(), values.end(),response->mutable_values_int()->mutable_values()->begin());
     }
     return grpc::Status::OK;
 }
+
+grpc::Status BmiGRPCService::setValue(grpc::ServerContext* context, const bmi::SetValueRequest* request, bmi::Empty* response)
+{
+    char typechar = this->find_type(request->name());
+    int status = BMI_FAILURE;
+    if (typechar == 'i')
+    {
+        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_int().data());
+    }
+    if (typechar == 'f')
+    {
+        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_float().data());
+    }
+    if (typechar == 'd')
+    {
+        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_double().data());
+    }
+    return BmiGRPCService::translate_status(status);
+}
+
+grpc::Status BmiGRPCService::setValuePtr(grpc::ServerContext* context, const bmi::SetValuePtrRequest* request, bmi::Empty* response)
+{
+    return grpc::Status(grpc::StatusCode::NOTIMPLEMENTED);
+}
+
+grpc::Status BmiGRPCService::setValueAtIndices(grpc::ServerContext* context, const bmi::SetValueAtIndicesRequest* request, bmi::Empty* response)
+{
+    char typechar = this->find_type(request->name());
+    std::vector<int> indices(request->indices().begin(),request->indices().end());
+    const void* values;
+    if (typechar == 'i')
+    {
+        values = (const void*)request->values_int().values().data();
+    }
+    if (typechar == 'f')
+    {
+        values = (const void*)request->values_float().values().data();
+    }
+    if (typechar == 'd')
+    {
+        values = (const void*)request->values_double().values().data();
+    }
+    return translate_status(this->bmi->set_value_at_indices(request->name().c_str(), indices.data(), indices.size(), values));
+}
+
 grpc::Status BmiGRPCService::getGridSize(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridSizeResponse* response) const
 {
-    response->set_size(this->bmi->GetGridSize(request->grid_id()));
-    return grpc::Status::OK;
+    int size;
+    int status = this->bmi->get_grid_size(request->grid_id(), &size);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_size(size);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridType(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridTypeResponse* response) const
 {
-    response->set_type(this->bmi->GetGridType(request->grid_id()));
-    return grpc::Status::OK;
+    char type[2048];
+    int status = this->bmi->get_grid_type(request->grid_id(), type);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_type(std::string(type));
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridRank(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridRankResponse* response) const
 {
-    response->set_rank(this->bmi->GetGridRank(request->grid_id()));
-    return grpc::Status::OK;
+    int rank;
+    int status = this->bmi->get_grid_rank(request->grid_id(), &rank);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_rank(rank);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridShape(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridShapeResponse* response) const
 {
-    std::vector<int> shape = this->bmi->GetGridShape(request->grid_id());
-    for(std::vector<int>::const_iterator it = shape.begin(); it != shape.end(); ++it)
+    int rank;
+    int status = this->bmi->get_grid_rank(request->grid_id(), &rank);
+    if(status == BMI_FAILURE)
     {
-        response->add_shape(*it);
+        return BmiGRPCService::translate_status(status);
     }
-    return grpc::Status::OK;
+    int* shape = malloc(rank * sizeof(int));
+    status = this->bmi->get_grid_shape(request->grid_id(), shape);
+    if(status == BMI_FAILURE)
+    {
+        free(shape);
+        return BmiGRPCService::translate_status(status);
+    }
+    for(int i = 0; i < rank; i++)
+    {
+        response->add_shape(shape[i]);
+    }
+    free(shape);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridSpacing(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridSpacingResponse* response) const
 {
-    std::vector<double> spacing = this->bmi->GetGridSpacing(request->grid_id());
-    for(std::vector<double>::const_iterator it = spacing.begin(); it != spacing.end(); ++it)
+    int rank;
+    int status = this->bmi->get_grid_rank(request->grid_id(), &rank);
+    if(status == BMI_FAILURE)
     {
-        response->add_spacing(*it);
+        return BmiGRPCService::translate_status(status);
     }
-    return grpc::Status::OK;
+    int* spacing = malloc(rank * sizeof(double));
+    status = this->bmi->get_grid_spacing(request->grid_id(), spacing);
+    if(status == BMI_FAILURE)
+    {
+        free(spacing);
+        return BmiGRPCService::translate_status(status);
+    }
+    for(int i = 0; i < rank; i++)
+    {
+        response->add_spacing(spacing[i]);
+    }
+    free(spacing);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridOrigin(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridOriginResponse* response) const
 {
-    std::vector<double> spacing = this->bmi->GetGridSpacing(request->grid_id());
-    for(std::vector<double>::const_iterator it = spacing.begin(); it != spacing.end(); ++it)
+    int rank;
+    int status = this->bmi->get_grid_rank(request->grid_id(), &rank);
+    if(status == BMI_FAILURE)
     {
-        response->add_origin(*it);
+        return BmiGRPCService::translate_status(status);
     }
-    return grpc::Status::OK;
+    int* origin = malloc(rank * sizeof(double));
+    status = this->bmi->get_grid_origin(request->grid_id(), origin);
+    if(status == BMI_FAILURE)
+    {
+        free(origin);
+        return BmiGRPCService::translate_status(status);
+    }
+    for(int i = 0; i < rank; i++)
+    {
+        response->add_origin(origin[i]);
+    }
+    free(origin);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridX(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) const
 {
-    std::vector<double> x_coords = this->bmi->GetGridX(request->grid_id());
-    response->mutable_coordinates()->Resize(x_coords.size(), 0);
-    std::copy(x_coords.begin(), x_coords.end(), response->mutable_coordinates()->begin());
-    return grpc::Status::OK;
+    int d[3];
+    int status = this->get_grid_dimensions(request->grid_id(), d);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    int size = d[0];
+    double* vals = (double*)malloc(size*sizeof(double));
+    status = this->bmi->get_grid_x(request->grid_id(), vals);
+    if(status == BMI_FAILURE)
+    {
+        free(vals);
+        return BmiGRPCService::translate_status(status);
+    }
+    response->mutable_coordinates()->Resize(size, 0);
+    std::copy(vals, vals + size, response->mutable_coordinates()->begin());
+    free(vals);
+    return BmiGRPCService::translate_status(status);
 }
 grpc::Status BmiGRPCService::getGridY(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) const
 {
-    std::vector<double> y_coords = this->bmi->GetGridY(request->grid_id());
-    response->mutable_coordinates()->Resize(y_coords.size(), 0);
-    std::copy(y_coords.begin(), y_coords.end(), response->mutable_coordinates()->begin());
-    return grpc::Status::OK;
+    int d[3];
+    int status = this->get_grid_dimensions(request->grid_id(), d);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    int size = d[1];
+    double* vals = (double*)malloc(size*sizeof(double));
+    status = this->bmi->get_grid_y(request->grid_id(), vals);
+    if(status == BMI_FAILURE)
+    {
+        free(vals);
+        return BmiGRPCService::translate_status(status);
+    }
+    response->mutable_coordinates()->Resize(size, 0);
+    std::copy(vals, vals + size, response->mutable_coordinates()->begin());
+    free(vals);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridZ(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) const
 {
-    std::vector<double> z_coords = this->bmi->GetGridZ(request->grid_id());
-    response->mutable_coordinates()->Resize(z_coords.size(), 0);
-    std::copy(z_coords.begin(), z_coords.end(), response->mutable_coordinates()->begin());
-    return grpc::Status::OK;
+    int d[3];
+    int status = this->get_grid_dimensions(request->grid_id(), d);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    int size = d[2];
+    double* vals = (double*)malloc(size*sizeof(double));
+    status = this->bmi->get_grid_z(request->grid_id(), vals);
+    if(status == BMI_FAILURE)
+    {
+        free(vals);
+        return BmiGRPCService::translate_status(status);
+    }
+    response->mutable_coordinates()->Resize(size, 0);
+    std::copy(vals, vals + size, response->mutable_coordinates()->begin());
+    free(vals);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridCellCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const
 {
-    response->set_count(this->bmi->GetGridCellCount(request->grid_id()));
-    return grpc::Status::OK;
+    int count;
+    int status = this->bmi->get_grid_cell_count(request->grid_id(), &count);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_count(count);
+    return BmiGRPCService::translate_status(status);
 }
 grpc::Status BmiGRPCService::getGridPointCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const
 {
-    response->set_count(this->bmi->GetGridPointCount(request->grid_id()));
-    return grpc::Status::OK;
+    int count;
+    int status = this->bmi->get_grid_point_count(request->grid_id(), &count);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_count(count);
+    return BmiGRPCService::translate_status(status);
 }
 grpc::Status BmiGRPCService::getGridVertexCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const
 {
-    response->set_count(this->bmi->GetGridVertexCount(request->grid_id()));
-    return grpc::Status::OK;
+    int count;
+    int status = this->bmi->get_grid_vertex_count(request->grid_id(), &count);
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    response->set_count(count);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridConnectivity(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridConnectivityResponse* response) const
 {
-    std::vector<int> links = this->bmi->GetGridConnectivity(request->grid_id());
-    response->mutable_links()->Resize(links.size(), 0);
-    std::copy(links.begin(), links.end(), response->mutable_links()->begin());
-    return grpc::Status::OK;
+    int size;
+    int status = this->bmi->get_grid_cell_count(request->grid_id(), &size);
+    size *= 3; // TODO: Figure out how to retrieve cell types to get the total storage size, this is only for triangles...
+    if(status == BMI_FAILURE)
+    {
+        return BmiGRPCService::translate_status(status);
+    }
+    int* links = (int*)malloc(size * sizeof(int));
+    status = this->bmi->get_grid_connectivity(request->grid_id(), links);
+    if(status == BMI_FAILURE)
+    {
+        free(links);
+        return BmiGRPCService::translate_status(status);
+    }
+    response->mutable_links()->Resize(size, 0);
+    std::copy(links, links + size, response->mutable_links()->begin());
+    free(links);
+    return BmiGRPCService::translate_status(status);
 }
+
 grpc::Status BmiGRPCService::getGridOffset(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridOffsetResponse* response) const
 {
-    std::vector<double> origin = this->bmi->GetGridOrigin(request->grid_id());
-    for(std::vector<double>::const_iterator it = origin.begin(); it != origin.end(); ++it)
+    int size;
+    int status = this->bmi->get_grid_size(request->grid_id(), &size);
+    if(status == BMI_FAILURE)
     {
-        response->add_offsets(*it);
+        return BmiGRPCService::translate_status(status);
     }
-    return grpc::Status::OK;
+    double* offsets = (double*)malloc(size * sizeof(double));
+    status = this->bmi->get_grid_offset(request->grid_id(), offsets);
+    if(status == BMI_FAILURE)
+    {
+        free(offsets);
+        return BmiGRPCService::translate_status(status);
+    }
+    response->mutable_links()->Resize(size, 0);
+    std::copy(offsets, offsets + size, response->mutable_links()->begin());
+    free(offsets);
+    return BmiGRPCService::translate_status(status);
 }
 
 char BmiGRPCService::find_type(const std::string& varname) const
@@ -461,6 +612,53 @@ char BmiGRPCService::find_type(const std::string& varname) const
         return 'd';
     }
     throw std::invalid_argument("Could not match the variable type " + vartype + " of variable " + varname + "to integer, float or double");
+}
+
+int BmiGRPCService::get_grid_dimensions(int grid_id, int* vec3d) const
+{
+    int rank;
+    int status = this->bmi->get_grid_rank(request->grid_id(), &rank);
+    if(status == BMI_FAILURE)
+    {
+        return status
+    }
+    int* shape = malloc(rank * sizeof(int));
+    status = this->bmi->get_grid_shape(request->grid_id(), shape);
+    if(status == BMI_FAILURE)
+    {
+        free(shape);
+        return status
+    }
+    char type[2048];
+    status = this->bmi->get_grid_type(request->grid_id(), type);
+    if(status == BMI_FAILURE)
+    {
+        free(shape);
+        return status
+    }
+    std::string typestr(type);
+    if(typestr == "uniform_rectilinear" or typestr == "rectilinear")
+    {
+        vec3d[0] = shape[0];
+        vec3d[1] = shape[1];
+        if(rank > 2)
+        {
+            vec3d[2] = shape[2];
+        }
+        else
+        {
+            vec3d[3] = 1;
+        }
+    }
+    else
+    {
+        int size;
+        status = this->bmi->get_grid_size(request->grid_id(), &size);
+        vec3d[0] = size;
+        vec3d[1] = size;
+        vec3d[2] = size;
+    }
+    return status;
 }
 
 grpc::Status BmiGRPCService::translate_status(int status)
