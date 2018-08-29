@@ -10,13 +10,6 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-package_data = {}
-
-directories = ["grpc4bmi"]
-for d in directories:
-    files = [os.path.join(d, f) for f in os.listdir(d) if os.path.isfile(os.path.join(d, f))]
-    package_data[d] = files
-
 setup(name="grpc4bmi",
       version="0.1.3",
       author="Gijs van den Oord",
@@ -27,7 +20,7 @@ setup(name="grpc4bmi",
       packages=find_packages(),
       package_data=package_data,
       include_package_data=True,
-      long_description=open("README.md").read(),
+      long_description=read("README.md"),
       entry_points={"console_scripts": [
           "run-bmi-server =  grpc4bmi.run_server:main"
       ]},

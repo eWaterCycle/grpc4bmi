@@ -43,5 +43,14 @@ mymodel = BmiClientDocker(<IMAGE>,<PORT>)
 
 ```
 will launch a docker container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
+
+## Development: generating the grpc code
+When developers change the proto-file, it is necessary to install grpc tools python packages in your python environment:
+```bash
+pip install grpcio-tools
+pip install googleapis-common-protos
+```
+and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
+After this, simply executing the `proto_gen.sh` script should do the job. 
 ## Future work
 More language bindings are underway.
