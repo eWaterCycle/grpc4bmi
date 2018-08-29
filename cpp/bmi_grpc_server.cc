@@ -307,15 +307,15 @@ grpc::Status BmiGRPCService::setValue(grpc::ServerContext* context, const bmi::S
     int status = BMI_FAILURE;
     if (typechar == 'i')
     {
-        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_int().data());
+        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_int().values().data());
     }
     if (typechar == 'f')
     {
-        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_float().data());
+        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_float().values().data());
     }
     if (typechar == 'd')
     {
-        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_double().data());
+        status = this->bmi->set_value(request->name().c_str(), (const void*)request->values_double().values().data());
     }
     return BmiGRPCService::translate_status(status);
 }
@@ -389,7 +389,7 @@ grpc::Status BmiGRPCService::getGridShape(grpc::ServerContext* context, const bm
     {
         return BmiGRPCService::translate_status(status);
     }
-    int* shape = malloc(rank * sizeof(int));
+    int* shape = (int*)malloc(rank * sizeof(int));
     status = this->bmi->get_grid_shape(request->grid_id(), shape);
     if(status == BMI_FAILURE)
     {
@@ -412,7 +412,7 @@ grpc::Status BmiGRPCService::getGridSpacing(grpc::ServerContext* context, const 
     {
         return BmiGRPCService::translate_status(status);
     }
-    int* spacing = malloc(rank * sizeof(double));
+    double* spacing = (double*)malloc(rank * sizeof(double));
     status = this->bmi->get_grid_spacing(request->grid_id(), spacing);
     if(status == BMI_FAILURE)
     {
@@ -435,7 +435,7 @@ grpc::Status BmiGRPCService::getGridOrigin(grpc::ServerContext* context, const b
     {
         return BmiGRPCService::translate_status(status);
     }
-    int* origin = malloc(rank * sizeof(double));
+    double* origin = (double*)malloc(rank * sizeof(double));
     status = this->bmi->get_grid_origin(request->grid_id(), origin);
     if(status == BMI_FAILURE)
     {
@@ -586,8 +586,8 @@ grpc::Status BmiGRPCService::getGridOffset(grpc::ServerContext* context, const b
         free(offsets);
         return BmiGRPCService::translate_status(status);
     }
-    response->mutable_links()->Resize(size, 0);
-    std::copy(offsets, offsets + size, response->mutable_links()->begin());
+    response->mutable_offsets()->Resize(size, 0);
+    std::copy(offsets, offsets + size, response->mutable_offsets()->begin());
     free(offsets);
     return BmiGRPCService::translate_status(status);
 }
@@ -595,7 +595,10 @@ grpc::Status BmiGRPCService::getGridOffset(grpc::ServerContext* context, const b
 char BmiGRPCService::find_type(const std::string& varname) const
 {
     std::locale loc;
-    std::string vartype = std::tolower(this->bmi->GetVarType(varname), loc);
+    char type[2028];
+    this->bmi->get_var_type(varname.c_str(), type);
+    std::string vartype(type);
+    vartype = std::tolower(vartype, loc);
     std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
     if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
     {
@@ -617,24 +620,24 @@ char BmiGRPCService::find_type(const std::string& varname) const
 int BmiGRPCService::get_grid_dimensions(int grid_id, int* vec3d) const
 {
     int rank;
-    int status = this->bmi->get_grid_rank(request->grid_id(), &rank);
+    int status = this->bmi->get_grid_rank(grid_id, &rank);
     if(status == BMI_FAILURE)
     {
-        return status
+        return status;
     }
-    int* shape = malloc(rank * sizeof(int));
-    status = this->bmi->get_grid_shape(request->grid_id(), shape);
+    int* shape = (int*)malloc(rank * sizeof(int));
+    status = this->bmi->get_grid_shape(grid_id, shape);
     if(status == BMI_FAILURE)
     {
         free(shape);
-        return status
+        return status;
     }
     char type[2048];
-    status = this->bmi->get_grid_type(request->grid_id(), type);
+    status = this->bmi->get_grid_type(grid_id, type);
     if(status == BMI_FAILURE)
     {
         free(shape);
-        return status
+        return status;
     }
     std::string typestr(type);
     if(typestr == "uniform_rectilinear" or typestr == "rectilinear")
@@ -653,7 +656,7 @@ int BmiGRPCService::get_grid_dimensions(int grid_id, int* vec3d) const
     else
     {
         int size;
-        status = this->bmi->get_grid_size(request->grid_id(), &size);
+        status = this->bmi->get_grid_size(grid_id, &size);
         vec3d[0] = size;
         vec3d[1] = size;
         vec3d[2] = size;
