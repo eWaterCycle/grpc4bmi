@@ -9,12 +9,14 @@ import signal
 import socket
 from contextlib import closing
 import importlib
+from concurrent import futures
 
 import grpc
-from concurrent import futures
+from grpc_reflection.v1alpha import reflection
 
 from basic_modeling_interface import Bmi
 
+from . import bmi_pb2
 from . import bmi_pb2_grpc
 from .bmi_grpc_server import BmiServer
 
@@ -58,6 +60,9 @@ def serve(model, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     bmi_pb2_grpc.add_BmiServiceServicer_to_server(model, server)
     server.add_insecure_port("[::]:" + str(port))
+    service_names = [service.full_name for service in bmi_pb2.DESCRIPTOR.services_by_name.values()]
+    service_names.append(reflection.SERVICE_NAME)
+    reflection.enable_server_reflection(service_names, server)
     signal.signal(signal.SIGINT, interrupt)
     signal.signal(signal.SIGABRT, interrupt)
     signal.signal(signal.SIGTERM, interrupt)

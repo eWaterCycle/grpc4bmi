@@ -25,6 +25,7 @@ setup(name="grpc4bmi",
       ]},
       install_requires=[
           "grpcio",
+          "grpcio-reflection",
           "protobuf",
           "numpy",
           'futures; python_version == "2.7"',

@@ -18,7 +18,7 @@ def build_model(class_name, module=""):
 class BmiR(Bmi):
     """Python Wrapper of a R based sub class of bmi::AbstractBmi"""
     def __init__(self, class_name, module=""):
-        self.model = build_model(class_name, module)
+        self.model = build_model(class_name, module + '.r')
 
     # base
     def initialize(self, filename):
@@ -90,6 +90,7 @@ class BmiR(Bmi):
 
     # setter
     def set_value(self, var_name, src):
+        # TODO rethrow R exception so grpc also throws up, now it is silently ignored
         if src.dtype == np.int32:
             rsrc = robjects.IntVector(src)
         else:
