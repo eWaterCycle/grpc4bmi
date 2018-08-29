@@ -514,9 +514,9 @@ int BmiCppExtension::get_grid_connectivity(int id, int* dest) const
     return BMI_SUCCESS;
 }
 
-int BmiCppExtension::get_grid_offset(int id, int* dest) const
+int BmiCppExtension::get_grid_offset(int id, double* dest) const
 {
-    std::vector<int> o = this->get_grid_offset(id);
+    std::vector<double> o = this->get_grid_offset(id);
     memcpy(dest, o.data(), o.size()*sizeof(double));
     return BMI_SUCCESS;
 }

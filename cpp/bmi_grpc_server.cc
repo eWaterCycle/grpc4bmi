@@ -32,7 +32,7 @@ grpc::Status BmiGRPCService::runModel(grpc::ServerContext* context, const bmi::E
 
 grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) const
 {
-    char name[2048];
+    char name[BMI_MAX_COMPONENT_NAME];
     int status = this->bmi->get_component_name(name);
     if(status == BMI_FAILURE)
     {
@@ -63,10 +63,10 @@ grpc::Status BmiGRPCService::getInputVarNames(grpc::ServerContext* context, cons
         return BmiGRPCService::translate_status(status);
     }
     char** input_var_names = (char**)malloc(sizeof(char*) * count);
-    char* data = (char*)malloc(sizeof(char) * count * 2048);
+    char* data = (char*)malloc(sizeof(char) * count * BMI_MAX_VAR_NAME);
     for(int i = 0; i < count; i++)
     {
-        input_var_names[i] = data + i * 2048;
+        input_var_names[i] = data + i * BMI_MAX_VAR_NAME;
     }
     status = this->bmi->get_input_var_names(input_var_names);
     if(status == BMI_FAILURE)
@@ -91,10 +91,10 @@ grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext* context, con
         return BmiGRPCService::translate_status(status);
     }
     char** output_var_names = (char**)malloc(sizeof(char*) * count);
-    char* data = (char*)malloc(sizeof(char) * count * 2048);
+    char* data = (char*)malloc(sizeof(char) * count * BMI_MAX_VAR_NAME);
     for(int i = 0; i < count; i++)
     {
-        output_var_names[i] = data + i * 2048;
+        output_var_names[i] = data + i * BMI_MAX_VAR_NAME;
     }
     status = this->bmi->get_output_var_names(output_var_names);
     if(status == BMI_FAILURE)
@@ -112,7 +112,7 @@ grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext* context, con
 
 grpc::Status BmiGRPCService::getTimeUnits(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeUnitsResponse* response) const
 {
-    char units[2048];
+    char units[BMI_MAX_UNITS_NAME];
     int status = this->bmi->get_time_units(units);
     if(status == BMI_FAILURE)
     {
@@ -184,7 +184,7 @@ grpc::Status BmiGRPCService::getVarGrid(grpc::ServerContext* context, const bmi:
 
 grpc::Status BmiGRPCService::getVarType(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarTypeResponse* response) const
 {
-    char type[2048];
+    char type[BMI_MAX_TYPE_NAME];
     int status = this->bmi->get_var_type(request->name().c_str(), type);
     if(status == BMI_FAILURE)
     {
@@ -208,7 +208,7 @@ grpc::Status BmiGRPCService::getVarItemSize(grpc::ServerContext* context, const 
 
 grpc::Status BmiGRPCService::getVarUnits(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarUnitsResponse* response) const
 {
-    char units[2048];
+    char units[BMI_MAX_UNITS_NAME];
     int status = this->bmi->get_var_units(request->name().c_str(), units);
     if(status == BMI_FAILURE)
     {
@@ -270,7 +270,7 @@ grpc::Status BmiGRPCService::getValue(grpc::ServerContext* context, const bmi::G
 
 grpc::Status BmiGRPCService::getValuePtr(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::Empty* response)
 {
-    return grpc::Status(grpc::StatusCode::NOTIMPLEMENTED);
+    return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Passing pointers is forbidden accross memory space boundary");
 }
 
 grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext* context, const bmi::GetValueAtIndicesRequest* request, bmi::GetValueAtIndicesResponse* response) const
@@ -322,7 +322,7 @@ grpc::Status BmiGRPCService::setValue(grpc::ServerContext* context, const bmi::S
 
 grpc::Status BmiGRPCService::setValuePtr(grpc::ServerContext* context, const bmi::SetValuePtrRequest* request, bmi::Empty* response)
 {
-    return grpc::Status(grpc::StatusCode::NOTIMPLEMENTED);
+    return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Passing pointers is forbidden accross memory space boundary");
 }
 
 grpc::Status BmiGRPCService::setValueAtIndices(grpc::ServerContext* context, const bmi::SetValueAtIndicesRequest* request, bmi::Empty* response)
@@ -359,7 +359,7 @@ grpc::Status BmiGRPCService::getGridSize(grpc::ServerContext* context, const bmi
 
 grpc::Status BmiGRPCService::getGridType(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridTypeResponse* response) const
 {
-    char type[2048];
+    char type[BMI_MAX_TYPE_NAME];
     int status = this->bmi->get_grid_type(request->grid_id(), type);
     if(status == BMI_FAILURE)
     {
@@ -632,7 +632,7 @@ int BmiGRPCService::get_grid_dimensions(int grid_id, int* vec3d) const
         free(shape);
         return status;
     }
-    char type[2048];
+    char type[BMI_MAX_TYPE_NAME];
     status = this->bmi->get_grid_type(grid_id, type);
     if(status == BMI_FAILURE)
     {
@@ -674,5 +674,5 @@ grpc::Status BmiGRPCService::translate_status(int status)
     {
         return grpc::Status::CANCELLED;
     }
-    return grpc::Status::UNKNOWN;
+    return grpc::Status(grpc::StatusCode::UNKNOWN, "Unknown BMI status code encountered");
 }
