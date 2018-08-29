@@ -25,7 +25,7 @@ vpath %.proto $(PROTOS_PATH)
 
 all: system-check grpc4bmi.so
 
-grpc4bmi.so: bmi.pb.o bmi.grpc.pb.o bmi.o bmi_cpp_base.o bmi_grpc_server.o
+grpc4bmi.so: bmi.pb.o bmi.grpc.pb.o bmi.o bmi_cpp_extension.o bmi_grpc_server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 %.grpc.pb.cc: %.proto
