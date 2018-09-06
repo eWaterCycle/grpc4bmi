@@ -41,10 +41,10 @@ class BmiR(Bmi):
         return self.model['getComponentName']()[0]
 
     def get_input_var_names(self):
-        return self.model['getInputVarNames ']()
+        return self.model['getInputVarNames']()
 
     def get_output_var_names(self):
-        return self.model['getOutputVarNames ']()
+        return self.model['getOutputVarNames']()
 
     # time
     def get_start_time(self):
@@ -64,19 +64,19 @@ class BmiR(Bmi):
 
     # vars
     def get_var_type(self, var_name):
-        return self.model['getVarType']()[0]
+        return self.model['getVarType'](var_name)[0]
 
     def get_var_units(self, var_name):
-        return self.model['getVarUnits']()[0]
+        return self.model['getVarUnits'](var_name)[0]
 
     def get_var_itemsize(self, var_name):
-        return self.model['getVarItemSize']()[0]
+        return self.model['getVarItemSize'](var_name)[0]
 
     def get_var_nbytes(self, var_name):
-        return self.model['getVarNBytes']()[0]
+        return self.model['getVarNBytes'](var_name)[0]
 
     def get_var_grid(self, var_name):
-        return self.model['getVarGrid']()[0]
+        return self.model['getVarGrid'](var_name)[0]
 
     # getter
     def get_value(self, var_name):
