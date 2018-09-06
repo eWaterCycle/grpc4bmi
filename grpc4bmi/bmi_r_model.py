@@ -117,7 +117,7 @@ class BmiR(Bmi):
         return self.model['getGridType'](grid_id)[0]
 
     def get_grid_shape(self, grid_id):
-        return np.array(self.model['getGridType'](grid_id))
+        return np.array(self.model['getGridShape'](grid_id))
 
     def get_grid_x(self, grid_id):
         return np.array(self.model['getGridX'](grid_id))
