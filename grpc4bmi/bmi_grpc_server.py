@@ -96,7 +96,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def getValueAtIndices(self, request, context):
-        indices = request.indices
+        indices = numpy.array(request.indices)
         vals = self.bmi_model_.get_value_at_indices(request.name, indices)
         if vals.dtype == numpy.int32:
             return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
@@ -119,7 +119,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def setValueAtIndices(self, request, context):
-        index_array = request.indices
+        index_array = numpy.array(request.indices)
         if request.HasField("values_int"):
             array = numpy.array(request.values_int.values, dtype=numpy.int32)
             self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)

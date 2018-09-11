@@ -1,0 +1,3 @@
+[submodule "cpp/bmi-c"]
+	path = cpp/bmi-c
+	url = https://github.com/csdms/bmi-c.git

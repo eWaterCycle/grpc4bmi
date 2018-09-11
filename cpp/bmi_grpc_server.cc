@@ -42,18 +42,6 @@ grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext* context, cons
     return BmiGRPCService::translate_status(status);
 }
 
-grpc::Status BmiGRPCService::getInputVarNameCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNameCountResponse* response) const
-{
-    // to be removed...
-    return grpc::Status::OK;
-}
-
-grpc::Status BmiGRPCService::getOutputVarNameCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNameCountResponse* response) const
-{
-    // to be removed...
-    return grpc::Status::OK;
-}
-
 grpc::Status BmiGRPCService::getInputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const
 {
     int count;
@@ -512,40 +500,6 @@ grpc::Status BmiGRPCService::getGridZ(grpc::ServerContext* context, const bmi::G
     response->mutable_coordinates()->Resize(size, 0);
     std::copy(vals, vals + size, response->mutable_coordinates()->begin());
     free(vals);
-    return BmiGRPCService::translate_status(status);
-}
-
-grpc::Status BmiGRPCService::getGridCellCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const
-{
-    int count;
-    int status = this->bmi->get_grid_cell_count(request->grid_id(), &count);
-    if(status == BMI_FAILURE)
-    {
-        return BmiGRPCService::translate_status(status);
-    }
-    response->set_count(count);
-    return BmiGRPCService::translate_status(status);
-}
-grpc::Status BmiGRPCService::getGridPointCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const
-{
-    int count;
-    int status = this->bmi->get_grid_point_count(request->grid_id(), &count);
-    if(status == BMI_FAILURE)
-    {
-        return BmiGRPCService::translate_status(status);
-    }
-    response->set_count(count);
-    return BmiGRPCService::translate_status(status);
-}
-grpc::Status BmiGRPCService::getGridVertexCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const
-{
-    int count;
-    int status = this->bmi->get_grid_vertex_count(request->grid_id(), &count);
-    if(status == BMI_FAILURE)
-    {
-        return BmiGRPCService::translate_status(status);
-    }
-    response->set_count(count);
     return BmiGRPCService::translate_status(status);
 }
 
