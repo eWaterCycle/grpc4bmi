@@ -1,5 +1,6 @@
 import shutil
 import os
+import errno
 
 import docker
 
@@ -28,10 +29,12 @@ class BmiClientDocker(BmiClient):
         if output_dir is not None:
             self.output_dir = os.path.abspath(output_dir)
             try:
-                # Create output dir ourselves, otherwise Docker will create it as root user, resulting in permission errors
+                # Create output dir ourselves, otherwise Docker will create it as root user, resulting in permission
+                # errors
                 os.mkdir(self.output_dir)
-            except FileExistsError:
-                pass
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
             volumes[self.output_dir] = {"bind": BmiClientDocker.output_mount_point, "mode": "rw"}
         self.container = client.containers.run(image,
                                                ports={str(image_port) + "/tcp": port},
