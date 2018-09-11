@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 def make_bmi_classes(init=False):
     numpy.random.seed(0)
-    client = BmiClientSubProcess("heat.BmiHeat")
+    client = BmiClientSubProcess("test.flatbmiheat.FlatBmiHeat")
     local = FlatBmiHeat()
     if init:
         client.initialize(None)
