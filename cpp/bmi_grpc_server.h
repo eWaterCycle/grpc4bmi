@@ -15,8 +15,6 @@ class BmiGRPCService final: public grpc::Service
         grpc::Status updateFrac(grpc::ServerContext* context, const bmi::UpdateFracRequest* request, bmi::Empty* response);
         grpc::Status runModel(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response);
         grpc::Status getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) const;
-        grpc::Status getInputVarNameCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNameCountResponse* response) const;
-        grpc::Status getOutputVarNameCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNameCountResponse* response) const;
         grpc::Status getInputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const;
         grpc::Status getOutputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const;
         grpc::Status getTimeUnits(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeUnitsResponse* response) const;
@@ -44,9 +42,6 @@ class BmiGRPCService final: public grpc::Service
         grpc::Status getGridX(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) const;
         grpc::Status getGridY(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) const;
         grpc::Status getGridZ(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) const;
-        grpc::Status getGridCellCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const;
-        grpc::Status getGridPointCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const;
-        grpc::Status getGridVertexCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) const;
         grpc::Status getGridConnectivity(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridConnectivityResponse* response) const;
         grpc::Status getGridOffset(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridOffsetResponse* response) const;
     private:

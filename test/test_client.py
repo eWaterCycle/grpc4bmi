@@ -189,7 +189,7 @@ def test_set_values_indices():
     indices = numpy.array([1, 11, 21])
     values = numpy.array([0.123, 4.567, 8.901])
     client.set_value_at_indices(varname, indices, values)
-    assert numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices), values)
+    numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices), values)
 
 
 def test_get_grid_size():

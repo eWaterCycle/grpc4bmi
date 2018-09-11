@@ -61,7 +61,7 @@ message GetVarTypeResponse
 
 message GetVarItemSizeResponse
 {
-    int32 size = 1;
+    int64 size = 1;
 }
 
 message GetVarUnitsResponse
@@ -71,12 +71,12 @@ message GetVarUnitsResponse
 
 message GetVarNBytesResponse
 {
-    int32 nbytes = 1;
+    int64 nbytes = 1;
 }
 
 message IntArrayMessage
 {
-    repeated int32 values = 1 [packed = true];
+    repeated int64 values = 1 [packed = true];
 }
 
 message FloatArrayMessage
@@ -101,7 +101,7 @@ message GetValueResponse
 message GetValueAtIndicesRequest
 {
     string name = 1;
-    repeated int32 indices = 2 [packed = true];
+    repeated int64 indices = 2 [packed = true];
 }
 
 message GetValueAtIndicesResponse
@@ -126,13 +126,13 @@ message SetValueRequest
 message SetValuePtrRequest
 {
     string name = 1;
-    int32 ref = 2;
+    int64 ref = 2;
 }
 
 message SetValueAtIndicesRequest
 {
     string name = 1;
-    repeated int32 indices = 2 [packed = true];
+    repeated int64 indices = 2 [packed = true];
     oneof values {
         IntArrayMessage values_int = 3;
         FloatArrayMessage values_float = 4;
@@ -142,17 +142,17 @@ message SetValueAtIndicesRequest
 
 message GridRequest
 {
-    int32 grid_id = 1;
+    int64 grid_id = 1;
 }
 
 message GetGridSizeResponse
 {
-    int32 size = 1;
+    int64 size = 1;
 }
 
 message GetGridRankResponse
 {
-    int32 rank = 1;
+    int64 rank = 1;
 }
 
 message GetGridTypeResponse
@@ -162,7 +162,7 @@ message GetGridTypeResponse
 
 message GetGridShapeResponse
 {
-    repeated int32 shape = 1 [packed = true];
+    repeated int64 shape = 1 [packed = true];
 }
 
 message GetGridSpacingResponse
@@ -182,12 +182,12 @@ message GetGridPointsResponse
 
 message GetGridConnectivityResponse
 {
-    repeated int32 links = 1 [packed = true];
+    repeated int64 links = 1 [packed = true];
 }
 
 message GetGridOffsetResponse
 {
-    repeated int32 offsets = 1 [packed = true];
+    repeated int64 offsets = 1 [packed = true];
 }
 
 service BmiService {

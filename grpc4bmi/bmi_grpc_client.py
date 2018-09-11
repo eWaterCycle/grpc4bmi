@@ -125,7 +125,7 @@ class BmiClient(bmi.Bmi):
         return BmiClient.make_array(response)
 
     def set_value(self, var_name, src):
-        if src.dtype == numpy.int32:
+        if src.dtype in [numpy.int32, numpy.int64]:
             request = bmi_pb2.SetValueRequest(name=var_name,
                                               values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
         elif src.dtype == numpy.float32:
@@ -142,7 +142,7 @@ class BmiClient(bmi.Bmi):
         index_array = indices
         if indices is list:
             index_array = numpy.array(indices)
-        if src.dtype == numpy.int32:
+        if src.dtype in [numpy.int32, numpy.int64]:
             request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
                                                        indices=index_array.flatten(),
                                                        values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
