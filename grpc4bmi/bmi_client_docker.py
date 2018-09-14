@@ -1,6 +1,7 @@
 import shutil
 import os
 import errno
+import time
 
 import docker
 
@@ -42,6 +43,7 @@ class BmiClientDocker(BmiClient):
                                                user=user,
                                                remove=True,
                                                detach=True)
+        time.sleep(1)
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
