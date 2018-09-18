@@ -12,13 +12,13 @@ class BmiClientSubProcess(BmiClient):
     respective destruction. The server is a forked subprocess running the run_server command.
     """
 
-    def __init__(self, module_name):
+    def __init__(self, module_name, path=None):
         host = "localhost"
         port = BmiClient.get_unique_port(host)
         name_options = ["--name", module_name]
         port_options = ["--port", str(port)]
-        self.pipe = subprocess.Popen(["run-bmi-server"] + name_options + port_options, env=dict(os.environ),
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        path_options = ["--path", path] if path else []
+        self.pipe = subprocess.Popen(["run-bmi-server"] + name_options + port_options + path_options, env=dict(os.environ))
         time.sleep(1)
         super(BmiClientSubProcess, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
