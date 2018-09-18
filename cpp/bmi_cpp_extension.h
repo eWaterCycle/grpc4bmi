@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include "bmi.h"
+#include "bmi_class.h"
 
 
 class BmiCppExtension: public Bmi 
@@ -72,7 +72,7 @@ class BmiCppExtension: public Bmi
     virtual int get_grid_vertex_count(int id) const = 0;
 
     virtual std::vector<int> get_grid_connectivity(int id) const = 0;
-    virtual std::vector<double> get_grid_offset(int id) const = 0;
+    virtual std::vector<int> get_grid_offset(int id) const = 0;
 
     int initialize(const char* configfile) override;
 
@@ -114,7 +114,7 @@ class BmiCppExtension: public Bmi
     int get_grid_point_count(int id, int* dest) const override;
     int get_grid_vertex_count(int id, int* dest) const override;
     int get_grid_connectivity(int id, int* dest) const override;
-    int get_grid_offset(int id, double* dest) const override;
+    int get_grid_offset(int id, int* dest) const override;
 
   protected:
 

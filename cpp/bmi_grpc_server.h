@@ -2,12 +2,12 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
-#include "bmi.h"
+#include "bmi_class.h"
 
 class BmiGRPCService final: public grpc::Service
 {
     public:
-        BmiGRPCService(Bmi* const bmi_);
+        BmiGRPCService(Bmi*);
         ~BmiGRPCService();
         grpc::Status initialize(grpc::ServerContext* context, const bmi::InitializeRequest* request, bmi::Empty* response);
         grpc::Status update(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response);

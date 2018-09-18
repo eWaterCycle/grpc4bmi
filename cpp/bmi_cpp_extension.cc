@@ -5,6 +5,8 @@
 
 BmiCppExtension::BmiCppExtension(){}
 
+BmiCppExtension::~BmiCppExtension(){}
+
 template<> std::vector<int> BmiCppExtension::get_value(const std::string name) const
 {
     if (this->find_type(name) == 'i')
@@ -514,10 +516,10 @@ int BmiCppExtension::get_grid_connectivity(int id, int* dest) const
     return BMI_SUCCESS;
 }
 
-int BmiCppExtension::get_grid_offset(int id, double* dest) const
+int BmiCppExtension::get_grid_offset(int id, int* dest) const
 {
-    std::vector<double> o = this->get_grid_offset(id);
-    memcpy(dest, o.data(), o.size()*sizeof(double));
+    std::vector<int> o = this->get_grid_offset(id);
+    memcpy(dest, o.data(), o.size()*sizeof(int));
     return BMI_SUCCESS;
 }
 
