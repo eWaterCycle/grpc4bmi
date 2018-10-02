@@ -57,15 +57,14 @@ def build(name, path):
     if not class_name:
         raise ValueError("Missing bmi implementation: class could not be derived from name input %s or environment "
                          "variable %s" % (name, ENV_BMI_CLASS))
-    module_name = parts[-2] if len(parts) > 1 else ""
+    module_name = '.'.join(parts[:-1]) if len(parts) > 1 else ""
     if not module_name:
         module_name = os.environ.get(ENV_BMI_MODULE, "")
     if not module_name:
         raise ValueError("Missing module name: module could not be derived from name input %s or environment "
                          "variable %s" % (name, ENV_BMI_MODULE))
-    package_name = '.'.join(parts[:-2]) if len(parts) > 2 else None
 
-    class_ = getattr(importlib.import_module(module_name, package_name), class_name)
+    class_ = getattr(importlib.import_module(module_name), class_name)
     return class_()
 
 
