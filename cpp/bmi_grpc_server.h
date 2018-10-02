@@ -4,7 +4,9 @@
 #include "bmi.grpc.pb.h"
 #include "bmi_class.h"
 
-class BmiGRPCService final: public grpc::Service
+using bmi::BmiService;
+
+class BmiGRPCService final: public BmiService::Service
 {
     public:
         BmiGRPCService(Bmi*);

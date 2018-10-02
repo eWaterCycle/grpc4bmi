@@ -30,13 +30,11 @@ void serve(Bmi* model_instance)
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-    std::cout << "Server listening on " << server_address << std::endl;
     server->Wait();
 }
 
 int main(int argc, char* argv[])
 {
-    std::cout<<"starting..."<<std::endl;
     Bmi* model = create_model_instance();
     serve(model);
     delete model;
