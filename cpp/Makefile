@@ -3,17 +3,18 @@
 HOST_SYSTEM = $(shell uname | cut -f 1 -d_)
 SYSTEM ?= $(HOST_SYSTEM)
 CXX = g++
+CFLAGS += -g
 CPPFLAGS += `pkg-config --cflags protobuf grpc`
-CPPFLAGS += -I$(PWD) -fPIC
-CXXFLAGS += -std=c++11
-ifeq ($(SYSTEM),Darwin)
+CPPFLAGS += -I$(PWD) -I/usr/local/include/grpc++ -fPIC -g
+CXXFLAGS += -std=c++11 -g
+ifeq ($(SYSTEM), Darwin)
 LDFLAGS += -L/usr/local/lib `pkg-config --libs protobuf grpc++`\
            -lgrpc++_reflection\
-           -ldl -shared
+           -ldl -lbmic -shared -g
 else
 LDFLAGS += -L/usr/local/lib `pkg-config --libs protobuf grpc++`\
            -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed\
-           -ldl -shared
+           -ldl -lbmic -shared -g
 endif
 PROTOC = protoc
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
@@ -23,9 +24,17 @@ PROTOS_PATH = ../proto/grpc4bmi
 
 vpath %.proto $(PROTOS_PATH)
 
-all: system-check grpc4bmi.so
+OBJ = bmi.pb.o bmi.grpc.pb.o bmi_class.o bmi_cpp_extension.o bmi_c_wrapper.o bmi_grpc_server.o
 
-grpc4bmi.so: bmi.pb.o bmi.grpc.pb.o bmi.o bmi_cpp_extension.o bmi_grpc_server.o
+all: system-check grpc4bmi.so main
+
+main: run-bmi-server.o $(OBJ)
+	g++ -g run-bmi-server.o $(OBJ) -o run-bmi-server -L/usr/local/lib `pkg-config --libs protobuf grpc++` -lgrpc++_reflection -lbmi_heatc -lbmic
+
+run-bmi-server.o: run-bmi-server.cc
+	$(CXX) -c run-bmi-server.cc
+
+grpc4bmi.so: bmi.pb.o bmi.grpc.pb.o bmi_class.o bmi_cpp_extension.o bmi_c_wrapper.o bmi_grpc_server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 %.grpc.pb.cc: %.proto

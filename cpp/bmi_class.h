@@ -1,5 +1,5 @@
-#ifndef BMI_H_INCLUDED
-#define BMI_H_INCLUDED
+#ifndef BMI_CLASS_H_INCLUDED
+#define BMI_CLASS_H_INCLUDED
 
 #include <string>
 
@@ -63,7 +63,7 @@ class Bmi
     virtual int get_grid_point_count(int id, int* dest) const = 0;
     virtual int get_grid_vertex_count(int id, int* dest) const = 0;
     virtual int get_grid_connectivity(int id, int* dest) const = 0;
-    virtual int get_grid_offset(int id, double* dest) const = 0;
+    virtual int get_grid_offset(int id, int* dest) const = 0;
 };
 
 // TODO: converter to C-BMI struct

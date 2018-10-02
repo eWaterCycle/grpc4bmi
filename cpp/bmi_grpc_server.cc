@@ -1,7 +1,7 @@
 #include "bmi_grpc_server.h"
 
 
-BmiGRPCService::BmiGRPCService(Bmi* const bmi_):bmi(bmi_){}
+BmiGRPCService::BmiGRPCService(Bmi* bmi_):bmi(bmi_){}
 
 BmiGRPCService::~BmiGRPCService(){}
 
@@ -533,7 +533,7 @@ grpc::Status BmiGRPCService::getGridOffset(grpc::ServerContext* context, const b
     {
         return BmiGRPCService::translate_status(status);
     }
-    double* offsets = (double*)malloc(size * sizeof(double));
+    int* offsets = (int*)malloc(size * sizeof(int));
     status = this->bmi->get_grid_offset(request->grid_id(), offsets);
     if(status == BMI_FAILURE)
     {
