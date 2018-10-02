@@ -168,13 +168,13 @@ class BmiClient(bmi.Bmi):
         return str(self.stub.getGridType(bmi_pb2.GridRequest(grid_id=grid_id)).type)
 
     def get_grid_x(self, grid_id):
-        return self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
+        return numpy.array(self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates)
 
     def get_grid_y(self, grid_id):
-        return self.stub.getGridY(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
+        return numpy.array(self.stub.getGridY(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates)
 
     def get_grid_z(self, grid_id):
-        return self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates
+        return numpy.array(self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates)
 
     def get_grid_shape(self, grid_id):
         return tuple(self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).shape)
@@ -194,8 +194,8 @@ class BmiClient(bmi.Bmi):
     @staticmethod
     def make_array(response):
         if response.HasField("values_int"):
-            return response.values_int.values
+            return numpy.array(response.values_int.values)
         if response.HasField("values_float"):
-            return response.values_float.values
+            return numpy.array(response.values_float.values)
         if response.HasField("values_double"):
-            return response.values_double.values
+            return numpy.array(response.values_double.values)
