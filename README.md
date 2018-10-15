@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/130237165.svg)](https://zenodo.org/badge/latestdoi/130237165)
+
 # grpc4bmi
 
 ## Purpose
