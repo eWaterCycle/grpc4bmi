@@ -53,4 +53,7 @@ class BmiGRPCService final: public BmiService::Service
         static grpc::Status translate_status(int);
 };
 
+void run_bmi_server(BMI_Model* model, int argc, char* argv[]);
+void run_bmi_server(Bmi* model, int argc, char* argv[]);
+
 #endif

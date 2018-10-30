@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <random>
-#include "BmiTestExtension.h"
+#include "bmi_test_extension.h"
 
 BmiTestExtension::BmiTestExtension(const std::vector<double>& x_, const std::vector<double>& y_):time_counter(0), x(x_), y(y_), size(x_.size() * y_.size()), input_var("water level"), output_var("discharge"), grid_id(121)
 {
@@ -11,6 +11,38 @@ BmiTestExtension::BmiTestExtension(const std::vector<double>& x_, const std::vec
     {
         this->ovars[i] = std::rand();
     }
+}
+
+int BmiTestExtension::update()
+{
+    for(std::vector<double>::size_type i = 0; i < size; ++i)
+    {
+        this->ovars[i] += std::rand();
+    }
+    this->time_counter++;
+}
+
+int BmiTestExtension::update_until(double step)
+{
+    while((double)(this->time_counter + 1) <= step)
+    {
+        this->update();
+    }
+}
+
+int BmiTestExtension::update_frac(double frac)
+{
+    return BMI_FAILURE;
+}
+
+int BmiTestExtension::finalize()
+{
+    return BMI_SUCCESS;
+}
+
+int BmiTestExtension::run_model()
+{
+    this->update_until(1000);
 }
 
 BmiTestExtension::~BmiTestExtension(){}
