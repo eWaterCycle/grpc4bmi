@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <locale>
 #include <cstring>
 #include "bmi_cpp_extension.h"
 
@@ -179,6 +178,7 @@ int BmiCppExtension::get_component_name(char* dest) const
 {
     std::string s = this->get_component_name();
     strncpy(dest, s.c_str(), s.size());
+    dest[s.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -200,6 +200,7 @@ int BmiCppExtension::get_input_var_names(char** dest) const
     for(std::vector<std::string>::size_type i = 0; i < src.size(); i++)
     {
         strncpy(dest[i], src[i].c_str(), src[i].size());
+        dest[i][src[i].size()] = '\0';
     }
     return BMI_SUCCESS;
 }
@@ -210,6 +211,7 @@ int BmiCppExtension::get_output_var_names(char** dest) const
     for(std::vector<std::string>::size_type i = 0; i < src.size(); i++)
     {
         strncpy(dest[i], src[i].c_str(), src[i].size());
+        dest[i][src[i].size()] = '\0';
     }
     return BMI_SUCCESS;
 }
@@ -224,6 +226,7 @@ int BmiCppExtension::get_var_type(const char* name, char* dest) const
 {
     std::string type = this->get_var_type(std::string(name));
     strncpy(dest, type.c_str(), type.size());
+    dest[type.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -237,6 +240,7 @@ int BmiCppExtension::get_var_units(const char* name, char* dest) const
 {
     std::string units = this->get_var_units(std::string(name));
     strncpy(dest, units.c_str(), units.size());
+    dest[units.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -268,6 +272,7 @@ int BmiCppExtension::get_time_units(char* dest) const
 {
     std::string units = this->get_time_units();
     strncpy(dest, units.c_str(), units.size());
+    dest[units.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -294,7 +299,7 @@ int BmiCppExtension::get_value(const char* name, void* dest) const
     if(type == 'd')
     {
         std::vector<double> vals = this->get_value_double(std::string(name));
-        memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(double));
+        memcpy(dest, vals.data(), vals.size()*sizeof(double));
         return BMI_SUCCESS;
     }
     return BMI_FAILURE;
@@ -525,8 +530,8 @@ int BmiCppExtension::get_grid_offset(int id, int* dest) const
 
 char BmiCppExtension::find_type(const std::string& varname) const
 {
-    std::locale loc;
-    std::string vartype = std::tolower(this->get_var_type(varname), loc);
+    std::string vartype = this->get_var_type(varname);
+    std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
     if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
     {

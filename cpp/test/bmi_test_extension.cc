@@ -89,7 +89,7 @@ int BmiTestExtension::get_var_itemsize(std::string name) const
 {
     if(name == this->input_var or name == this->output_var)
     {
-        return 1;
+        return sizeof(double);
     }
     throw std::invalid_argument("unknown variable" + name);
 }
@@ -111,7 +111,7 @@ int BmiTestExtension::get_var_nbytes(std::string name) const
 {
     if(name == this->input_var or name == this->output_var)
     {
-        return sizeof(double);
+        return sizeof(double) * this->size;
     }
     throw std::invalid_argument("unknown variable" + name);
 }
@@ -302,6 +302,10 @@ float* BmiTestExtension::get_value_float_ptr(const std::string& name)
 
 double* BmiTestExtension::get_value_double_ptr(const std::string& name)
 {
+    if(name == this->output_var)
+    {
+        return &(this->ovars.data()[0]);
+    }
     throw std::invalid_argument("invalid variable" + name);
 }
 
