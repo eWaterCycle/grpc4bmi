@@ -32,28 +32,34 @@ class BmiCppExtension: public Bmi
 
     template<typename T> std::vector<T> get_value(std::string name) const
     {
-        throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
+        std::vector<T> result(this->get_var_nbytes(name.c_str())/sizeof(T));
+        this->get_value(name.c_str(), (void*)result.data());
+        return result;
     }
     template<typename T> T* get_value_ptr(std::string name)
     {
-        throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
+        T* ptr;
+        this->get_value_ptr(name.c_str(), (void**)&ptr);
+        return ptr;
     }
     template<typename T> std::vector<T> get_value_at_indices(std::string name, const std::vector<int>& indices) const
     {
-        throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
+        std::vector<T> result(indices.size());
+        this->get_value_at_indices(name.c_str(), (void*)result.data(), indices.data(), indices.size());
+        return result;
     }
 
     template<typename T> void set_value(std::string name, const std::vector<T>& src)
     {
-        throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
+        this->set_value(name.c_str(), static_cast<const void*>(src.data()));
     }
     template<typename T> void set_value_ptr(std::string name, T* const ptr)
     {
-        throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
+        this->set_value_ptr(name.c_str(), (void**)(&ptr));
     }
     template<typename T> void set_value_at_indices(std::string name, const std::vector<int>& indices, const std::vector<T>& values)
     {
-        throw std::logic_error(std::string("This method is not generically implemented for type") + std::string(typeid(T).name()));
+        this->set_value_at_indices(name.c_str(), indices.data(), indices.size(), static_cast<const void*>(values.data()));
     }
 
     virtual int get_grid_rank(int id) const = 0;

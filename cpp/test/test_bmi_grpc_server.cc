@@ -3,24 +3,36 @@
 #include <cstring>
 #include "bmi_cpp_extension.h"
 #include "test/bmi_test_extension.h"
+#include "bmi_grpc_server.h"
 
-void test_initialize(Bmi* b)
+
+void test_initialize(BmiGRPCService* s, Bmi* b)
 {
-    const char* s = "somestring";
-    b->initialize(s);
+    const char* inifile = "somestring";
+    bmi::InitializeRequest* request = new bmi::InitializeRequest();
+    bmi::Empty* response = new bmi::Empty();
+    request->set_config_file(std::string(inifile));
+    s->initialize(NULL, request, response);
+    b->initialize(inifile);
     assert(true);
+    delete request;
+    delete response;
 }
 
-void test_component_name(Bmi* b)
+void test_component_name(BmiGRPCService* s, Bmi* b)
 {
     char component_name_char[BMI_MAX_COMPONENT_NAME];
     b->get_component_name(component_name_char);
     std::string check_string(component_name_char, strlen(component_name_char));
-    std::string component_name_string = static_cast<const BmiCppExtension*>(b)->get_component_name();
-    assert(check_string == component_name_string);
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetComponentNameResponse* response = new bmi::GetComponentNameResponse();
+    s->getComponentName(NULL, request, response);
+    assert(response->name() == check_string);
+    delete request;
+    delete response;
 }
 
-void test_input_var_count(Bmi* b)
+/*void test_input_var_count(Bmi* b)
 {
     int count = 0;
     b->get_input_var_name_count(&count);
@@ -105,14 +117,14 @@ void test_var_type(Bmi* b)
     std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
     for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
     {
-        char type[BMI_MAX_VAR_NAME];
+        char type[BMI_MAX_TYPE_NAME];
         b->get_var_type(it->c_str(), type);
         assert(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) == std::string(type, strlen(type)));
     }
     std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
     for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); ++it)
     {
-        char type[BMI_MAX_VAR_NAME];
+        char type[BMI_MAX_TYPE_NAME];
         b->get_var_type(it->c_str(), type);
         assert(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) == std::string(type, strlen(type)));
     }
@@ -222,8 +234,7 @@ void test_get_values(Bmi* b)
         void* vals = (void*) malloc(nbytes);
         b->get_value(it->c_str(), vals);
         std::vector<double> vals_vec((double*)vals, (double*)vals + nbytes/sizeof(double));
-        std::vector<double> vals_check = static_cast<const BmiCppExtension*>(b)->get_value<double>(*it);
-        assert(vals_vec == vals_check);
+        assert(vals_vec == static_cast<const BmiCppExtension*>(b)->get_value<double>(*it));
         free(vals);
     }
 }
@@ -269,95 +280,99 @@ void test_finalize(Bmi* b)
 {
     b->finalize();
     assert(true);
-}
+}*/
 
 int main(int argc, char* argv[])
 {
     std::vector<double> u = {0.1, 0.2, 0.4, 0.8};
     std::vector<double> v = {-0.6, -0.4, -0.2, 0.};
     Bmi* bmi = new BmiTestExtension(u, v);
+    BmiGRPCService* bmi_service = new BmiGRPCService(bmi);
+    Bmi* bmi_copy = new BmiTestExtension(u, v);
     std::string testfunc(argv[1]);
     if(testfunc == "initialize")
     {
-        test_initialize(bmi);
+        test_initialize(bmi_service, bmi_copy);
     }
     else if(testfunc == "component_name")
     {
-        test_component_name(bmi);
+        test_component_name(bmi_service, bmi_copy);
     }
-    else if(testfunc == "input_var_count")
+/*    else if(testfunc == "input_var_count")
     {
-        test_input_var_count(bmi);
+        test_input_var_count(bmi_service, bmi_copy);
     }
     else if(testfunc == "input_vars")
     {
-        test_input_vars(bmi);
+        test_input_vars(bmi_service, bmi_copy);
     }
     else if(testfunc == "output_var_count")
     {
-        test_output_var_count(bmi);
+        test_output_var_count(bmi_service, bmi_copy);
     }
     else if(testfunc == "output_vars")
     {
-        test_output_vars(bmi);
+        test_output_vars(bmi_service, bmi_copy);
     }
     else if(testfunc == "var_grid")
     {
-        test_var_grid(bmi);
+        test_var_grid(bmi_service, bmi_copy);
     }
     else if(testfunc == "var_type")
     {
-        test_var_type(bmi);
+        test_var_type(bmi_service, bmi_copy);
     }
     else if(testfunc == "var_itemsize")
     {
-        test_var_itemsize(bmi);
+        test_var_itemsize(bmi_service, bmi_copy);
     }
     else if(testfunc == "var_units")
     {
-        test_var_units(bmi);
+        test_var_units(bmi_service, bmi_copy);
     }
     else if(testfunc == "start_time")
     {
-        test_start_time(bmi);
+        test_start_time(bmi_service, bmi_copy);
     }
     else if(testfunc == "current_time")
     {
-        test_current_time(bmi);
+        test_current_time(bmi_service, bmi_copy);
     }
     else if(testfunc == "end_time")
     {
-        test_end_time(bmi);
+        test_end_time(bmi_service, bmi_copy);
     }
     else if(testfunc == "time_step")
     {
-        test_time_step(bmi);
+        test_time_step(bmi_service, bmi_copy);
     }
     else if(testfunc == "time_units")
     {
-        test_time_units(bmi);
+        test_time_units(bmi_service, bmi_copy);
     }
     else if(testfunc == "get_values")
     {
-        test_get_values(bmi);
+        test_get_values(bmi_service, bmi_copy);
     }
     else if(testfunc == "get_values_at_indices")
     {
-        test_get_values_at_indices(bmi);
+        test_get_values_at_indices(bmi_service, bmi_copy);
     }
     else if(testfunc == "get_value_ptr")
     {
-        test_get_value_ptr(bmi);
+        test_get_value_ptr(bmi_service, bmi_copy);
     }
     else if(testfunc == "finalize")
     {
-        test_finalize(bmi);
-    }
+        test_finalize(bmi_service, bmi_copy);
+    }*/
     else
     {
         throw std::invalid_argument("Unknown test function selection " + testfunc);
         return 1;
     }
+    delete bmi_service;
+    delete bmi_copy;
     delete bmi;
     return 0;
 }

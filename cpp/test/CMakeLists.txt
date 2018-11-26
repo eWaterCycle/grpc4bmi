@@ -1,7 +1,13 @@
 cmake_minimum_required (VERSION 2.6)
-add_executable(test_cpp_extension test_bmi_cpp_extension.cc bmi_test_extension.cc ${CMAKE_CURRENT_SOURCE_DIR}/../bmi_cpp_extension.cc)
-target_include_directories(test_cpp_extension PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+add_executable(test_cpp_extension test_bmi_cpp_extension.cc bmi_test_extension.h bmi_test_extension.cc)
+target_link_libraries(test_cpp_extension grpc4bmi)
+
+add_executable(test_bmi_service test_bmi_grpc_server.cc bmi_test_extension.h bmi_test_extension.cc)
+target_link_libraries(test_bmi_service grpc4bmi)
+
 include (CTest)
+
 add_test(NAME test_cpp_extension_initialize COMMAND test_cpp_extension initialize)
 add_test(NAME test_cpp_extension_component_name COMMAND test_cpp_extension component_name)
 add_test(NAME test_cpp_extension_input_var_count COMMAND test_cpp_extension input_var_count)
@@ -22,3 +28,5 @@ add_test(NAME test_cpp_extension_get_values_at_indices COMMAND test_cpp_extensio
 add_test(NAME test_cpp_extension_get_value_ptr COMMAND test_cpp_extension get_value_ptr)
 add_test(NAME test_cpp_extension_finalize COMMAND test_cpp_extension finalize)
 
+add_test(NAME test_service_initialize COMMAND test_bmi_service initialize)
+add_test(NAME test_service_component_name COMMAND test_bmi_service component_name)
