@@ -313,6 +313,10 @@ int main(int argc, char* argv[])
     {
         test_var_itemsize(bmi);
     }
+    else if(testfunc == "var_nbytes")
+    {
+        test_var_nbytes(bmi);
+    }
     else if(testfunc == "var_units")
     {
         test_var_units(bmi);

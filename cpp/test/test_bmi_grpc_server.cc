@@ -32,15 +32,19 @@ void test_component_name(BmiGRPCService* s, Bmi* b)
     delete response;
 }
 
-/*void test_input_var_count(Bmi* b)
+void test_input_var_count(BmiGRPCService* s, Bmi* b)
 {
     int count = 0;
     b->get_input_var_name_count(&count);
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    assert(input_vars.size() == count);
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetVarNamesResponse* response = new bmi::GetVarNamesResponse();
+    s->getInputVarNames(NULL, request, response);
+    assert(response->names().size() == count);
+    delete request;
+    delete response;
 }
 
-void test_input_vars(Bmi* b)
+void test_input_vars(BmiGRPCService* s, Bmi* b)
 {
     int count = 0;
     b->get_input_var_name_count(&count);
@@ -50,28 +54,35 @@ void test_input_vars(Bmi* b)
         names[i] = (char*) malloc(sizeof(char)*BMI_MAX_VAR_NAME);
     }
     b->get_input_var_names(names);
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    for(std::vector<std::string>::size_type i = 0; i < input_vars.size(); i++)
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetVarNamesResponse* response = new bmi::GetVarNamesResponse();
+    s->getInputVarNames(NULL, request, response);
+    for(int i = 0; i < count; i++)
     {
-        std::string check_string(names[i], strlen(names[i]));
-        assert(input_vars[i] == check_string);
+        assert(std::string(names[i]) == response->names()[i]);
     }
     for(int i = 0; i < count; i++)
     {
         free(names[i]);
     }
     free(names);
+    delete request;
+    delete response;
 }
 
-void test_output_var_count(Bmi* b)
+void test_output_var_count(BmiGRPCService* s, Bmi* b)
 {
     int count = 0;
     b->get_output_var_name_count(&count);
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    assert(output_vars.size() == count);
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetVarNamesResponse* response = new bmi::GetVarNamesResponse();
+    s->getOutputVarNames(NULL, request, response);
+    assert(response->names().size() == count);
+    delete request;
+    delete response;
 }
 
-void test_output_vars(Bmi* b)
+void test_output_vars(BmiGRPCService* s, Bmi* b)
 {
     int count = 0;
     b->get_output_var_name_count(&count);
@@ -81,139 +92,181 @@ void test_output_vars(Bmi* b)
         names[i] = (char*) malloc(sizeof(char)*BMI_MAX_VAR_NAME);
     }
     b->get_output_var_names(names);
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::size_type i = 0; i < output_vars.size(); i++)
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetVarNamesResponse* response = new bmi::GetVarNamesResponse();
+    s->getOutputVarNames(NULL, request, response);
+    for(int i = 0; i < count; i++)
     {
-        std::string check_string(names[i], strlen(names[i]));
-        assert(output_vars[i] == check_string);
+        assert(std::string(names[i]) == response->names()[i]);
     }
     for(int i = 0; i < count; i++)
     {
         free(names[i]);
     }
     free(names);
+    delete request;
+    delete response;
 }
 
-void test_var_grid(Bmi* b)
+std::vector<std::string> get_all_vars(Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    int input_count = 0;
+    int output_count = 0;
+    b->get_input_var_name_count(&input_count);
+    b->get_output_var_name_count(&output_count);
+    int count = input_count + output_count;
+    char** names = (char**) malloc(sizeof(char*)*count);
+    for(int i = 0; i < count; i++)
+    {
+        names[i] = (char*) malloc(sizeof(char)*BMI_MAX_VAR_NAME);
+    }
+    b->get_input_var_names(names);
+    b->get_output_var_names(names + input_count);
+    std::vector<std::string> result(count);
+    for(std::vector<std::string>::size_type i = 0; i < result.size(); ++i)
+    {
+        result[i] = std::string(names[i]);
+        free(names[i]);
+    }
+    free(names);
+    return result;
+}
+
+void test_var_grid(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<std::string> names = get_all_vars(b);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetVarGridResponse* response = new bmi::GetVarGridResponse();
+    for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
     {
         int id = -999;
-        b->get_var_grid(it->c_str(), &id);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_grid(*it) == id);
+        b->get_var_grid(names[i].c_str(), &id);
+        request->set_name(names[i]);
+        s->getVarGrid(NULL, request, response);
+        assert(id == response->grid_id());
     }
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); ++it)
-    {
-        int id = -999;
-        b->get_var_grid(it->c_str(), &id);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_grid(*it) == id);
-    }
+    delete request;
+    delete response;
 }
 
-void test_var_type(Bmi* b)
+void test_var_type(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> names = get_all_vars(b);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetVarTypeResponse* response = new bmi::GetVarTypeResponse();
+    for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
     {
         char type[BMI_MAX_TYPE_NAME];
-        b->get_var_type(it->c_str(), type);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) == std::string(type, strlen(type)));
+        b->get_var_type(names[i].c_str(), type);
+        request->set_name(names[i]);
+        s->getVarType(NULL, request, response);
+        assert(std::string(type) == response->type());
     }
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); ++it)
-    {
-        char type[BMI_MAX_TYPE_NAME];
-        b->get_var_type(it->c_str(), type);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) == std::string(type, strlen(type)));
-    }
+    delete request;
+    delete response;
 }
 
-void test_var_itemsize(Bmi* b)
+void test_var_itemsize(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> names = get_all_vars(b);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetVarItemSizeResponse* response = new bmi::GetVarItemSizeResponse();
+    for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
     {
-        int size = -999;
-        b->get_var_itemsize(it->c_str(), &size);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_itemsize(*it) == size);
+        int itemsize = -999;
+        b->get_var_itemsize(names[i].c_str(), &itemsize);
+        request->set_name(names[i]);
+        s->getVarItemSize(NULL, request, response);
+        assert(itemsize == response->size());
     }
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); ++it)
-    {
-        int size = -999;
-        b->get_var_itemsize(it->c_str(), &size);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_itemsize(*it) == size);
-    }
+    delete request;
+    delete response;
 }
 
-void test_var_nbytes(Bmi* b)
+void test_var_nbytes(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> names = get_all_vars(b);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetVarNBytesResponse* response = new bmi::GetVarNBytesResponse();
+    for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
     {
-        int size = -999;
-        b->get_var_nbytes(it->c_str(), &size);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_nbytes(*it) == size);
+        int nbytes = -999;
+        b->get_var_nbytes(names[i].c_str(), &nbytes);
+        request->set_name(names[i]);
+        s->getVarNBytes(NULL, request, response);
+        assert(nbytes == response->nbytes());
     }
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); ++it)
-    {
-        int size = -999;
-        b->get_var_nbytes(it->c_str(), &size);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_nbytes(*it) == size);
-    }
+    delete request;
+    delete response;
 }
 
-void test_var_units(Bmi* b)
+void test_var_units(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> names = get_all_vars(b);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetVarUnitsResponse* response = new bmi::GetVarUnitsResponse();
+    for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
     {
-        char units[BMI_MAX_UNITS_NAME];
-        b->get_var_units(it->c_str(), units);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_units(*it) == std::string(units, strlen(units)));
+        char type[BMI_MAX_UNITS_NAME];
+        b->get_var_units(names[i].c_str(), type);
+        request->set_name(names[i]);
+        s->getVarUnits(NULL, request, response);
+        assert(std::string(type) == response->units());
     }
-    std::vector<std::string> input_vars = static_cast<const BmiCppExtension*>(b)->get_input_var_names();
-    for(std::vector<std::string>::const_iterator it = input_vars.begin(); it != input_vars.end(); ++it)
-    {
-        char units[BMI_MAX_UNITS_NAME];
-        b->get_var_units(it->c_str(), units);
-        assert(static_cast<const BmiCppExtension*>(b)->get_var_units(*it) == std::string(units, strlen(units)));
-    }
+    delete request;
+    delete response;
 }
 
-void test_start_time(Bmi* b)
+void test_start_time(BmiGRPCService* s, Bmi* b)
 {
     double t = -999.;
     b->get_start_time(&t);
-    assert(t == static_cast<const BmiCppExtension*>(b)->get_start_time());
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetTimeResponse* response = new bmi::GetTimeResponse();
+    s->getStartTime(NULL, request, response);
+    assert(response->time() == t);
+    delete request;
+    delete response;
 }
 
-void test_end_time(Bmi* b)
+void test_current_time(BmiGRPCService* s, Bmi* b)
+{
+    double t = -999.;
+    b->get_current_time(&t);
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetTimeResponse* response = new bmi::GetTimeResponse();
+    s->getCurrentTime(NULL, request, response);
+    assert(response->time() == t);
+    delete request;
+    delete response;
+}
+
+void test_end_time(BmiGRPCService* s, Bmi* b)
 {
     double t = -999.;
     b->get_end_time(&t);
-    assert(t == static_cast<const BmiCppExtension*>(b)->get_end_time());
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetTimeResponse* response = new bmi::GetTimeResponse();
+    s->getEndTime(NULL, request, response);
+    assert(response->time() == t);
+    delete request;
+    delete response;
 }
 
-void test_current_time(Bmi* b)
+void test_time_step(BmiGRPCService* s, Bmi* b)
 {
-    double t = -999.;
-    b->update();
-    b->get_current_time(&t);
-    assert(t == static_cast<const BmiCppExtension*>(b)->get_current_time());
+    double dt = -999.;
+    b->get_time_step(&dt);
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetTimeStepResponse* response = new bmi::GetTimeStepResponse();
+    s->getTimeStep(NULL, request, response);
+    assert(response->interval() == dt);
+    delete request;
+    delete response;
 }
 
-void test_time_step(Bmi* b)
-{
-    double t = -999.;
-    b->get_time_step(&t);
-    assert(t == static_cast<const BmiCppExtension*>(b)->get_time_step());
-}
 
-void test_time_units(Bmi* b)
+/*void test_time_units(Bmi* b)
 {
     char unit[BMI_MAX_UNITS_NAME];
     b->get_time_units(unit);
@@ -298,7 +351,7 @@ int main(int argc, char* argv[])
     {
         test_component_name(bmi_service, bmi_copy);
     }
-/*    else if(testfunc == "input_var_count")
+    else if(testfunc == "input_var_count")
     {
         test_input_var_count(bmi_service, bmi_copy);
     }
@@ -326,6 +379,10 @@ int main(int argc, char* argv[])
     {
         test_var_itemsize(bmi_service, bmi_copy);
     }
+    else if(testfunc == "var_nbytes")
+    {
+        test_var_nbytes(bmi_service, bmi_copy);
+    }
     else if(testfunc == "var_units")
     {
         test_var_units(bmi_service, bmi_copy);
@@ -346,7 +403,7 @@ int main(int argc, char* argv[])
     {
         test_time_step(bmi_service, bmi_copy);
     }
-    else if(testfunc == "time_units")
+/*    else if(testfunc == "time_units")
     {
         test_time_units(bmi_service, bmi_copy);
     }
