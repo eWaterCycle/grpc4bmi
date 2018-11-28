@@ -23,7 +23,7 @@ matrix:
             - cd third_party/protobuf
             - sudo make install
         script:
-            - mkdir -p ./cpp/build && cd ./cpp/build
+            - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - cmake ..
             - cmake --build .
             - ctest
