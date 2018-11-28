@@ -12,11 +12,9 @@ matrix:
         cache:
             directories:
                 - $HOME/cache/pip
-      - language: c++
-        build:
-            - mkdir -p cpp/build
-            - cd cpp/build
-            - cmake ..
-            - make
+      - language: cpp
         script:
+            - mkdir -p ./cpp/build && cd ./cpp/build
+            - cmake ..
+            - cmake --build .
             - ctest
