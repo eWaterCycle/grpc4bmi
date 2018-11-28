@@ -13,6 +13,17 @@ matrix:
             directories:
                 - $HOME/cache/pip
       - language: cpp
+        before_install:
+            - sudo apt-get update
+            - sudo apt-get install -y build-essential autoconf libtool pkg-config
+            - git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+            - cd grpc
+            - git submodule update --init
+            - cd third_party/protobuf
+            - sudo make install
+            - cd ..
+            - make
+            - cd
         script:
             - mkdir -p ./cpp/build && cd ./cpp/build
             - cmake ..
