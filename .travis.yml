@@ -19,11 +19,9 @@ matrix:
             - git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
             - cd grpc
             - git submodule update --init
+            - make
             - cd third_party/protobuf
             - sudo make install
-            - cd ..
-            - make
-            - cd
         script:
             - mkdir -p ./cpp/build && cd ./cpp/build
             - cmake ..
