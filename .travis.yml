@@ -16,27 +16,24 @@ matrix:
             - sudo apt-get update
             - sudo apt-get install -y build-essential autoconf libtool pkg-config
             - | 
-                export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/usr/local/bin
-                export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/usr/local/lib
-                export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/install/usr/local/include
+                export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
+                export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib
+                export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/install/include
                 if [ ! -d ${TRAVIS_BUILD_DIR}/install ]; then
                   git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init
-                  sudo make DESTDIR=${TRAVIS_BUILD_DIR}/install install
-                  cd third_party/protobuf
-                  sudo make DESTDIR=${TRAVIS_BUILD_DIR}/install install
-                  mkdir -p ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build
-                  cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build
-                  cmake ..
-                  sudo make DESTDIR=${TRAVIS_BUILD_DIR}/install install
+                  mkdir -p build && cd build
+                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make all install
+                  mkdir -p ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build && cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build
+                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make all install
                 else
                   echo "using cached builds of protobuf, grpc and bmi-c..."
                 fi
         script:
-            - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/usr/local/bin
-            - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/usr/local/lib
-            - export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/install/usr/local/include
+            - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
+            - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib
+            - export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/install/include
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - cmake ..
             - cmake --build .
