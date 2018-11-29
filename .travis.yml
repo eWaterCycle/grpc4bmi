@@ -15,7 +15,10 @@ matrix:
             - git submodule update --init
             - sudo apt-get update
             - sudo apt-get install -y build-essential autoconf libtool pkg-config
-            - [ -d grpc ] || git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+            - | 
+                if [ ! -d grpc ]; then
+                  git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+                fi
             - cd grpc
             - git submodule update --init
             - sudo make install
