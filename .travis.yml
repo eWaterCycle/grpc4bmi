@@ -9,9 +9,7 @@ matrix:
             - python setup.py install
         script:
             - pytest
-        cache:
-            directories:
-                - $HOME/cache/pip
+        cache: pip
       - language: cpp
         before_install:
             - sudo apt-get update
@@ -19,7 +17,7 @@ matrix:
             - git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
             - cd grpc
             - git submodule update --init
-            - make
+            - sudo make install
             - cd third_party/protobuf
             - sudo make install
         script:
@@ -27,3 +25,6 @@ matrix:
             - cmake ..
             - cmake --build .
             - ctest
+        cache:
+            directories:
+                - grpc
