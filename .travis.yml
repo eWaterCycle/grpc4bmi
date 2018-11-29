@@ -41,6 +41,3 @@ matrix:
             - cmake ..
             - cmake --build .
             - ctest
-        cache:
-            directories:
-                - install
