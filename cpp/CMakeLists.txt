@@ -5,6 +5,7 @@ project (grpc4bmi)
 add_compile_options(-std=c++11)
 
 find_package(Protobuf REQUIRED)
+find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin REQUIRED)
 
 set(PROTO_PATH "${CMAKE_SOURCE_DIR}/../proto/grpc4bmi")
 add_custom_command(
@@ -19,6 +20,7 @@ add_custom_command(
     COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
     ARGS "--proto_path=${PROTO_PATH}"
          "--grpc_out=${CMAKE_CURRENT_BINARY_DIR}"
+         "--plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
          "${PROTO_PATH}/bmi.proto"
     )
 set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc
