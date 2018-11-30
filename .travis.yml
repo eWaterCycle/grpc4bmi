@@ -26,11 +26,11 @@ matrix:
                   cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make all install
                 else
                   echo "using cached builds of protobuf, grpc and bmi-c..."
+                  echo "Installed programs are $(ls ${TRAVIS_BUILD_DIR}/install/bin)"
                 fi
         script:
-            - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
-            - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
+            - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
             - cmake .. -DCMAKE_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib -DCMAKE_INCLUDE_PATH=${TRAVIS_BUILD_DIR}/install/include -DCMAKE_PATH=${TRAVIS_BUILD_DIR}/install/bin
             - cmake --build .
             - ctest
