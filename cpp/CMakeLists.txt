@@ -6,6 +6,7 @@ add_compile_options(-std=c++11)
 
 find_package(Protobuf REQUIRED)
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin REQUIRED)
+message("-- Detected grpc plugin ${GRPC_CPP_PLUGIN}")
 
 set(PROTO_PATH "${CMAKE_SOURCE_DIR}/../proto/grpc4bmi")
 add_custom_command(
