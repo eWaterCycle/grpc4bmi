@@ -19,11 +19,34 @@ matrix:
                 if [[ ! -f ${TRAVIS_BUILD_DIR}/install/bin/protoc ]]; then
                   git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
                   cd grpc
-                  git submodule update --init
+                  # Install c-ares
+                  cd third_party/cares/cares
+                  git fetch origin
+                  git checkout cares-1_13_0
                   mkdir -p build && cd build
-                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make -j4 install
-                  mkdir -p ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build && cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build
-                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make install
+                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DCMAKE_BUILD_TYPE=Release ..
+                  make -j4 install
+                  cd ${TRAVIS_BUILD_DIR}/grpc
+                  rm -rf third_party/cares/cares  # wipe out to prevent influencing the grpc build
+                  # Install zlib
+                  cd third_party/zlib
+                  mkdir -p build && cd build
+                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DCMAKE_BUILD_TYPE=Release ..
+                  make -j4 install
+                  cd ${TRAVIS_BUILD_DIR}/grpc
+                  rm -rf third_party/zlib  # wipe out to prevent influencing the grpc build
+                  # Install protobuf
+                  cd third_party/protobuf
+                  mkdir -p build && cd build
+                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release ..
+                  make -j4 install
+                  cd ${TRAVIS_BUILD_DIR}/grpc
+                  rm -rf third_party/protobuf  # wipe out to prevent influencing the grpc build
+                  # Install gRPC
+                  mkdir -p build && cd build
+                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release ..
+                  make -j4 install
+                  cd ${TRAVIS_BUILD_DIR}
                 else
                   echo "using cached builds of protobuf, grpc and bmi-c..."
                 fi
