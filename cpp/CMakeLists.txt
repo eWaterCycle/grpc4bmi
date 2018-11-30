@@ -19,7 +19,6 @@ add_custom_command(
     COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
     ARGS "--proto_path=${PROTO_PATH}"
          "--grpc_out=${CMAKE_CURRENT_BINARY_DIR}"
-         "--plugin=protoc-gen-grpc=/usr/local/bin/grpc_cpp_plugin"
          "${PROTO_PATH}/bmi.proto"
     )
 set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc
