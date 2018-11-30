@@ -30,8 +30,12 @@ matrix:
         script:
             - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
             - export CMAKE_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib
+            - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib
             - export CMAKE_INCLUDE_PATH=${CPATH}:${TRAVIS_BUILD_DIR}/install/include
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - cmake ..
             - cmake --build .
             - ctest
+        cache:
+            directories:
+                - ${TRAVIS_BUILD_DIR}/install

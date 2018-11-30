@@ -3,8 +3,6 @@ cmake_minimum_required (VERSION 2.6)
 project (grpc4bmi)
 
 add_compile_options(-std=c++11)
-include_directories(/usr/local/include)
-link_directories(/usr/local/lib)
 
 find_package(Protobuf REQUIRED)
 
