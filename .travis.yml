@@ -19,6 +19,7 @@ matrix:
                 if [[ ! -f ${TRAVIS_BUILD_DIR}/install/bin/protoc ]]; then
                   git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
                   cd grpc
+                  git submodule update --init
                   # Install c-ares
                   cd third_party/cares/cares
                   git fetch origin
