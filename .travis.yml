@@ -21,13 +21,14 @@ matrix:
                   cd grpc
                   git submodule update --init
                   mkdir -p build && cd build
-                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make -j4 all install
+                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make -j4 install
                   mkdir -p ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build && cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c/build
-                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make all install
+                  cmake .. -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install && make install
                 else
                   echo "using cached builds of protobuf, grpc and bmi-c..."
-                  echo "Installed programs are $(ls ${TRAVIS_BUILD_DIR}/install/bin)"
                 fi
+                echo "Installed programs are $(ls ${TRAVIS_BUILD_DIR}/install/bin)"
+                echo "Installed libraries are $(ls ${TRAVIS_BUILD_DIR}/install/lib)"
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
