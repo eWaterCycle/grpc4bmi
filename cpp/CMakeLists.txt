@@ -28,7 +28,7 @@ add_custom_command(
     )
 set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc
                    ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.cc)
-link_libraries(GRPCPP_UNSECURE GRPC BMIC ${PROTOBUF_LIBRARY})
+link_libraries(${PROTOBUF_LIBRARY} ${GRPCPP_UNSECURE} ${GRPC} ${BMIC})
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/bmi-c/bmi)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})

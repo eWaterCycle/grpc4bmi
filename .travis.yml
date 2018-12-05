@@ -20,9 +20,9 @@ matrix:
                   git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init --recursive
-                  sudo make install
+                  sudo make -j4 install
                   cd third_party/protobuf
-                  sudo make install
+                  sudo make -j4 install
                   cd ${TRAVIS_BUILD_DIR}
                 else
                   echo "using cached builds of protobuf and grpc"
@@ -31,9 +31,8 @@ matrix:
                 cmake .. && sudo make install
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
-            - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
-            - cmake .. -DCMAKE_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib -DCMAKE_INCLUDE_PATH=${TRAVIS_BUILD_DIR}/install/include -DCMAKE_PATH=${TRAVIS_BUILD_DIR}/install/bin
-            - cmake --build .
+            - cmake ..
+            - make
             - ctest -V
         cache:
             directories:
