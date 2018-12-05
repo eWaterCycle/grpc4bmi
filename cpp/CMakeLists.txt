@@ -6,7 +6,9 @@ add_compile_options(-std=c++11)
 
 find_package(Protobuf REQUIRED)
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin REQUIRED)
-message("-- Detected grpc plugin ${GRPC_CPP_PLUGIN}")
+find_library(GRPCPP_UNSECURE grpc++_unsecure)
+find_library(GRPCLIB grpc)
+find_library(BMIC bmic)
 
 set(PROTO_PATH "${CMAKE_SOURCE_DIR}/../proto/grpc4bmi")
 add_custom_command(
@@ -26,9 +28,7 @@ add_custom_command(
     )
 set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc
                    ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.cc)
-
-find_library(bmic "/usr/local/lib")
-link_libraries(grpc++_unsecure grpc bmic ${PROTOBUF_LIBRARY})
+link_libraries(GRPCPP_UNSECURE GRPC BMIC ${PROTOBUF_LIBRARY})
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/bmi-c/bmi)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
