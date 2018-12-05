@@ -34,7 +34,7 @@ matrix:
             - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
             - cmake .. -DCMAKE_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/install/lib -DCMAKE_INCLUDE_PATH=${TRAVIS_BUILD_DIR}/install/include -DCMAKE_PATH=${TRAVIS_BUILD_DIR}/install/bin
             - cmake --build .
-            - ctest
+            - ctest -V
         cache:
             directories:
                 - /usr/local
