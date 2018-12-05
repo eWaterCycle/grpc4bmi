@@ -54,7 +54,8 @@ matrix:
                   #cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release ..
                   make -j4
                   mkdir -p grpc_tmp_dest
-                  sudo make install DESTDIR=grpc_tmp_dest
+                  make CFLAGS=-I${TRAVIS_BUILD_DIR}/install/include CPPFLAGS=-I${TRAVIS_BUILD_DIR}/install/include LDFLAGS=-L$(TRAVIS_BUILD_DIR)/lib
+                  make install DESTDIR=grpc_tmp_dest
                   mv grpc_tmp_dest/usr/local/bin/* ${TRAVIS_BUILD_DIR}/install/bin
                   mv grpc_tmp_dest/usr/local/lib/* ${TRAVIS_BUILD_DIR}/install/lib
                   mv grpc_tmp_dest/usr/local/include/* ${TRAVIS_BUILD_DIR}/install/include
