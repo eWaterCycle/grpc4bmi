@@ -5,6 +5,52 @@
 #include "test/bmi_test_extension.h"
 #include "bmi_grpc_server.h"
 
+#define SELECT_NONE 0
+#define SELECT_OUTPUT 1
+#define SELECT_INPUT 2
+#define SELECT_ALL 3
+
+std::vector<std::string> get_bmi_varnames(Bmi* b, int selector=SELECT_ALL)
+{
+    int count = 0;
+    int input_count = 0;
+    int output_count = 0;
+    if((selector & SELECT_INPUT) > 0)
+    {
+        b->get_input_var_name_count(&input_count);
+        count += input_count;
+    }
+    if((selector & SELECT_OUTPUT) > 0)
+    {
+        b->get_output_var_name_count(&output_count);
+        count += output_count;
+    }
+    if(count == 0)
+    {
+        return std::vector<std::string>();
+    }
+    char** names = (char**) malloc(sizeof(char*)*count);
+    for(int i = 0; i < count; i++)
+    {
+        names[i] = (char*) malloc(sizeof(char)*BMI_MAX_VAR_NAME);
+    }
+    if(selector & SELECT_INPUT > 0)
+    {
+        b->get_input_var_names(names);
+    }
+    if(selector & SELECT_OUTPUT > 0)
+    {
+        b->get_output_var_names(names + input_count);
+    }
+    std::vector<std::string> result(count);
+    for(std::vector<std::string>::size_type i = 0; i < result.size(); ++i)
+    {
+        result[i] = std::string(names[i]);
+        free(names[i]);
+    }
+    free(names);
+    return result;
+}
 
 void test_initialize(BmiGRPCService* s, Bmi* b)
 {
@@ -108,33 +154,10 @@ void test_output_vars(BmiGRPCService* s, Bmi* b)
     delete response;
 }
 
-std::vector<std::string> get_all_vars(Bmi* b)
-{
-    int input_count = 0;
-    int output_count = 0;
-    b->get_input_var_name_count(&input_count);
-    b->get_output_var_name_count(&output_count);
-    int count = input_count + output_count;
-    char** names = (char**) malloc(sizeof(char*)*count);
-    for(int i = 0; i < count; i++)
-    {
-        names[i] = (char*) malloc(sizeof(char)*BMI_MAX_VAR_NAME);
-    }
-    b->get_input_var_names(names);
-    b->get_output_var_names(names + input_count);
-    std::vector<std::string> result(count);
-    for(std::vector<std::string>::size_type i = 0; i < result.size(); ++i)
-    {
-        result[i] = std::string(names[i]);
-        free(names[i]);
-    }
-    free(names);
-    return result;
-}
 
 void test_var_grid(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> names = get_all_vars(b);
+    std::vector<std::string> names = get_bmi_varnames(b);
     bmi::GetVarRequest* request = new bmi::GetVarRequest();
     bmi::GetVarGridResponse* response = new bmi::GetVarGridResponse();
     for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
@@ -151,7 +174,7 @@ void test_var_grid(BmiGRPCService* s, Bmi* b)
 
 void test_var_type(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> names = get_all_vars(b);
+    std::vector<std::string> names = get_bmi_varnames(b);
     bmi::GetVarRequest* request = new bmi::GetVarRequest();
     bmi::GetVarTypeResponse* response = new bmi::GetVarTypeResponse();
     for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
@@ -168,7 +191,7 @@ void test_var_type(BmiGRPCService* s, Bmi* b)
 
 void test_var_itemsize(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> names = get_all_vars(b);
+    std::vector<std::string> names = get_bmi_varnames(b);
     bmi::GetVarRequest* request = new bmi::GetVarRequest();
     bmi::GetVarItemSizeResponse* response = new bmi::GetVarItemSizeResponse();
     for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
@@ -185,7 +208,7 @@ void test_var_itemsize(BmiGRPCService* s, Bmi* b)
 
 void test_var_nbytes(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> names = get_all_vars(b);
+    std::vector<std::string> names = get_bmi_varnames(b);
     bmi::GetVarRequest* request = new bmi::GetVarRequest();
     bmi::GetVarNBytesResponse* response = new bmi::GetVarNBytesResponse();
     for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
@@ -202,7 +225,7 @@ void test_var_nbytes(BmiGRPCService* s, Bmi* b)
 
 void test_var_units(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> names = get_all_vars(b);
+    std::vector<std::string> names = get_bmi_varnames(b);
     bmi::GetVarRequest* request = new bmi::GetVarRequest();
     bmi::GetVarUnitsResponse* response = new bmi::GetVarUnitsResponse();
     for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
@@ -265,75 +288,101 @@ void test_time_step(BmiGRPCService* s, Bmi* b)
     delete response;
 }
 
-
-/*void test_time_units(Bmi* b)
+void test_time_units(BmiGRPCService* s, Bmi* b)
 {
     char unit[BMI_MAX_UNITS_NAME];
     b->get_time_units(unit);
-    assert(std::string(unit, strlen(unit)) == static_cast<const BmiCppExtension*>(b)->get_time_units());
+    bmi::Empty* request = new bmi::Empty();
+    bmi::GetTimeUnitsResponse* response = new bmi::GetTimeUnitsResponse();
+    s->getTimeUnits(NULL, request, response);
+    assert(response->units() == std::string(unit));
+    delete request;
+    delete response;
 }
 
-void test_get_values(Bmi* b)
+void test_get_values(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> output_vars = get_bmi_varnames(b, SELECT_OUTPUT);
+    char type[BMI_MAX_TYPE_NAME];
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetValueResponse* response = new bmi::GetValueResponse();
+    for(std::vector<std::string>::iterator it = output_vars.begin(); it != output_vars.end(); ++it)
     {
-        if(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) != "double")
+        b->get_var_type(it->c_str(), type);
+        if(std::string(type) != "double")
         {
             continue;
         }
         int nbytes = 0;
         b->get_var_nbytes(it->c_str(), &nbytes);
-        void* vals = (void*) malloc(nbytes);
+        void* vals = malloc(nbytes);
         b->get_value(it->c_str(), vals);
-        std::vector<double> vals_vec((double*)vals, (double*)vals + nbytes/sizeof(double));
-        assert(vals_vec == static_cast<const BmiCppExtension*>(b)->get_value<double>(*it));
+        request->set_name(*it);
+        s->getValue(NULL, request, response);
+        for(int i = 0; i < response->mutable_values_double()->values_size(); ++i)
+        {
+            assert(response->mutable_values_double()->values(i) == *(static_cast<double*>(vals) + i));
+        }
         free(vals);
     }
+    delete request;
+    delete response;
 }
 
-void test_get_values_at_indices(Bmi* b)
+void test_get_values_at_indices(BmiGRPCService* s, Bmi* b)
 {
     std::vector<int>indices = {1, 3, 5, 7};
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> output_vars = get_bmi_varnames(b, SELECT_OUTPUT);
+    char type[BMI_MAX_TYPE_NAME];
+    bmi::GetValueAtIndicesRequest* request = new bmi::GetValueAtIndicesRequest();
+    bmi::GetValueAtIndicesResponse* response = new bmi::GetValueAtIndicesResponse();
+    for(std::vector<std::string>::iterator it = output_vars.begin(); it != output_vars.end(); ++it)
     {
-        if(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) != "double")
+        b->get_var_type(it->c_str(), type);
+        if(std::string(type) != "double")
         {
             continue;
         }
-        int nbytes = 0;
-        b->get_var_itemsize(it->c_str(), &nbytes);
-        nbytes *= indices.size();
-        void* vals = (void*) malloc(nbytes);
+        void* vals = malloc(indices.size() * sizeof(double));
         b->get_value_at_indices(it->c_str(), vals, indices.data(), indices.size());
-        std::vector<double> vals_vec((double*)vals, (double*)vals + nbytes/sizeof(double));
-        assert(vals_vec == static_cast<const BmiCppExtension*>(b)->get_value_at_indices<double>(*it, indices));
+        request->set_name(*it);
+        for(std::vector<int>::const_iterator it = indices.begin(); it != indices.end(); ++it)
+        {
+            request->add_indices(*it);
+        }
+        s->getValueAtIndices(NULL, request, response);
+        for(int i = 0; i < response->mutable_values_double()->values_size(); ++i)
+        {
+            assert(response->mutable_values_double()->values(i) == *(static_cast<double*>(vals) + i));
+        }
         free(vals);
     }
+    delete request;
+    delete response;
 }
 
-void test_get_value_ptr(Bmi* b)
+void test_get_value_ptr(BmiGRPCService* s, Bmi* b)
 {
-    std::vector<std::string> output_vars = static_cast<const BmiCppExtension*>(b)->get_output_var_names();
-    for(std::vector<std::string>::const_iterator it = output_vars.begin(); it != output_vars.end(); ++it)
+    std::vector<std::string> output_vars = get_bmi_varnames(b, SELECT_OUTPUT);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::Empty* response = new bmi::Empty();
+    for(std::vector<std::string>::iterator it = output_vars.begin(); it != output_vars.end(); ++it)
     {
-        if(static_cast<const BmiCppExtension*>(b)->get_var_type(*it) != "double")
-        {
-            continue;
-        }
-        void* p;
-        b->get_value_ptr(it->c_str(), &p);
-        assert(p == static_cast<BmiCppExtension*>(b)->get_value_ptr<double>(*it));
+        request->set_name(*it);
+        assert(s->getValuePtr(NULL, request, response).error_code() == ::grpc::StatusCode::UNIMPLEMENTED);
     }
-    
+    delete request;
+    delete response;
 }
 
-void test_finalize(Bmi* b)
+void test_finalize(BmiGRPCService* s)
 {
-    b->finalize();
-    assert(true);
-}*/
+    bmi::Empty* request = new bmi::Empty();
+    bmi::Empty* response = new bmi::Empty();
+    assert(s->finalize(NULL, request, response).error_code() == ::grpc::StatusCode::OK);
+    delete request;
+    delete response;
+}
 
 int main(int argc, char* argv[])
 {
@@ -345,84 +394,84 @@ int main(int argc, char* argv[])
     std::string testfunc(argv[1]);
     if(testfunc == "initialize")
     {
-        test_initialize(bmi_service, bmi_copy);
+        test_initialize(bmi_service, bmi);
     }
     else if(testfunc == "component_name")
     {
-        test_component_name(bmi_service, bmi_copy);
+        test_component_name(bmi_service, bmi);
     }
     else if(testfunc == "input_var_count")
     {
-        test_input_var_count(bmi_service, bmi_copy);
+        test_input_var_count(bmi_service, bmi);
     }
     else if(testfunc == "input_vars")
     {
-        test_input_vars(bmi_service, bmi_copy);
+        test_input_vars(bmi_service, bmi);
     }
     else if(testfunc == "output_var_count")
     {
-        test_output_var_count(bmi_service, bmi_copy);
+        test_output_var_count(bmi_service, bmi);
     }
     else if(testfunc == "output_vars")
     {
-        test_output_vars(bmi_service, bmi_copy);
+        test_output_vars(bmi_service, bmi);
     }
     else if(testfunc == "var_grid")
     {
-        test_var_grid(bmi_service, bmi_copy);
+        test_var_grid(bmi_service, bmi);
     }
     else if(testfunc == "var_type")
     {
-        test_var_type(bmi_service, bmi_copy);
+        test_var_type(bmi_service, bmi);
     }
     else if(testfunc == "var_itemsize")
     {
-        test_var_itemsize(bmi_service, bmi_copy);
+        test_var_itemsize(bmi_service, bmi);
     }
     else if(testfunc == "var_nbytes")
     {
-        test_var_nbytes(bmi_service, bmi_copy);
+        test_var_nbytes(bmi_service, bmi);
     }
     else if(testfunc == "var_units")
     {
-        test_var_units(bmi_service, bmi_copy);
+        test_var_units(bmi_service, bmi);
     }
     else if(testfunc == "start_time")
     {
-        test_start_time(bmi_service, bmi_copy);
+        test_start_time(bmi_service, bmi);
     }
     else if(testfunc == "current_time")
     {
-        test_current_time(bmi_service, bmi_copy);
+        test_current_time(bmi_service, bmi);
     }
     else if(testfunc == "end_time")
     {
-        test_end_time(bmi_service, bmi_copy);
+        test_end_time(bmi_service, bmi);
     }
     else if(testfunc == "time_step")
     {
-        test_time_step(bmi_service, bmi_copy);
+        test_time_step(bmi_service, bmi);
     }
-/*    else if(testfunc == "time_units")
+    else if(testfunc == "time_units")
     {
-        test_time_units(bmi_service, bmi_copy);
+        test_time_units(bmi_service, bmi);
     }
     else if(testfunc == "get_values")
     {
-        test_get_values(bmi_service, bmi_copy);
+        test_get_values(bmi_service, bmi);
     }
     else if(testfunc == "get_values_at_indices")
     {
-        test_get_values_at_indices(bmi_service, bmi_copy);
+        test_get_values_at_indices(bmi_service, bmi);
     }
     else if(testfunc == "get_value_ptr")
     {
-        test_get_value_ptr(bmi_service, bmi_copy);
+        test_get_value_ptr(bmi_service, bmi);
     }
     else if(testfunc == "finalize")
     {
-        test_finalize(bmi_service, bmi_copy);
-    }*/
+        test_finalize(bmi_service);
+    }
     else
     {
         throw std::invalid_argument("Unknown test function selection " + testfunc);
