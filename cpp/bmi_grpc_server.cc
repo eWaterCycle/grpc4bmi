@@ -37,6 +37,11 @@ grpc::Status BmiGRPCService::runModel(grpc::ServerContext* context, const bmi::E
     return BmiGRPCService::translate_status(this->bmi->run_model());
 }
 
+grpc::Status BmiGRPCService::finalize(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response)
+{
+    return BmiGRPCService::translate_status(this->bmi->finalize());
+}
+
 grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) const
 {
     char name[BMI_MAX_COMPONENT_NAME];
@@ -284,14 +289,14 @@ grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext* context, con
         std::vector<float> values(indices.size());
         this->bmi->get_value_at_indices(request->name().c_str(), (void*)values.data(), indices.data(), indices.size());
         response->mutable_values_float()->mutable_values()->Resize(values.size(), 0);
-        std::copy(values.begin(), values.end(),response->mutable_values_int()->mutable_values()->begin());
+        std::copy(values.begin(), values.end(),response->mutable_values_float()->mutable_values()->begin());
     }
     if (typechar == 'd')
     {
         std::vector<double> values(indices.size());
         this->bmi->get_value_at_indices(request->name().c_str(), (void*)values.data(), indices.data(), indices.size());
         response->mutable_values_double()->mutable_values()->Resize(values.size(), 0);
-        std::copy(values.begin(), values.end(),response->mutable_values_int()->mutable_values()->begin());
+        std::copy(values.begin(), values.end(),response->mutable_values_double()->mutable_values()->begin());
     }
     return grpc::Status::OK;
 }
@@ -556,10 +561,10 @@ grpc::Status BmiGRPCService::getGridOffset(grpc::ServerContext* context, const b
 char BmiGRPCService::find_type(const std::string& varname) const
 {
     std::locale loc;
-    char type[2028];
+    char type[BMI_MAX_TYPE_NAME];
     this->bmi->get_var_type(varname.c_str(), type);
     std::string vartype(type);
-    vartype = std::tolower(vartype, loc);
+    std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
     if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
     {

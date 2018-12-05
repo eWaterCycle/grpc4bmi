@@ -17,6 +17,7 @@ class BmiGRPCService final: public BmiService::Service
         grpc::Status updateUntil(grpc::ServerContext* context, const bmi::UpdateUntilRequest* request, bmi::Empty* response);
         grpc::Status updateFrac(grpc::ServerContext* context, const bmi::UpdateFracRequest* request, bmi::Empty* response);
         grpc::Status runModel(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response);
+        grpc::Status finalize(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response);
         grpc::Status getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) const;
         grpc::Status getInputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const;
         grpc::Status getOutputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) const;
