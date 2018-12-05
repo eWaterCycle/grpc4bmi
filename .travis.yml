@@ -1,12 +1,39 @@
-language: python
-python:
-    - '2.7'
-    - '3.6'
-install:
-    - pip install -r requirements.txt
-    - python setup.py install
-script:
-    - pytest
-cache:
-    directories:
-        - $HOME/cache/pip
+matrix:
+    include:
+      - language: python
+        python:
+            - '2.7'
+            - '3.6'
+        install:
+            - pip install -r requirements.txt
+            - python setup.py install
+        script:
+            - pytest
+        cache: pip
+      - language: cpp
+        before_install:
+            - git submodule update --init
+            - sudo apt-get update
+            - sudo apt-get install -y build-essential autoconf libtool pkg-config
+            - | 
+                if [[ ! -f /usr/local/bin/protoc || ! -f /usr/local/bin/grpc_cpp_plugin ]]; then
+                  git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+                  cd grpc
+                  git submodule update --init --recursive
+                  sudo make -j4 install
+                  cd third_party/protobuf
+                  sudo make -j4 install
+                  cd ${TRAVIS_BUILD_DIR}
+                else
+                  echo "using cached builds of protobuf and grpc"
+                fi
+                cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c && mkdir -p build && cd build
+                cmake .. && sudo make install
+        script:
+            - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
+            - cmake ..
+            - make
+            - ctest -V
+        cache:
+            directories:
+                - /usr/local

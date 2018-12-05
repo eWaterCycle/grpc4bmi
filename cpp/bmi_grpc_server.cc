@@ -1,4 +1,11 @@
+#include <grpc/grpc.h>
+#include <grpcpp/server.h>
+#include <grpcpp/server_builder.h>
+#include <grpcpp/server_context.h>
+#include <grpcpp/security/server_credentials.h>
+#include "bmi-c/bmi/bmilib.h"
 #include "bmi_grpc_server.h"
+#include "bmi_c_wrapper.h"
 
 
 BmiGRPCService::BmiGRPCService(Bmi* bmi_):bmi(bmi_){}
@@ -629,4 +636,27 @@ grpc::Status BmiGRPCService::translate_status(int status)
         return grpc::Status::CANCELLED;
     }
     return grpc::Status(grpc::StatusCode::UNKNOWN, "Unknown BMI status code encountered");
+}
+
+void run_bmi_server(BMI_Model* model, int argc, char* argv[])
+{
+    Bmi* wrapper = new BmiCWrapper(model);
+    run_bmi_server(wrapper, argc, argv);
+    delete wrapper;
+}
+
+void run_bmi_server(Bmi* model, int argc, char* argv[])
+{
+    std::string server_address("0.0.0.0:50051");
+    if(argc > 1)
+    {
+        server_address = std::string(argv[1]);
+    }
+    std::cerr<<"BMI grpc server attached to server address "<<server_address<<std::endl;
+    BmiGRPCService service(model); 
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    server->Wait();
 }

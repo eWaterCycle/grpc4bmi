@@ -9,7 +9,13 @@ class BmiTestExtension: public BmiCppExtension
 
         BmiTestExtension(const std::vector<double>&, const std::vector<double>&);
         virtual ~BmiTestExtension();
-        void initialize (std::string configfile) = 0;
+        
+        void initialize (std::string configfile) override;
+        int update() override;
+        int update_until(double) override;
+        int update_frac(double) override;
+        int finalize() override;
+        int run_model() override;
 
         std::string get_component_name() const override;
         std::vector<std::string> get_input_var_names() const override;

@@ -14,8 +14,8 @@ class Bmi
 {
   public:
 
-    Bmi();
-    virtual ~Bmi();
+    Bmi(){};
+    virtual ~Bmi(){};
 
     virtual int initialize(const char* configfile) = 0;
     virtual int update() = 0;

@@ -3,6 +3,7 @@
 
 #include "bmi.grpc.pb.h"
 #include "bmi_class.h"
+#include "bmi.h"
 
 using bmi::BmiService;
 
@@ -52,5 +53,8 @@ class BmiGRPCService final: public BmiService::Service
         int get_grid_dimensions(int id, int* vec3d) const;
         static grpc::Status translate_status(int);
 };
+
+void run_bmi_server(BMI_Model* model, int argc, char* argv[]);
+void run_bmi_server(Bmi* model, int argc, char* argv[]);
 
 #endif

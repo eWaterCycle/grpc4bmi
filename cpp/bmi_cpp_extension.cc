@@ -1,173 +1,10 @@
 #include <algorithm>
-#include <locale>
 #include <cstring>
 #include "bmi_cpp_extension.h"
 
 BmiCppExtension::BmiCppExtension(){}
 
 BmiCppExtension::~BmiCppExtension(){}
-
-template<> std::vector<int> BmiCppExtension::get_value(const std::string name) const
-{
-    if (this->find_type(name) == 'i')
-    {
-        return this->get_value_int(name);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not integer");
-}
-
-template<> std::vector<float> BmiCppExtension::get_value(const std::string name) const
-{
-    if (this->find_type(name) == 'f')
-    {
-        return this->get_value_float(name);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not float");
-}
-
-template<> std::vector<double> BmiCppExtension::get_value(const std::string name) const
-{
-    if (this->find_type(name) == 'd')
-    {
-        return this->get_value_double(name);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not double");
-}
-
-template<> int* BmiCppExtension::get_value_ptr(std::string name)
-{
-    if (this->find_type(name) == 'i')
-    {
-        return this->get_value_int_ptr(name);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not integer");
-}
-
-template<> float* BmiCppExtension::get_value_ptr(std::string name)
-{
-    if (this->find_type(name) == 'f')
-    {
-        return this->get_value_float_ptr(name);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not float");
-}
-
-template<> double* BmiCppExtension::get_value_ptr(std::string name)
-{
-    if (this->find_type(name) == 'd')
-    {
-        return this->get_value_double_ptr(name);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not double");
-}
-
-template<> std::vector<int> BmiCppExtension::get_value_at_indices(std::string name, const std::vector<int>& indices) const
-{
-    if (this->find_type(name) == 'i')
-    {
-        return this->get_value_int_at_indices(name, indices);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not integer");
-}
-
-template<> std::vector<float> BmiCppExtension::get_value_at_indices(std::string name, const std::vector<int>& indices) const
-{
-    if (this->find_type(name) == 'f')
-    {
-        return this->get_value_float_at_indices(name, indices);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not float");
-}
-
-template<> std::vector<double> BmiCppExtension::get_value_at_indices(std::string name, const std::vector<int>& indices) const
-{
-    if (this->find_type(name) == 'd')
-    {
-        return this->get_value_double_at_indices(name, indices);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not double");
-}
-
-template<> void BmiCppExtension::set_value(std::string name, const std::vector<int>& src)
-{
-    if (this->find_type(name) == 'i')
-    {
-        this->set_value_int(name, src);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not integer");
-}
-
-template<> void BmiCppExtension::set_value(std::string name, const std::vector<float>& src)
-{
-    if (this->find_type(name) == 'f')
-    {
-        this->set_value_float(name, src);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not float");
-}
-
-template<> void BmiCppExtension::set_value(std::string name, const std::vector<double>& src)
-{
-    if (this->find_type(name) == 'd')
-    {
-        this->set_value_double(name, src);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not double");
-}
-
-template<> void BmiCppExtension::set_value_ptr(std::string name, int* const ptr)
-{
-    if (this->find_type(name) == 'i')
-    {
-        this->set_value_int_ptr(name, ptr);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not integer");
-}
-
-template<> void BmiCppExtension::set_value_ptr(std::string name, float* const ptr)
-{
-    if (this->find_type(name) == 'f')
-    {
-        this->set_value_float_ptr(name, ptr);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not float");
-}
-
-template<> void BmiCppExtension::set_value_ptr(std::string name, double* const ptr)
-{
-    if (this->find_type(name) == 'd')
-    {
-        this->set_value_double_ptr(name, ptr);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not double");
-}
-
-template<> void BmiCppExtension::set_value_at_indices(std::string name, const std::vector<int>& indices, const std::vector<int>& values)
-{
-    if (this->find_type(name) == 'i')
-    {
-        this->set_value_int_at_indices(name, indices, values);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not integer");
-}
-
-template<> void BmiCppExtension::set_value_at_indices(std::string name, const std::vector<int>& indices, const std::vector<float>& values)
-{
-    if (this->find_type(name) == 'f')
-    {
-        this->set_value_float_at_indices(name, indices, values);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not float");
-}
-
-template<> void BmiCppExtension::set_value_at_indices(std::string name, const std::vector<int>& indices, const std::vector<double>& values)
-{
-    if (this->find_type(name) == 'd')
-    {
-        this->set_value_double_at_indices(name, indices, values);
-    }
-    throw std::invalid_argument("The value type of variable " + name + "is not double");
-}
 
 int BmiCppExtension::initialize(const char* configfile)
 {
@@ -179,6 +16,7 @@ int BmiCppExtension::get_component_name(char* dest) const
 {
     std::string s = this->get_component_name();
     strncpy(dest, s.c_str(), s.size());
+    dest[s.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -200,6 +38,7 @@ int BmiCppExtension::get_input_var_names(char** dest) const
     for(std::vector<std::string>::size_type i = 0; i < src.size(); i++)
     {
         strncpy(dest[i], src[i].c_str(), src[i].size());
+        dest[i][src[i].size()] = '\0';
     }
     return BMI_SUCCESS;
 }
@@ -210,6 +49,7 @@ int BmiCppExtension::get_output_var_names(char** dest) const
     for(std::vector<std::string>::size_type i = 0; i < src.size(); i++)
     {
         strncpy(dest[i], src[i].c_str(), src[i].size());
+        dest[i][src[i].size()] = '\0';
     }
     return BMI_SUCCESS;
 }
@@ -224,6 +64,7 @@ int BmiCppExtension::get_var_type(const char* name, char* dest) const
 {
     std::string type = this->get_var_type(std::string(name));
     strncpy(dest, type.c_str(), type.size());
+    dest[type.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -237,6 +78,7 @@ int BmiCppExtension::get_var_units(const char* name, char* dest) const
 {
     std::string units = this->get_var_units(std::string(name));
     strncpy(dest, units.c_str(), units.size());
+    dest[units.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -268,6 +110,7 @@ int BmiCppExtension::get_time_units(char* dest) const
 {
     std::string units = this->get_time_units();
     strncpy(dest, units.c_str(), units.size());
+    dest[units.size()] = '\0';
     return BMI_SUCCESS;
 }
 
@@ -294,7 +137,7 @@ int BmiCppExtension::get_value(const char* name, void* dest) const
     if(type == 'd')
     {
         std::vector<double> vals = this->get_value_double(std::string(name));
-        memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(double));
+        memcpy(dest, vals.data(), vals.size()*sizeof(double));
         return BMI_SUCCESS;
     }
     return BMI_FAILURE;
@@ -525,8 +368,8 @@ int BmiCppExtension::get_grid_offset(int id, int* dest) const
 
 char BmiCppExtension::find_type(const std::string& varname) const
 {
-    std::locale loc;
-    std::string vartype = std::tolower(this->get_var_type(varname), loc);
+    std::string vartype = this->get_var_type(varname);
+    std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
     if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
     {
