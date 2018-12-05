@@ -16,57 +16,19 @@ matrix:
             - sudo apt-get update
             - sudo apt-get install -y build-essential autoconf libtool pkg-config
             - | 
-                if [[ ! -f ${TRAVIS_BUILD_DIR}/install/bin/protoc ]]; then
-                  git clone https://github.com/grpc/grpc
+                if [[ ! -f /usr/local/bin/protoc || ! -f /usr/local/bin/grpc_cpp_plugin ]]; then
+                  git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init --recursive
-                  # Install c-ares
-                  cd third_party/cares/cares
-                  git fetch origin
-                  git checkout cares-1_13_0
-                  mkdir -p build && cd build
-                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DCMAKE_BUILD_TYPE=Release ..
-                  make -j4 install
-                  cd ${TRAVIS_BUILD_DIR}/grpc
-                  rm -rf third_party/cares/cares  # wipe out to prevent influencing the grpc build
-                  # Install zlib
-                  cd third_party/zlib
-                  mkdir -p build && cd build
-                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DCMAKE_BUILD_TYPE=Release ..
-                  make -j4 install
-                  cd ${TRAVIS_BUILD_DIR}/grpc
-                  rm -rf third_party/zlib  # wipe out to prevent influencing the grpc build
-                  # Install boringssl
-                  cd third_party/boringssl
-                  mkdir -p build && cd build
-                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DCMAKE_BUILD_TYPE=Release ..
-                  make -j4
-                  cd ${TRAVIS_BUILD_DIR}/grpc
-                  # Install protobuf
-                  cd third_party/protobuf/cmake
-                  mkdir -p build && cd build
-                  cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release ..
-                  make -j4 install
-                  cd ${TRAVIS_BUILD_DIR}/grpc
-                  rm -rf third_party/protobuf  # wipe out to prevent influencing the grpc build
-                  # Install gRPC
-                  #mkdir -p build && cd build
-                  #cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release ..
-                  make -j4
-                  mkdir -p grpc_tmp_dest
-                  make CFLAGS=-I${TRAVIS_BUILD_DIR}/install/include CPPFLAGS=-I${TRAVIS_BUILD_DIR}/install/include LDFLAGS=-L$(TRAVIS_BUILD_DIR)/lib
-                  make install DESTDIR=grpc_tmp_dest
-                  mv grpc_tmp_dest/usr/local/bin/* ${TRAVIS_BUILD_DIR}/install/bin
-                  mv grpc_tmp_dest/usr/local/lib/* ${TRAVIS_BUILD_DIR}/install/lib
-                  mv grpc_tmp_dest/usr/local/include/* ${TRAVIS_BUILD_DIR}/install/include
-                  mv grpc_tmp_dest/usr/local/share/* ${TRAVIS_BUILD_DIR}/install/share
-                  rm -rf grpc_tmp_dest
+                  sudo make install
+                  cd third_party/protobuf
+                  sudo make install
                   cd ${TRAVIS_BUILD_DIR}
                 else
-                  echo "using cached builds of protobuf, grpc and bmi-c..."
+                  echo "using cached builds of protobuf and grpc"
                 fi
-                echo "Installed programs are $(ls ${TRAVIS_BUILD_DIR}/install/bin)"
-                echo "Installed libraries are $(ls ${TRAVIS_BUILD_DIR}/install/lib)"
+                cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c && mkdir -p build && cd build
+                cmake .. && sudo make install
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - export PATH=${PATH}:${TRAVIS_BUILD_DIR}/install/bin
@@ -75,4 +37,4 @@ matrix:
             - ctest
         cache:
             directories:
-                - ${TRAVIS_BUILD_DIR}/install
+                - /usr/local
