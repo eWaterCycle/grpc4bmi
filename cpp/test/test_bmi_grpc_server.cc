@@ -34,11 +34,11 @@ std::vector<std::string> get_bmi_varnames(Bmi* b, int selector=SELECT_ALL)
     {
         names[i] = (char*) malloc(sizeof(char)*BMI_MAX_VAR_NAME);
     }
-    if(selector & SELECT_INPUT > 0)
+    if((selector & SELECT_INPUT) > 0)
     {
         b->get_input_var_names(names);
     }
-    if(selector & SELECT_OUTPUT > 0)
+    if((selector & SELECT_OUTPUT) > 0)
     {
         b->get_output_var_names(names + input_count);
     }
@@ -335,7 +335,12 @@ void test_get_values_at_indices(BmiGRPCService* s, Bmi* b)
     std::vector<std::string> output_vars = get_bmi_varnames(b, SELECT_OUTPUT);
     char type[BMI_MAX_TYPE_NAME];
     bmi::GetValueAtIndicesRequest* request = new bmi::GetValueAtIndicesRequest();
+    for(std::vector<int>::const_iterator it = indices.begin(); it != indices.end(); ++it)
+    {
+        request->add_indices(*it);
+    }
     bmi::GetValueAtIndicesResponse* response = new bmi::GetValueAtIndicesResponse();
+    void* vals = malloc(indices.size() * sizeof(double));
     for(std::vector<std::string>::iterator it = output_vars.begin(); it != output_vars.end(); ++it)
     {
         b->get_var_type(it->c_str(), type);
@@ -343,20 +348,15 @@ void test_get_values_at_indices(BmiGRPCService* s, Bmi* b)
         {
             continue;
         }
-        void* vals = malloc(indices.size() * sizeof(double));
         b->get_value_at_indices(it->c_str(), vals, indices.data(), indices.size());
         request->set_name(*it);
-        for(std::vector<int>::const_iterator it = indices.begin(); it != indices.end(); ++it)
-        {
-            request->add_indices(*it);
-        }
         s->getValueAtIndices(NULL, request, response);
         for(int i = 0; i < response->mutable_values_double()->values_size(); ++i)
         {
             assert(response->mutable_values_double()->values(i) == *(static_cast<double*>(vals) + i));
         }
-        free(vals);
     }
+    free(vals);
     delete request;
     delete response;
 }
@@ -370,6 +370,89 @@ void test_get_value_ptr(BmiGRPCService* s, Bmi* b)
     {
         request->set_name(*it);
         assert(s->getValuePtr(NULL, request, response).error_code() == ::grpc::StatusCode::UNIMPLEMENTED);
+    }
+    delete request;
+    delete response;
+}
+
+void test_set_values(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<std::string> input_vars   = get_bmi_varnames(b, SELECT_INPUT);
+    std::vector<std::string> output_vars  = get_bmi_varnames(b, SELECT_OUTPUT);
+    char type[BMI_MAX_TYPE_NAME];
+    bmi::SetValueRequest* request = new bmi::SetValueRequest();
+    bmi::Empty* response = new bmi::Empty();
+    for(std::vector<std::string>::iterator it = input_vars.begin(); it != input_vars.end(); ++it)
+    {
+        b->get_var_type(it->c_str(), type);
+        if(std::string(type) != "double")
+        {
+            continue;
+        }
+        int nbytes = 0;
+        b->get_var_nbytes(it->c_str(), &nbytes);
+        std::vector<double>vals(nbytes / sizeof(double));
+        request->set_name(*it);
+        request->mutable_values_double()->clear_values();
+        for(std::vector<double>::iterator it2 = vals.begin(); it2 != vals.end(); ++it2)
+        {
+            *it2 = ((double)std::rand())/RAND_MAX;
+            request->mutable_values_double()->add_values(*it2);
+        }
+        s->setValue(NULL, request, response);
+        if(std::find(output_vars.begin(), output_vars.end(), *it) != output_vars.end())
+        {
+            void* check_vals = malloc(nbytes);
+            b->get_value(it->c_str(), check_vals);
+            for(std::vector<double>::size_type i = 0; i < vals.size(); ++i)
+            {
+                assert(vals[i] == *(static_cast<double*>(check_vals) + i));
+            }
+            free(check_vals);
+        }
+    }
+    delete request;
+    delete response;
+}
+
+void test_set_values_at_indices(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<int>indices = {0, 2, 4, 6};
+    std::vector<std::string> input_vars   = get_bmi_varnames(b, SELECT_INPUT);
+    std::vector<std::string> output_vars  = get_bmi_varnames(b, SELECT_OUTPUT);
+    char type[BMI_MAX_TYPE_NAME];
+    bmi::SetValueAtIndicesRequest* request = new bmi::SetValueAtIndicesRequest();
+    for(std::vector<int>::const_iterator it = indices.begin(); it != indices.end(); ++it)
+    {
+        request->add_indices(*it);
+    }
+    bmi::Empty* response = new bmi::Empty();
+    for(std::vector<std::string>::iterator it = input_vars.begin(); it != input_vars.end(); ++it)
+    {
+        b->get_var_type(it->c_str(), type);
+        if(std::string(type) != "double")
+        {
+            continue;
+        }
+        request->set_name(*it);
+        request->mutable_values_double()->clear_values();
+        std::vector<double>vals(indices.size());
+        for(std::vector<double>::iterator it2 = vals.begin(); it2 != vals.end(); ++it2)
+        {
+            *it2 = ((double)std::rand())/RAND_MAX;
+            request->mutable_values_double()->add_values(*it2);
+        }
+        s->setValueAtIndices(NULL, request, response);
+        if(std::find(output_vars.begin(), output_vars.end(), *it) != output_vars.end())
+        {
+            void* check_vals = malloc(sizeof(double)*indices.size());
+            b->get_value_at_indices(it->c_str(), check_vals, indices.data(), indices.size());
+            for(std::vector<double>::size_type i = 0; i < vals.size(); ++i)
+            {
+                assert(vals[i] == *(static_cast<double*>(check_vals) + i));
+            }
+            free(check_vals);
+        }
     }
     delete request;
     delete response;
@@ -467,6 +550,14 @@ int main(int argc, char* argv[])
     else if(testfunc == "get_value_ptr")
     {
         test_get_value_ptr(bmi_service, bmi);
+    }
+    else if(testfunc == "set_values")
+    {
+        test_set_values(bmi_service, bmi);
+    }
+    else if(testfunc == "set_values_at_indices")
+    {
+        test_set_values_at_indices(bmi_service, bmi);
     }
     else if(testfunc == "finalize")
     {

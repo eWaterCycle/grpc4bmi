@@ -28,7 +28,7 @@ int BmiCppExtension::get_input_var_name_count(int* dest) const
 
 int BmiCppExtension::get_output_var_name_count(int* dest) const
 {
-    *dest = this->get_input_var_names().size();
+    *dest = this->get_output_var_names().size();
     return BMI_SUCCESS;
 }
     
@@ -194,28 +194,26 @@ int BmiCppExtension::get_value_at_indices(const char* name, void* dest, const in
 int BmiCppExtension::set_value(const char* name, const void* src)
 {
     char type = this->find_type(std::string(name));
-    int grid_id;
-    this->get_var_grid(name, &grid_id);
-    int size;
-    this->get_grid_size(grid_id, &size);
+    int nbytes;
+    this->get_var_nbytes(name, &nbytes);
     if(type == 'i')
     {
         std::vector<int> vals;
-        vals.assign(static_cast<const int*>(src), static_cast<const int*>(src) + size);
+        vals.assign(static_cast<const int*>(src), static_cast<const int*>(src) + nbytes / sizeof(int));
         this->set_value_int(std::string(name), vals);
         return BMI_SUCCESS;
     }
     if(type == 'f')
     {
         std::vector<float> vals;
-        vals.assign(static_cast<const float*>(src), static_cast<const float*>(src) + size);
+        vals.assign(static_cast<const float*>(src), static_cast<const float*>(src) + nbytes / sizeof(float));
         this->set_value_float(std::string(name), vals);
         return BMI_SUCCESS;
     }
     if(type == 'd')
     {
         std::vector<double> vals;
-        vals.assign(static_cast<const double*>(src), static_cast<const double*>(src) + size);
+        vals.assign(static_cast<const double*>(src), static_cast<const double*>(src) + nbytes / sizeof(double));
         this->set_value_double(std::string(name), vals);
         return BMI_SUCCESS;
     }
@@ -246,8 +244,7 @@ int BmiCppExtension::set_value_ptr(const char* name, void** src)
 int BmiCppExtension::set_value_at_indices(const char* name, const int* pts, int numpts, const void* src)
 {
     char type = this->find_type(std::string(name));
-    std::vector<int> indices;
-    indices.assign(pts, pts + numpts);
+    std::vector<int> indices(pts, pts + numpts);
     if(type == 'i')
     {
         std::vector<int> vals;

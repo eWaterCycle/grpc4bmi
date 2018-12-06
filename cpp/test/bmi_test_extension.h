@@ -82,11 +82,13 @@ class BmiTestExtension: public BmiCppExtension
         std::vector<double> x;
         std::vector<double> y;
         std::vector<double>::size_type size;
-        std::string input_var;
-        std::string output_var;
+        std::vector<std::string> input_vars;
+        std::vector<std::string> output_vars;
         int grid_id;
-        std::vector<double> ovars;
-        std::vector<double> ivars;
+        std::vector<double> Q;
+        std::vector<double> h;
+
+        bool has_var(std::string name) const;
 };
 
 #endif

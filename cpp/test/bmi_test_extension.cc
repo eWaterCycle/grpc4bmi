@@ -1,15 +1,17 @@
 #include <iostream>
+#include <algorithm>
 #include <stdexcept>
 #include <random>
 #include "bmi_test_extension.h"
 
-BmiTestExtension::BmiTestExtension(const std::vector<double>& x_, const std::vector<double>& y_):time_counter(0), x(x_), y(y_), size(x_.size() * y_.size()), input_var("water level"), output_var("discharge"), grid_id(121)
+BmiTestExtension::BmiTestExtension(const std::vector<double>& x_, const std::vector<double>& y_):time_counter(0), x(x_), y(y_), size(x_.size() * y_.size()), input_vars({"water level"}), output_vars({"discharge", "water level"}), grid_id(121)
 {
-    this->ivars = std::vector<double>(size, 0.);
-    this->ovars = std::vector<double>(size, 0.);
+    this->h = std::vector<double>(size, 0.);
+    this->Q = std::vector<double>(size, 0.);
     for(std::vector<double>::size_type i = 0; i < size; ++i)
     {
-        this->ovars[i] = std::rand();
+        this->Q[i] = 2500.*((double)std::rand())/RAND_MAX;
+        this->h[i] = 2.5*((double)std::rand())/RAND_MAX;
     }
 }
 
@@ -17,7 +19,8 @@ int BmiTestExtension::update()
 {
     for(std::vector<double>::size_type i = 0; i < size; ++i)
     {
-        this->ovars[i] += std::rand();
+        this->Q[i] = 2500.*((double)std::rand())/RAND_MAX;
+        this->h[i] = 2.5*((double)std::rand())/RAND_MAX;
     }
     this->time_counter++;
 }
@@ -59,61 +62,66 @@ std::string BmiTestExtension::get_component_name() const
 
 std::vector<std::string> BmiTestExtension::get_input_var_names() const
 {
-    return std::vector<std::string>(1, this->input_var);
+    return this->input_vars;
 }
 
 std::vector<std::string> BmiTestExtension::get_output_var_names() const
 {
-    return std::vector<std::string>(1, this->output_var);
+    return this->output_vars;
+}
+
+bool BmiTestExtension::has_var(std::string name) const
+{
+    return std::find(this->input_vars.begin(), this->input_vars.end(), name) != this->input_vars.end() or std::find(this->output_vars.begin(), this->output_vars.end(), name) != this->output_vars.end();
 }
 
 int BmiTestExtension::get_var_grid(std::string name) const
 {
-    if(name == this->input_var or name == this->output_var)
+    if(this->has_var(name))
     {
         return this->grid_id;
     }
-    throw std::invalid_argument("unknown variable" + name);
+    throw std::invalid_argument("unknown variable: " + name);
 }
 
 std::string BmiTestExtension::get_var_type(std::string name) const
 {
-    if(name == this->input_var or name == this->output_var)
+    if(this->has_var(name))
     {
         return "double";
     }
-    throw std::invalid_argument("unknown variable" + name);
+    throw std::invalid_argument("unknown variable: " + name);
 }
 
 int BmiTestExtension::get_var_itemsize(std::string name) const
 {
-    if(name == this->input_var or name == this->output_var)
+    if(this->has_var(name))
     {
         return sizeof(double);
     }
-    throw std::invalid_argument("unknown variable" + name);
+    throw std::invalid_argument("unknown variable: " + name);
 }
 
 std::string BmiTestExtension::get_var_units(std::string name) const
 {
-    if(name == this->input_var)
+    if(name == "water level")
     {
         return "m";
     }
-    if(name == this->output_var)
+    if(name == "discharge")
     {
         return "m3 s-1";
     }
-    throw std::invalid_argument("unknown variable" + name);
+    throw std::invalid_argument("unknown variable: " + name);
 }
 
 int BmiTestExtension::get_var_nbytes(std::string name) const
 {
-    if(name == this->input_var or name == this->output_var)
+    if(this->has_var(name))
     {
         return sizeof(double) * this->size;
     }
-    throw std::invalid_argument("unknown variable" + name);
+    throw std::invalid_argument("unknown variable: " + name);
 }
 
 double BmiTestExtension::get_current_time() const
@@ -273,114 +281,140 @@ std::vector<int> BmiTestExtension::get_grid_offset(int id) const
 
 std::vector<int> BmiTestExtension::get_value_int(const std::string& name) const
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 std::vector<float> BmiTestExtension::get_value_float(const std::string& name) const
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 std::vector<double> BmiTestExtension::get_value_double(const std::string& name) const
 {
-    if(name == this->output_var)
+    if(name == "discharge")
     {
-        return this->ovars;
+        return this->Q;
     }
-    throw std::invalid_argument("invalid variable" + name);
+    if(name == "water level")
+    {
+        return this->h;
+    }
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 int* BmiTestExtension::get_value_int_ptr(const std::string& name)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 float* BmiTestExtension::get_value_float_ptr(const std::string& name)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 double* BmiTestExtension::get_value_double_ptr(const std::string& name)
 {
-    if(name == this->output_var)
+    if(name == "discharge")
     {
-        return &(this->ovars.data()[0]);
+        return &(this->Q.data()[0]);
     }
-    throw std::invalid_argument("invalid variable" + name);
+    if(name == "water level")
+    {
+        return &(this->h.data()[0]);
+    }
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 std::vector<int> BmiTestExtension::get_value_int_at_indices(std::string name, const std::vector<int>& indices) const
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 std::vector<float> BmiTestExtension::get_value_float_at_indices(std::string name, const std::vector<int>& indices) const
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 std::vector<double> BmiTestExtension::get_value_double_at_indices(std::string name, const std::vector<int>& indices) const
 {
-    if(name == this->output_var)
+    const std::vector<double>* ref = NULL;
+    if(name == "discharge")
     {
-        std::vector<double>result(indices.size(), 0.);
-        for(std::vector<double>::size_type i = 0; i < indices.size(); ++i)
-        {
-            result[i] = this->ovars[indices[i]];
-        }
-        return result;
+        ref = &(this->Q);
     }
-    throw std::invalid_argument("invalid variable" + name);
+    if(name == "water level")
+    {
+        ref = &(this->h);
+    }
+    if(ref == NULL)
+    {
+        throw std::invalid_argument("invalid variable: " + name);
+    }
+    std::vector<double>result(indices.size(), 0.);
+    for(std::vector<double>::size_type i = 0; i < indices.size(); ++i)
+    {
+        result[i] = (*ref)[indices[i]];
+    }
+    return result;
 }
 
 void BmiTestExtension::set_value_int(std::string name, const std::vector<int>& src)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 void BmiTestExtension::set_value_float(std::string name, const std::vector<float>& src)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 void BmiTestExtension::set_value_double(std::string name, const std::vector<double>& src)
 {
-    std::vector<double>::size_type n = std::min(src.size(), this->size);
-    for(std::vector<double>::size_type i = 0; i < n; ++i)
+    if(name == "water level")
     {
-        this->ivars[i] = src[i];
+        for(std::vector<double>::size_type i = 0; i < this->size; ++i)
+        {
+            this->h[i] = src[i];
+        }
+    }
+    else
+    {
+        throw std::invalid_argument("invalid variable: " + name);
     }
 }
 
 void BmiTestExtension::set_value_int_ptr(std::string name, int* const ptr)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 void BmiTestExtension::set_value_float_ptr(std::string name, float* const ptr)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 void BmiTestExtension::set_value_double_ptr(std::string name, double* const ptr)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 
 void BmiTestExtension::set_value_int_at_indices(std::string name, const std::vector<int>& indices, const std::vector<int>& values)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 void BmiTestExtension::set_value_float_at_indices(std::string name, const std::vector<int>& indices, const std::vector<float>& values)
 {
-    throw std::invalid_argument("invalid variable" + name);
+    throw std::invalid_argument("invalid variable: " + name);
 }
 void BmiTestExtension::set_value_double_at_indices(std::string name, const std::vector<int>& indices, const std::vector<double>& values)
 {
-    if(name == this->input_var)
+    if(name == "water level")
     {
         for(std::vector<double>::size_type i = 0; i < indices.size(); ++i)
         {
-            this->ivars[i] = values[indices[i]];
+            this->h[indices[i]] = values[i];
         }
     }
-    throw std::invalid_argument("invalid variable" + name);
+    else
+    {
+        throw std::invalid_argument("invalid variable: " + name);    
+    }
 }
