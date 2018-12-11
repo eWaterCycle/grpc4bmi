@@ -396,6 +396,7 @@ grpc::Status BmiGRPCService::getGridShape(grpc::ServerContext* context, const bm
         free(shape);
         return BmiGRPCService::translate_status(status);
     }
+    response->clear_shape();
     for(int i = 0; i < rank; i++)
     {
         response->add_shape(shape[i]);

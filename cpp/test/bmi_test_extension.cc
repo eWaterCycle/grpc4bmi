@@ -162,7 +162,7 @@ int BmiTestExtension::get_grid_size(int id) const
 {
     if(id == this->grid_id)
     {
-        return 1;
+        return this->size;
     }
     throw std::invalid_argument("unknown grid id argument");
 }
@@ -180,7 +180,7 @@ std::vector<int> BmiTestExtension::get_grid_shape(int id) const
 {
     if(id == this->grid_id)
     {
-        return std::vector<int>(1, 1);
+        return {static_cast<int>(this->x.size()), static_cast<int>(this->y.size())};
     }
     throw std::invalid_argument("unknown grid id argument");
 }
@@ -190,7 +190,7 @@ std::vector<double> BmiTestExtension::get_grid_spacing(int id) const
 {
     if(id == this->grid_id)
     {
-        return std::vector<double>(1, 0.);
+        return std::vector<double>();
     }
     throw std::invalid_argument("unknown grid id argument");
 }
@@ -199,7 +199,7 @@ std::vector<double> BmiTestExtension::get_grid_origin(int id) const
 {
     if(id == this->grid_id)
     {
-        return std::vector<double>(1, 0.);
+        return std::vector<double>();
     }
     throw std::invalid_argument("unknown grid id argument");
 

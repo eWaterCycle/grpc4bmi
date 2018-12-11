@@ -52,6 +52,22 @@ std::vector<std::string> get_bmi_varnames(Bmi* b, int selector=SELECT_ALL)
     return result;
 }
 
+std::vector<int> get_bmi_grids(Bmi* b, int selector=SELECT_ALL)
+{
+    std::vector<int> grids;
+    std::vector<std::string> names = get_bmi_varnames(b, selector);
+    for(std::vector<std::string>::const_iterator it = names.begin(); it != names.end(); ++it)
+    {
+        int id = -999;
+        b->get_var_grid(it->c_str(), &id);
+        if(std::find(grids.begin(), grids.end(), id) == grids.end())
+        {
+            grids.push_back(id);
+        }
+    }
+    return grids;
+}
+
 void test_initialize(BmiGRPCService* s, Bmi* b)
 {
     const char* inifile = "somestring";
@@ -458,6 +474,85 @@ void test_set_values_at_indices(BmiGRPCService* s, Bmi* b)
     delete response;
 }
 
+void test_get_grid_rank(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<int> grids = get_bmi_grids(b);
+    bmi::GridRequest* request = new bmi::GridRequest();
+    bmi::GetGridRankResponse* response = new bmi::GetGridRankResponse();
+    for(std::vector<int>::const_iterator it = grids.begin(); it != grids.end(); ++it)
+    {
+        request->set_grid_id(*it);
+        s->getGridRank(NULL, request, response);
+        int rank = -1;
+        b->get_grid_rank(*it, &rank);
+        assert(response->rank() == rank);
+    }
+    delete request;
+    delete response;
+}
+
+void test_get_grid_size(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<int> grids = get_bmi_grids(b);
+    bmi::GridRequest* request = new bmi::GridRequest();
+    bmi::GetGridSizeResponse* response = new bmi::GetGridSizeResponse();
+    for(std::vector<int>::const_iterator it = grids.begin(); it != grids.end(); ++it)
+    {
+        request->set_grid_id(*it);
+        s->getGridSize(NULL, request, response);
+        int size = -1;
+        b->get_grid_size(*it, &size);
+        assert(response->size() == size);
+    }
+    delete request;
+    delete response;
+}
+
+void test_get_grid_shape(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<int> grids = get_bmi_grids(b);
+    bmi::GridRequest* request = new bmi::GridRequest();
+    bmi::GetGridShapeResponse* response = new bmi::GetGridShapeResponse();
+    for(std::vector<int>::const_iterator it = grids.begin(); it != grids.end(); ++it)
+    {
+        int rank = 0;
+        b->get_grid_rank(*it, &rank);
+        int* shape = (int*)malloc(rank * sizeof(int));
+        b->get_grid_shape(*it, shape);
+        std::vector<int> shapevec = std::vector<int>(shape, shape + rank);
+        request->set_grid_id(*it);
+        s->getGridShape(NULL, request, response);
+        std::vector<int> shapegrpc(response->shape_size());
+        for(std::vector<int>::size_type i = 0; i < response->shape_size(); ++i)
+        {
+            shapegrpc[i] = response->shape(i);
+        }
+        assert(shapegrpc == shapevec);
+        free(shape);
+    }
+    delete request;
+    delete response;
+}
+
+void test_get_grid_type(BmiGRPCService* s, Bmi* b)
+{
+    std::vector<int> grids = get_bmi_grids(b);
+    bmi::GridRequest* request = new bmi::GridRequest();
+    bmi::GetGridTypeResponse* response = new bmi::GetGridTypeResponse();
+    for(std::vector<int>::const_iterator it = grids.begin(); it != grids.end(); ++it)
+    {
+        int rank = 0;
+        char type[BMI_MAX_TYPE_NAME];
+        b->get_grid_type(*it, type);
+        request->set_grid_id(*it);
+        s->getGridType(NULL, request, response);
+        std::string typegrpc = response->type();
+        assert(typegrpc == std::string(type));
+    }
+    delete request;
+    delete response;
+}
+
 void test_finalize(BmiGRPCService* s)
 {
     bmi::Empty* request = new bmi::Empty();
@@ -470,7 +565,7 @@ void test_finalize(BmiGRPCService* s)
 int main(int argc, char* argv[])
 {
     std::vector<double> u = {0.1, 0.2, 0.4, 0.8};
-    std::vector<double> v = {-0.6, -0.4, -0.2, 0.};
+    std::vector<double> v = {-0.6, -0.4, -0.2};
     Bmi* bmi = new BmiTestExtension(u, v);
     BmiGRPCService* bmi_service = new BmiGRPCService(bmi);
     Bmi* bmi_copy = new BmiTestExtension(u, v);
@@ -558,6 +653,22 @@ int main(int argc, char* argv[])
     else if(testfunc == "set_values_at_indices")
     {
         test_set_values_at_indices(bmi_service, bmi);
+    }
+    else if(testfunc == "get_grid_rank")
+    {
+        test_get_grid_rank(bmi_service, bmi);
+    }
+    else if(testfunc == "get_grid_size")
+    {
+        test_get_grid_size(bmi_service, bmi);
+    }
+    else if(testfunc == "get_grid_shape")
+    {
+        test_get_grid_shape(bmi_service, bmi);
+    }
+    else if(testfunc == "get_grid_type")
+    {
+        test_get_grid_type(bmi_service, bmi);
     }
     else if(testfunc == "finalize")
     {

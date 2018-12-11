@@ -50,4 +50,8 @@ add_test(NAME test_service_get_values_at_indices COMMAND test_bmi_service get_va
 add_test(NAME test_service_get_value_ptr COMMAND test_bmi_service get_value_ptr)
 add_test(NAME test_service_set_values COMMAND test_bmi_service set_values)
 add_test(NAME test_service_set_values_at_indices COMMAND test_bmi_service set_values_at_indices)
+add_test(NAME test_service_get_grid_rank COMMAND test_bmi_service get_grid_rank)
+add_test(NAME test_service_get_grid_size COMMAND test_bmi_service get_grid_size)
+add_test(NAME test_service_get_grid_shape COMMAND test_bmi_service get_grid_shape)
+add_test(NAME test_service_get_grid_type COMMAND test_bmi_service get_grid_type)
 add_test(NAME test_service_finalize COMMAND test_bmi_service finalize)
