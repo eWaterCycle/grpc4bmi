@@ -68,6 +68,7 @@ run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus
 The client side has only a Python implementation. The default BMI client assumes a running server process on a given port.
 ```python
 from grpc4bmi.bmi_grpc_client import BmiClient
+import grpc
 mymodel = BmiClient(grpc.insecure_channel("localhost:<PORT>"))
 print mymodel.get_component_name()
 mymodel.initialize(<FILEPATH>)
