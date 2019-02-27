@@ -3,7 +3,7 @@
 
 #include "bmi.grpc.pb.h"
 #include "bmi_class.h"
-#include "bmi.h"
+#include "bmi/bmi.h"
 
 using bmi::BmiService;
 
