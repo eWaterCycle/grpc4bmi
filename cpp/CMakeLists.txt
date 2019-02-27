@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 
 project (grpc4bmi)
+set (GRPC4BMI_VERSION 0.2)
 
 add_compile_options(-std=c++11)
 
@@ -13,7 +14,7 @@ find_library(BMIC bmic)
 set(PROTO_PATH "${CMAKE_SOURCE_DIR}/../proto/grpc4bmi")
 add_custom_command(
     OUTPUT bmi.pb.h bmi.pb.cc 
-    COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
+    COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
     ARGS "--proto_path=${PROTO_PATH}"
          "--cpp_out=${CMAKE_CURRENT_BINARY_DIR}"
          "${PROTO_PATH}/bmi.proto"
