@@ -35,8 +35,10 @@ include_directories(${CMAKE_SOURCE_DIR}/bmi-c/bmi)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library (grpc4bmi SHARED bmi_class.h bmi_cpp_extension.h bmi_cpp_extension.cc
     bmi_c_wrapper.h bmi_c_wrapper.cc bmi_grpc_server.cc bmi_grpc_server.h ${GRPC_SRC_FILES})
-
+set_target_properties(grpc4bmi PROPERTIES PUBLIC_HEADER "bmi_class.h; bmi_cpp_extension.h; bmi_c_wrapper.h; bmi_grpc_server.h")
 add_subdirectory (test bmi-c)
 
 include (CTest)
 
+install(TARGETS grpc4bmi DESTINATION lib)
+install(FILES grpc4bmi.pc DESTINATION lib/pkgconfig)
