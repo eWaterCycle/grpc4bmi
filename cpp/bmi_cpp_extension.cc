@@ -286,6 +286,7 @@ int BmiCppExtension::get_grid_type(int id, char* dest) const
 {
     std::string type = this->get_grid_type(id);
     strncpy(dest, type.c_str(), type.size());
+    dest[type.size()] = '\0';
     return BMI_SUCCESS;
 }
 
