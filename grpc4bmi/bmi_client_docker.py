@@ -50,13 +50,18 @@ class BmiClientDocker(BmiClient):
         if hasattr(self, "container"):
             self.container.stop()
 
-    def initialize(self, filename):
+    def initialize(self, filepath):
         if self.input_dir is not None:
-            shutil.copy(filename, self.input_dir)
-            fname = os.path.basename(filename)
-            super(BmiClientDocker, self).initialize(os.path.join(BmiClientDocker.input_mount_point, fname))
+            if filepath:
+                target = os.path.join(self.input_dir, os.path.basename(filepath))
+                if not os.path.isfile(target):
+                    shutil.copy(filepath, self.input_dir)
+                filename = os.path.basename(filepath)
+                super(BmiClientDocker, self).initialize(os.path.join(BmiClientDocker.input_mount_point, filename))
+            else:
+                super(BmiClientDocker, self).initialize(filepath)
         else:
-            super(BmiClientDocker, self).initialize(filename)
+            super(BmiClientDocker, self).initialize(filepath)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
