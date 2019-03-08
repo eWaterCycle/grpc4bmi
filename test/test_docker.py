@@ -5,7 +5,7 @@ from grpc4bmi.bmi_client_docker import BmiClientDocker
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi", image_port=55555, input_dir=tmp_path)
+    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.1.0", image_port=55555, input_dir=str(tmp_path))
     yield model
     del model
 
@@ -15,7 +15,7 @@ class TestBmiClientDocker:
         assert walrus_model.get_component_name() == 'WALRUS'
 
     def test_initialize(self, walrus_input, walrus_model):
-        walrus_model.initialize(walrus_input)
+        walrus_model.initialize(str(walrus_input))
         assert walrus_model.get_current_time() == walrus_model.get_start_time()
 
     def test_get_value_ref(self, walrus_model):

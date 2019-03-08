@@ -14,7 +14,7 @@ matrix:
          - pip
          - directories:
              - /usr/local
-             - ~/go
+             - ~/.singularity
         services:
           - docker
         before_install:
