@@ -1,7 +1,6 @@
 import errno
 import os
-from os.path import abspath, expanduser, exists
-import shutil
+from os.path import abspath
 import subprocess
 import sys
 import logging
@@ -9,7 +8,7 @@ import logging
 import semver
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-
+from grpc4bmi.utils import stage_config_file
 
 REQUIRED_SINGULARITY_VERSION = '>=3.1.0'
 
@@ -37,15 +36,19 @@ class BmiClientSingularity(BmiClient):
     >>> client.update_until(client.get_end_time())
     >>> del client
 
+    Args:
+        image: Singularity image. For Docker Hub image use `docker://*`.
+        input_dir (str): Directory for input files of model
+        output_dir (str): Directory for input files of model
+
     """
     INPUT_MOUNT_POINT = "/data/input"
     OUTPUT_MOUNT_POINT = "/data/output"
 
-    def __init__(self, image, port=None, input_dir=None, output_dir=None):
+    def __init__(self, image, input_dir=None, output_dir=None):
         check_singularity_version()
         host = 'localhost'
-        if port is None:
-            port = BmiClient.get_unique_port(host)
+        port = BmiClient.get_unique_port(host)
         args = [
             "singularity",
             "run",
@@ -66,36 +69,16 @@ class BmiClientSingularity(BmiClient):
         env = os.environ.copy()
         env['BMI_PORT'] = str(port)
         logging.info(f'Running {image} singularity container on port {port}')
-        self.pipe = subprocess.Popen(args, stderr=sys.stderr, stdout=sys.stdout, env=env, preexec_fn=os.setsid)
+        self.container = subprocess.Popen(args, stderr=sys.stderr, stdout=sys.stdout, env=env, preexec_fn=os.setsid)
         super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
-        self.pipe.terminate()
-        self.pipe.wait()
+        if hasattr(self, "container"):
+            self.container.terminate()
+            self.container.wait()
 
     def initialize(self, filename):
-        fn = filename
-        is_filename_inside_input_dir = self.input_dir and abspath(self.input_dir) < abspath(filename)
-        is_filename_inside_home_dir = expanduser('~') < abspath(filename)
-        filename_exists = exists(filename)
-        if is_filename_inside_input_dir:
-            # Replace input dir outside container by input dir inside container
-            fn = abspath(filename).replace(abspath(self.input_dir), BmiClientSingularity.INPUT_MOUNT_POINT)
-        elif is_filename_inside_home_dir:
-            # Singularity has home dir mounted, so valid filename should be available inside container
-            # Make absolute because current working dir can be different inside image
-            fn = abspath(filename)
-        elif filename_exists:
-            if self.input_dir is not None:
-                # Copying filename inside input dir
-                shutil.copy(filename, self.input_dir)
-                fname = os.path.basename(filename)
-                fn = os.path.join(BmiClientSingularity.OUTPUT_MOUNT_POINT, fname)
-            else:
-                raise Exception(f'Unable to copy {filename}, without a input_dir')
-        else:
-            # Assume filename exists inside container or model does not need a file to intialize
-            pass
+        fn = stage_config_file(filename, self.input_dir, self.INPUT_MOUNT_POINT)
         super(BmiClientSingularity, self).initialize(fn)
 
     def get_value_ref(self, var_name):
