@@ -31,6 +31,7 @@ setup(name="grpc4bmi",
           'futures; python_version == "2.7"',
           "docker",
           "basic-modeling-interface",
+          "semver",
       ],
       extras_require={
           'R': ['rpy2'],

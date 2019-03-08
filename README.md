@@ -76,7 +76,7 @@ mymodel.initialize(<FILEPATH>)
 ```
 
 The package contains also client implementation that own the server process, either as a python subprocess or a docker 
-image running the ```run-bmi-server``` script. For instance
+image or a singularity image running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
@@ -88,6 +88,13 @@ mymodel = BmiClientDocker(<IMAGE>,<PORT>)
 
 ```
 will launch a docker container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
+
+```python
+from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+mymodel = BmiClientSingularity(<IMAGE>,<PORT>)
+```
+will launch a singularity container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
+
 
 ## Development: generating the grpc code
 
