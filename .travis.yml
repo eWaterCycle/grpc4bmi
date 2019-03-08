@@ -6,8 +6,8 @@ matrix:
         install:
             - pip install -r requirements.txt
             - python setup.py install
-            - docker pull ewatercycle/walrus-grpc4bmi
-            - singularity pull docker://ewatercycle/walrus-grpc4bmi
+            - docker pull ewatercycle/walrus-grpc4bmi:v0.1.0
+            - singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.1.0
         script:
             - pytest
         cache:
