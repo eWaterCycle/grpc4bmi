@@ -23,6 +23,7 @@ matrix:
                 sudo apt-get install -y build-essential libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools
                 wget -O /tmp/go1.12.linux-amd64.tar.gz https://dl.google.com/go/go1.12.linux-amd64.tar.gz
                 sudo tar -C /usr/local -xzf /tmp/go1.12.linux-amd64.tar.gz
+                export GOPATH=~/go
                 export PATH=$PATH:/usr/local/go/bin
                 mkdir -p ~/go/src/github.com/sylabs
                 cd ~/go/src/github.com/sylabs && \
