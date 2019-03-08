@@ -4,10 +4,18 @@ from genericpath import exists
 from os.path import abspath, expanduser
 
 
-def stage_config_file(filename, input_dir, input_mount_point):
+def stage_config_file(filename, input_dir, input_mount_point, home_mounted=False):
+    """Stage config file inside container
+
+    Args:
+        filename (str): Path to config file
+        input_dir (str): The input directory outside the container
+        input_mount_point (str): The input directory inside the container
+        home_mounted (bool): True if home directory is mounted inside container
+    """
     fn = filename
     is_filename_inside_input_dir = input_dir and abspath(input_dir) < abspath(filename)
-    is_filename_inside_home_dir = expanduser('~') < abspath(filename)
+    is_filename_inside_home_dir = home_mounted and expanduser('~') < abspath(filename)
     filename_exists = exists(filename)
     if is_filename_inside_input_dir:
         # Replace input dir outside container by input dir inside container

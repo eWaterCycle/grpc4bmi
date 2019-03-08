@@ -78,7 +78,7 @@ class BmiClientSingularity(BmiClient):
             self.container.wait()
 
     def initialize(self, filename):
-        fn = stage_config_file(filename, self.input_dir, self.INPUT_MOUNT_POINT)
+        fn = stage_config_file(filename, self.input_dir, self.INPUT_MOUNT_POINT, homedir_mounted=True)
         super(BmiClientSingularity, self).initialize(fn)
 
     def get_value_ref(self, var_name):
