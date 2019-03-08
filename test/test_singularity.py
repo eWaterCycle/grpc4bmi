@@ -1,11 +1,11 @@
 import pytest
 
-from grpc4bmi.bmi_client_docker import BmiClientDocker
+from grpc4bmi.bmi_client_singularity import BmiClientSingularity
 
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi", image_port=55555, input_dir=tmp_path)
+    model = BmiClientSingularity(image="docker://ewatercycle/walrus-grpc4bmi", input_dir=tmp_path)
     yield model
     del model
 
