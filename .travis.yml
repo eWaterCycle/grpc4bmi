@@ -1,15 +1,43 @@
 matrix:
     include:
       - language: python
-        python:
-            - '2.7'
-            - '3.6'
+        dist: xenial
+        python: '3.6'
         install:
             - pip install -r requirements.txt
             - python setup.py install
+            - docker pull ewatercycle/walrus-grpc4bmi:v0.1.0
+            - singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.1.0
         script:
             - pytest
-        cache: pip
+        cache:
+         - pip
+         - directories:
+             - /usr/local
+             - ~/.singularity
+        services:
+          - docker
+        before_install:
+          # Build singularity binary
+          - |
+              if [[ ! -f /usr/local/bin/singularity ]]; then
+                sudo apt-get update
+                sudo apt-get install -y build-essential libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools
+                wget -O /tmp/go1.12.linux-amd64.tar.gz https://dl.google.com/go/go1.12.linux-amd64.tar.gz
+                sudo tar -C /usr/local -xzf /tmp/go1.12.linux-amd64.tar.gz
+                export GOPATH=~/go
+                export PATH=$PATH:/usr/local/go/bin
+                mkdir -p ~/go/src/github.com/sylabs
+                cd ~/go/src/github.com/sylabs && \
+                git clone https://github.com/sylabs/singularity.git && \
+                cd singularity
+                git checkout v3.1.0
+                ./mconfig && \
+                cd ./builddir && \
+                make && \
+                sudo make install
+                cd ${TRAVIS_BUILD_DIR}
+              fi
       - language: cpp
         before_install:
             - git submodule update --init

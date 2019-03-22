@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/130237165.svg)](https://zenodo.org/badge/latestdoi/130237165)
+[![Build Status](https://travis-ci.org/eWaterCycle/grpc4bmi.svg?branch=master)](https://travis-ci.org/eWaterCycle/grpc4bmi)
 
 # grpc4bmi
 
@@ -68,6 +69,7 @@ run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus
 The client side has only a Python implementation. The default BMI client assumes a running server process on a given port.
 ```python
 from grpc4bmi.bmi_grpc_client import BmiClient
+import grpc
 mymodel = BmiClient(grpc.insecure_channel("localhost:<PORT>"))
 print mymodel.get_component_name()
 mymodel.initialize(<FILEPATH>)
@@ -75,7 +77,7 @@ mymodel.initialize(<FILEPATH>)
 ```
 
 The package contains also client implementation that own the server process, either as a python subprocess or a docker 
-image running the ```run-bmi-server``` script. For instance
+image or a singularity image running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
@@ -87,6 +89,13 @@ mymodel = BmiClientDocker(<IMAGE>,<PORT>)
 
 ```
 will launch a docker container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
+
+```python
+from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+mymodel = BmiClientSingularity(<IMAGE>,<PORT>)
+```
+will launch a singularity container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
+
 
 ## Development: generating the grpc code
 
