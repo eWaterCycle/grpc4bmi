@@ -5,7 +5,7 @@ from grpc4bmi.bmi_client_singularity import BmiClientSingularity
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientSingularity(image="docker://ewatercycle/walrus-grpc4bmi:v0.1.0", input_dir=str(tmp_path))
+    model = BmiClientSingularity(image="docker://ewatercycle/walrus-grpc4bmi:v0.2.0", input_dir=str(tmp_path))
     yield model
     del model
 
@@ -21,3 +21,8 @@ class TestBmiClientDocker:
     def test_get_value_ref(self, walrus_model):
         with pytest.raises(NotImplementedError):
             walrus_model.get_value_ref('Q')
+
+    def test_get_grid_x(self, walrus_input, walrus_model):
+        walrus_model.initialize(str(walrus_input))
+        grid_id = walrus_model.get_var_grid('Q')
+        assert len(walrus_model.get_grid_x(grid_id)) == 1
