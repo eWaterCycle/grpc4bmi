@@ -95,6 +95,9 @@ To launch ``run-bmi-server`` in a python subprocess and automatically listen to 
 
 Docker
 ......
+The grpc bridge between processes allows you to containerize your model and address it from the host machine with the python BMI. For this we use the mapping feature of network ports that docker provides.
+
+To establish this, install your BMI model in a docker container. Then follow the installation steps above to install grpc4bmi inside the container, and let ``run-bmi-server`` act as the entry point of the docker image.
 
 Singularity
 ...........
