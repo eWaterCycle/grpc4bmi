@@ -10,6 +10,8 @@ Welcome to grpc4bmi's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   introduction
+   python
 
 
 Indices and tables
