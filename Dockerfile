@@ -1,10 +1,12 @@
-# DockerFile for grpc4bmi
+# DockerFile for grpc4bmi. Installs the C++ bindings in the /usr/local prefix directory in the container. If you are
+# planning to run a container with your BMI-enabled model and communicate with it using grpc4bmi, you can use this as a
+# base image for your model
 FROM ubuntu:bionic
 MAINTAINER Gijs van den Oord <g.vandenoord@esciencecenter.nl>
 RUN apt-get update
 
 # Prerequisite packages
-RUN apt-get install -y wget git build-essential g++ make cmake curl automake libtool pkg-config
+RUN apt-get install -y wget git build-essential g++ make cmake curl automake libtool pkg-config gfortran
 
 # Build grpc from source
 RUN git clone -b $(curl -L https://grpc.io/release) --depth=1 https://github.com/grpc/grpc /opt/grpc
@@ -28,6 +30,3 @@ RUN mkdir -p /opt/grpc4bmi/cpp/build
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake ..
 RUN make install
-
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
-ENV PATH="${PATH}:/usr/local/bin"

@@ -270,7 +270,7 @@ grpc::Status BmiGRPCService::getValue(grpc::ServerContext* context, const bmi::G
 
 grpc::Status BmiGRPCService::getValuePtr(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::Empty* response)
 {
-    return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Passing pointers is forbidden accross memory space boundary");
+    return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Passing pointers is forbidden across memory space boundary");
 }
 
 grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext* context, const bmi::GetValueAtIndicesRequest* request, bmi::GetValueAtIndicesResponse* response)
@@ -322,7 +322,7 @@ grpc::Status BmiGRPCService::setValue(grpc::ServerContext* context, const bmi::S
 
 grpc::Status BmiGRPCService::setValuePtr(grpc::ServerContext* context, const bmi::SetValuePtrRequest* request, bmi::Empty* response)
 {
-    return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Passing pointers is forbidden accross memory space boundary");
+    return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "Passing pointers is forbidden across memory space boundary");
 }
 
 grpc::Status BmiGRPCService::setValueAtIndices(grpc::ServerContext* context, const bmi::SetValueAtIndicesRequest* request, bmi::Empty* response)
