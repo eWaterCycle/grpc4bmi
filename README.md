@@ -8,8 +8,6 @@
 
 This software allows you to wrap your BMI implementation (https://github.com/csdms/bmi) in a server process and communicate with it via the included python client. The communication is serialized to protocol buffers by GRPC (https://grpc.io/) and occurs over network ports.
 
-[![Design](https://raw.githubusercontent.com/eWaterCycle/grpc4bmi/master/docs/_static/design-overview.svg)](https://raw.githubusercontent.com/eWaterCycle/grpc4bmi/master/docs/_static/design-overview.svg)
-
 ## Installation
 
 Optionally, create your virtual environment and activate it, Then, run
