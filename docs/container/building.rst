@@ -1,3 +1,5 @@
+.. _building-docker-image:
+
 Building a docker image
 =======================
 
@@ -10,8 +12,10 @@ To establish this, install your BMI model in a docker container. Then follow the
 
 Python
 ------
+
+
 R
-------
+-
 
 The Docker image can be made by writing a `Dockerfile` file like
 
