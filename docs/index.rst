@@ -12,8 +12,11 @@ Welcome to grpc4bmi's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   python
-   R
+   installing
+   server/index
+   usage
+   container/building
+   container/usage
    cli
    python_api
 
