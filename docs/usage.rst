@@ -1,19 +1,16 @@
+.. _usage:
+
 Using the client
 ================
 
-We assume that service is always dedicated to a single client, addressing a BMI model with multiple users at the same time results in undefined behavior. Therefore we have added utilities to launch the BMI server whenever a client is instantiated.
+We assume that service is always dedicated to a single client, addressing a BMI model with multiple users at the same time results in undefined behavior.
 
-.. _usage:
+.. _python-grpc4bmi-client:
 
-Python
-------
+Python BMI Client
+.................
 
-This is for already running server.
-
-Client
-......
-
-After setting up the service, we can expose the model in a different python process. This python environment does no longer need the dependencies of the original model, it just needs the grpc4bmi package installed. With python run
+For a given running BMI service process connected to networking port ``<PORT>``, we can start communicating with this server by instantiating the ``BmiClient`` python class:
 
 .. code-block:: python
 
@@ -22,27 +19,30 @@ After setting up the service, we can expose the model in a different python proc
 
     mymodel = BmiClient(grpc.insecure_channel("localhost:<PORT>"))
 
-Where ``<PORT>`` is the network port used by the launched service above. For the example model above the component name will be passed from the service to the client by
+
+For the example model launched in :ref:`python-example`, the component name can be retrieved following the usual BMI syntax,
 
 .. code-block:: python
 
     print(mymodel.get_component_name())
     Hello world
 
-Subprocess
-..........
 
-To launch the model service in a python subprocess, type
+Python Subprocess
+.................
+
+This python class launches a BMI server upon creation,
 
 .. code-block:: python
 
     from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 
-    mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
+    model = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
 
-To launch ``run-bmi-server`` in a python subprocess and automatically listen to the right port. Note that this requires your client to run in the same python environment as your model.
 
-:ref:`running-python` Python server chapter explains <PACKAGE>.<MODULE>.<CLASS>.
+The code above will execute ``run-bmi-server`` in a python subprocess and automatically listen to the appropriate port. Note that this requires your client to run in the same python environment as your model.
+
+:ref:`running-python` Python server explains the roles of ``<PACKAGE>``, ``<MODULE>`` and ``<CLASS>``.
 
 Polyglot CLI
 ------------

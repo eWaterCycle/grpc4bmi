@@ -30,6 +30,8 @@ The installation of the grpc4bmi package installs the ``run-bmi-server`` command
 where ``<PACKAGE>``, ``<MODULE>`` are the python package and module containing your python BMI model, which should contain a python class ``<CLASS>`` that implements Bmi. The script assumes that this class does not take any constructor arguments. Upon running, the server will report which networking port it has decided to use on the terminal. This port will later be needed by BMI clients to communicate with your service. The port can also be specified by adding the option ``--port <PORT>`` or pre-define the environment variable ``BMI_PORT``.
 
 
+.. _python-example:
+
 Example
 -------
 
@@ -53,11 +55,10 @@ and inside the ``mymodule.py`` the bmi implementation
         def get_component_name(self):
             return "Hello world"
 
-Then the correct call would be.
+Then we launch this toy model as a service by executing
 
 .. code-block:: sh
 
-    $ run-bmi-server --name my_package.my_module.MyBmi
+    $ run-bmi-server --name mypackage.mymodule.MyBmi
 
-.. _python-grpc4bmi-client:
-
+This will report the chosen port number in the standard output stream. It can be used to connect to the service via the BMI :ref:`python-grpc4bmi-client`.
