@@ -10,6 +10,9 @@ class BmiClientSubProcess(BmiClient):
     """
     BMI GRPC client that owns its server process, i.e. initiates and destroys the BMI server upon its own construction or
     respective destruction. The server is a forked subprocess running the run_server command.
+
+    >>> from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
+    >>> mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
     """
 
     def __init__(self, module_name, path=None):

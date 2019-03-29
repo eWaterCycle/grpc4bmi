@@ -17,6 +17,12 @@ class BmiClient(bmi.Bmi):
     Client BMI interface, implementing BMI by forwarding every function call via GRPC to the server connected to the
     same port. A GRPC channel can be passed to the constructor; if not, it constructs an insecure channel on a free
     port itself. The timeout parameter indicates the model BMI startup timeout parameter (s).
+
+    >>> import grpc
+    >>> from grpc4bmi.bmi_grpc_client import BmiClient
+    >>> mymodel = BmiClient(grpc.insecure_channel("localhost:<PORT>"))
+    >>> print(mymodel.get_component_name())
+    Hello world
     """
 
     occupied_ports = set()

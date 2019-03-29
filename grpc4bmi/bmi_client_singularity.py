@@ -24,10 +24,9 @@ def check_singularity_version():
 
 
 class BmiClientSingularity(BmiClient):
-    """
-    BMI GRPC client for singularity server processes:
+    """BMI GRPC client for singularity server processes
     During initialization launches a singularity container with run-bmi-server as its command.
-    Also it exposes a
+    The container exposes a port the client connects to.
 
     >>> from grpc4bmi.bmi_client_singularity import BmiClientSingularity
     >>> image = 'docker://ewatercycle/wflow-grpc4bmi:latest'
