@@ -120,6 +120,7 @@ class BmiClient(bmi.Bmi):
         return BmiClient.make_array(response)
 
     def get_value_ref(self, var_name):
+        """Not possible, unable give reference to data structure in another process and possibly another machine"""
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def get_value_at_indices(self, var_name, indices):

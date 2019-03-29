@@ -58,7 +58,6 @@ Once the model has an BMI interface it can be run as a GRPC server by installing
 
     pip install grpc4bmi[R]
 
-
 The server can be started with
 
 .. code-block:: sh
@@ -70,6 +69,8 @@ For the WALRUS model the command is
 .. code-block:: sh
 
     run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 50051
+
+The Python grpc4bmi :ref:`python-grpc4bmi-client` can then be used to connect to the server.
 
 Containerized GRPC server
 -------------------------
@@ -120,6 +121,8 @@ The Docker image can be published at `Docker Hub`_ by creating a repository and 
    docker push mymodel-grpc4bmi
 
 The WALRUS model is published at https://cloud.docker.com/u/ewatercycle/repository/docker/ewatercycle/walrus-grpc4bmi.
+
+The Docker image can then be started with :class:`grpc4bmi.bmi_client_docker.BmiClientDocker` or :class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity`.
 
 .. _Docker: https://docs.docker.com/
 .. _Dockerfile: https://github.com/eWaterCycle/grpc4bmi-examples/blob/master/walrus/Dockerfile

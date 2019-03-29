@@ -59,6 +59,8 @@ Then the correct call would be.
 
     $ run-bmi-server --name my_package.my_module.MyBmi
 
+.. _python-grpc4bmi-client:
+
 Client
 ......
 After setting up the service, we can expose the model in a different python process. This python environment does no longer need the dependencies of the original model, it just needs the grpc4bmi package installed. With python run
@@ -101,3 +103,4 @@ To establish this, install your BMI model in a docker container. Then follow the
 
 Singularity
 ...........
+

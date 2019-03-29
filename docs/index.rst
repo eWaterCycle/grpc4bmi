@@ -6,15 +6,16 @@
 Welcome to grpc4bmi's documentation!
 ====================================
 
+.. include:: introduction.rst
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   introduction
    python
    R
+   cli
    python_api
-
 
 Indices and tables
 ==================

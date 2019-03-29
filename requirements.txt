@@ -17,3 +17,6 @@ futures
 https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
 sphinx
 sphinxcontrib-napoleon
+sphinx-argparse
+sphinx_rtd_theme
+

@@ -99,21 +99,7 @@ def serve(model, port):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BMI GRPC server runner",
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--name", "-n", metavar="PACKAGE.MODULE.CLASS", type=str,
-                        help="Full name of the BMI implementation class. The module should be in your search "
-                             "path and the class should have a constructor with no arguments")
-    parser.add_argument("--port", "-p", metavar="N", default=0, type=int,
-                        help="Network port for the GRPC server and client. If 0, let the OS choose an available port")
-    parser.add_argument("--path", "-d", metavar="DIR", default=None, type=str,
-                        help="Extra path name to append to the server instance process")
-
-    lang_choices = ['python']
-    if BmiR:
-        lang_choices.append('R')
-    parser.add_argument("--language", default="python", choices=lang_choices,
-                        help="Language in which BMI implementation class is written")
+    parser = build_parser()
 
     args = parser.parse_args()
 
@@ -131,6 +117,24 @@ def main():
             port = int(s.getsockname()[1])
 
     serve(BmiServer(model), port)
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="BMI GRPC server runner",
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--name", "-n", metavar="PACKAGE.MODULE.CLASS", type=str,
+                        help="Full name of the BMI implementation class. The module should be in your search "
+                             "path and the class should have a constructor with no arguments")
+    parser.add_argument("--port", "-p", metavar="N", default=0, type=int,
+                        help="Network port for the GRPC server and client. If 0, let the OS choose an available port")
+    parser.add_argument("--path", "-d", metavar="DIR", default=None, type=str,
+                        help="Extra path name to append to the server instance process")
+    lang_choices = ['python']
+    if BmiR:
+        lang_choices.append('R')
+    parser.add_argument("--language", default="python", choices=lang_choices,
+                        help="Language in which BMI implementation class is written")
+    return parser
 
 
 if __name__ == "__main__":
