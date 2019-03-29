@@ -5,33 +5,32 @@ Python
 
 If you have a BMI-compliant model written in python, grpc4bmi provides a quick way to set up a BMI service.
 
-Installation
-------------
-If your model uses some virtual environment with installed dependencies (e.g. Anaconda or virtualenv), activate this environment before installing grpc4bmi.
+Installing Requirements
+-----------------------
 
-Install the grpc4bmi python package with pip:
+The grpc4bmi Python package should be installed, see :ref:`pip-install` chapter.
 
-.. code-block:: sh
 
-    $ pip install grpc4bmi
+Creating
+--------
 
-This will install the latest release of the package; for the most recent github revision type instead
 
-.. code-block:: sh
+.. _running-python:
 
-    $ pip install git+https://github.com/eWaterCycle/grpc4bmi.git#egg=grpc4bmi
+Running
+-------
 
-Deployment
-----------
-Service
-.......
-The installation of the package exposes the script ``run-bmi-server``. You can run your model as a service by typing
+The installation of the grpc4bmi package installs the ``run-bmi-server`` command. You can run your model as a service by typing
 
 .. code-block:: sh
 
     $ run-bmi-server --name <PACKAGE>.<MODULE>.<CLASS>
 
 where ``<PACKAGE>``, ``<MODULE>`` are the python package and module containing your python BMI model, which should contain a python class ``<CLASS>`` that implements Bmi. The script assumes that this class does not take any constructor arguments. Upon running, the server will report which networking port it has decided to use on the terminal. This port will later be needed by BMI clients to communicate with your service. The port can also be specified by adding the option ``--port <PORT>`` or pre-define the environment variable ``BMI_PORT``.
+
+
+Example
+-------
 
 As an example, suppose we have a package
 
@@ -60,47 +59,4 @@ Then the correct call would be.
     $ run-bmi-server --name my_package.my_module.MyBmi
 
 .. _python-grpc4bmi-client:
-
-Client
-......
-After setting up the service, we can expose the model in a different python process. This python environment does no longer need the dependencies of the original model, it just needs the grpc4bmi package installed. With python run
-
-.. code-block:: python
-
-    import grpc
-    from grpc4bmi.bmi_grpc_client import BmiClient
-
-    mymodel = BmiClient(grpc.insecure_channel("localhost:<PORT>"))
-
-Where ``<PORT>`` is the network port used by the launched service above. For the example model above the component name will be passed from the service to the client by
-
-.. code-block:: python
-
-    print(mymodel.get_component_name())
-    Hello world
-
-Service-Client deployment
--------------------------
-We assume that service is always dedicated to a single client, addressing a BMI model with multiple users at the same time results in undefined behavior. Therefore we have added utilities to launch the BMI server whenever a client is instantiated.
-
-Subprocess
-..........
-To launch the model service in a python subprocess, type
-
-.. code-block:: python
-
-    from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
-
-    mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
-
-To launch ``run-bmi-server`` in a python subprocess and automatically listen to the right port. Note that this requires your client to run in the same python environment as your model.
-
-Docker
-......
-The grpc bridge between processes allows you to containerize your model and address it from the host machine with the python BMI. For this we use the mapping feature of network ports that docker provides.
-
-To establish this, install your BMI model in a docker container. Then follow the installation steps above to install grpc4bmi inside the container, and let ``run-bmi-server`` act as the entry point of the docker image.
-
-Singularity
-...........
 
