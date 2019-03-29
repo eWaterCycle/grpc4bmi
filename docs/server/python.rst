@@ -8,12 +8,13 @@ If you have a BMI-compliant model written in python, grpc4bmi provides a quick w
 Installing Requirements
 -----------------------
 
-The grpc4bmi Python package should be installed, see :ref:`pip-install` chapter.
+The grpc4bmi Python package should be installed, see :ref:`pip-install`.
 
 
 Creating
 --------
 
+To obtain a python BMI for your model, install the `python bmi package <https://github.com/csdms/bmi-python>`_ and implement the ``Bmi`` abstract base class for your model. For exposing this model as a GRPC service, it is necessary to have a constructor without arguments: all initialization state will be presented to the model via the configuration file in the ``initialize`` method.
 
 .. _running-python:
 
