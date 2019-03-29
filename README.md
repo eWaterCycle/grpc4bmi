@@ -1,5 +1,6 @@
 [![DOI](https://zenodo.org/badge/130237165.svg)](https://zenodo.org/badge/latestdoi/130237165)
 [![Build Status](https://travis-ci.org/eWaterCycle/grpc4bmi.svg?branch=master)](https://travis-ci.org/eWaterCycle/grpc4bmi)
+[![Documentation Status](https://readthedocs.org/projects/grpc4bmi/badge/?version=latest)](https://grpc4bmi.readthedocs.io/en/latest/?badge=latest)
 
 # grpc4bmi
 
