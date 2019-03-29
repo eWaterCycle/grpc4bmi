@@ -1,7 +1,7 @@
 Test server with universal grpc command line client
 ===================================================
 
-Once you have started a GRPC server you can test it is running by using the `Polyglot - a universal grpc command line client`_.
+Once you have started a GRPC server you can test it by connecting to it using the `Polyglot - a universal grpc command line client`_.
 
 Polyglot requires Java and the `polglot.yar` file can be downloaded at https://github.com/dinowernli/polyglot/releases
 
