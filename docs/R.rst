@@ -5,7 +5,6 @@ Grpc4bmi allows you to wrap a Hydrological model written in the `R language`_ in
 
 .. _R language: https://www.r-project.org/
 
-
 BMI interface
 -------------
 
@@ -77,7 +76,7 @@ Containerized GRPC server
 
 To easily run a GRPC server it is handy to put it in a container like a `Docker`_ image.
 
-The Docker image can be made by writing a `Dockerfile` like
+The Docker image can be made by writing a `Dockerfile` file like
 
 .. code-block:: Dockerfile
 
@@ -90,7 +89,7 @@ The Docker image can be made by writing a `Dockerfile` like
     RUN install.r remotes && installGithub.r eWaterCycle/bmi-r
     RUN install.r <R mymodel library from CRAN>
 
-    # Copy BMI interface of model  into Docker image
+    # Copy BMI interface of model into Docker image
     RUN mkdir /opt/
     COPY mymodel-bmi.r /opt/
 
