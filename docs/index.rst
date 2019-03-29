@@ -12,6 +12,8 @@ Welcome to grpc4bmi's documentation!
 
    introduction
    python
+   R
+   python_api
 
 
 Indices and tables
