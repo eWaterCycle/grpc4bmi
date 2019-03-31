@@ -1,6 +1,8 @@
 Using the container clients
 ===========================
 
+.. _docker_client:
+
 Docker
 ------
 

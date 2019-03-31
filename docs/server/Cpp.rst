@@ -1,6 +1,8 @@
 C/C++/Fortran
 =============
 
+.. _install_cpp:
+
 Installing Requirements
 -----------------------
 For native programming languages it is necessary to install and compile the C++ bindings of GRPC and protobuf on your system:
@@ -32,6 +34,8 @@ Running
 -------
 
 Since native language lack reflection, it is necessary to make your own ``run_bmi_server`` program. We provide a function ``run_bmi_server(Bmi*, int*, char*)`` in the ``bmi_grpc_server.h`` header that can be called with your model instance (see the example below). To compile your server binary, it is necessary to link against grpc4bmi and protobuf libraries.
+
+.. _example_cpp:
 
 Example
 -------
@@ -96,7 +100,7 @@ This binary will need to be linked against grpc4bmi and the protobuf libraries:
 
 .. code-block:: sh
 
-    g++ -o hype_bmi_server run_my_bmi_model.o my_bmi_model.o `pkg-config --libs protobuf grpc++ grpc` -Wl,--no-as-needed -lgrpc++_reflection -ldl -lgrpc4bmi
+    g++ -o my_bmi_server run_my_bmi_model.o my_bmi_model.o `pkg-config --libs protobuf grpc++ grpc` -Wl,--no-as-needed -lgrpc++_reflection -ldl -lgrpc4bmi
 
 
 

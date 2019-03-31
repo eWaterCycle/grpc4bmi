@@ -8,7 +8,7 @@ If you have a BMI-compliant model written in python, grpc4bmi provides a quick w
 Installing Requirements
 -----------------------
 
-The grpc4bmi Python package should be installed, see :ref:`pip-install`.
+The grpc4bmi Python package should be :ref:`installed <pip-install>`.
 
 
 Creating
@@ -61,4 +61,4 @@ Then we launch this toy model as a service by executing
 
     $ run-bmi-server --name mypackage.mymodule.MyBmi
 
-This will report the chosen port number in the standard output stream. It can be used to connect to the service via the BMI :ref:`python-grpc4bmi-client`.
+This will report the chosen port number in the standard output stream. It can be used to connect to the service via the BMI :ref:`grpc python client <python-grpc4bmi-client>`.
