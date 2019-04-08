@@ -57,6 +57,11 @@ class BmiClientDocker(BmiClient):
                                                remove=remove,
                                                detach=True)
         time.sleep(5)
+        print(self.container)
+        time.sleep(5)
+        print(self.container)
+        time.sleep(5)
+        print(self.container)        
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
