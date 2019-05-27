@@ -2,6 +2,10 @@ import logging
 
 import numpy
 from basic_modeling_interface import Bmi
+from grpc_status import rpc_status
+from google.protobuf import any_pb2
+from google.rpc import code_pb2, status_pb2, error_details_pb2
+import traceback
 
 from . import bmi_pb2, bmi_pb2_grpc
 
@@ -15,151 +19,272 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     implementation by assuming a default constructor with no arguments.
     """
 
-    def __init__(self, model):
+    def __init__(self, model, debug=False):
         # type: (BmiServer, Bmi) -> None
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         self.bmi_model_ = model
+        self.debug = debug
+
+    def exception_handler(self, exc, context):
+        log.exception(exc)
+        detail = any_pb2.Any()
+        if self.debug:
+            detail.Pack(
+                error_details_pb2.DebugInfo(
+                    stack_entries=traceback.format_stack(),
+                    detail=repr(exc)
+                )
+            )
+        status = status_pb2.Status(
+            code=code_pb2.INTERNAL,
+            message=str(exc),
+            details=[detail]
+        )
+        context.abort_with_status(rpc_status.to_status(status))
 
     def initialize(self, request, context):
         ifile = str(request.config_file)
         if not ifile:
             ifile = None
-        self.bmi_model_.initialize(ifile)
-        return bmi_pb2.Empty()
+        try:
+            self.bmi_model_.initialize(ifile)
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def update(self, request, context):
-        self.bmi_model_.update()
-        return bmi_pb2.Empty()
+        try:
+            self.bmi_model_.update()
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def updateUntil(self, request, context):
-        self.bmi_model_.update_until(request.until)
-        return bmi_pb2.Empty()
+        try:
+            self.bmi_model_.update_until(request.until)
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def updateFrac(self, request, context):
-        self.bmi_model_.update_frac(request.frac)
-        return bmi_pb2.Empty()
+        try:
+            self.bmi_model_.update_frac(request.frac)
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def finalize(self, request, context):
-        self.bmi_model_.finalize()
-        return bmi_pb2.Empty()
+        try:
+            self.bmi_model_.finalize()
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getComponentName(self, request, context):
-        return bmi_pb2.GetComponentNameResponse(name=self.bmi_model_.get_component_name())
+        try:
+            return bmi_pb2.GetComponentNameResponse(name=self.bmi_model_.get_component_name())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getInputVarNames(self, request, context):
-        return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_input_var_names())
+        try:
+            return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_input_var_names())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getOutputVarNames(self, request, context):
-        return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_output_var_names())
+        try:
+            return bmi_pb2.GetVarNamesResponse(names=self.bmi_model_.get_output_var_names())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getTimeUnits(self, request, context):
-        return bmi_pb2.GetTimeUnitsResponse(units=self.bmi_model_.get_time_units())
+        try:
+            return bmi_pb2.GetTimeUnitsResponse(units=self.bmi_model_.get_time_units())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getTimeStep(self, request, context):
-        return bmi_pb2.GetTimeStepResponse(interval=self.bmi_model_.get_time_step())
+        try:
+            return bmi_pb2.GetTimeStepResponse(interval=self.bmi_model_.get_time_step())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getCurrentTime(self, request, context):
-        return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_current_time())
+        try:
+            return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_current_time())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getStartTime(self, request, context):
-        return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_start_time())
+        try:
+            return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_start_time())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getEndTime(self, request, context):
-        return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_end_time())
+        try:
+            return bmi_pb2.GetTimeResponse(time=self.bmi_model_.get_end_time())
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getVarGrid(self, request, context):
-        return bmi_pb2.GetVarGridResponse(grid_id=self.bmi_model_.get_var_grid(request.name))
+        try:
+            return bmi_pb2.GetVarGridResponse(grid_id=self.bmi_model_.get_var_grid(request.name))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getVarType(self, request, context):
-        return bmi_pb2.GetVarTypeResponse(type=self.bmi_model_.get_var_type(request.name))
+        try:
+            return bmi_pb2.GetVarTypeResponse(type=self.bmi_model_.get_var_type(request.name))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getVarItemSize(self, request, context):
-        return bmi_pb2.GetVarItemSizeResponse(size=self.bmi_model_.get_var_itemsize(request.name))
+        try:
+            return bmi_pb2.GetVarItemSizeResponse(size=self.bmi_model_.get_var_itemsize(request.name))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getVarUnits(self, request, context):
-        return bmi_pb2.GetVarUnitsResponse(units=self.bmi_model_.get_var_units(request.name))
+        try:
+            return bmi_pb2.GetVarUnitsResponse(units=self.bmi_model_.get_var_units(request.name))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getVarNBytes(self, request, context):
-        return bmi_pb2.GetVarNBytesResponse(nbytes=self.bmi_model_.get_var_nbytes(request.name))
+        try:
+            return bmi_pb2.GetVarNBytesResponse(nbytes=self.bmi_model_.get_var_nbytes(request.name))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getValue(self, request, context):
-        vals = self.bmi_model_.get_value(request.name)
-        if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
-        if vals.dtype == numpy.float32:
-            return bmi_pb2.GetValueResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
-        if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
-        raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
+        try:
+            vals = self.bmi_model_.get_value(request.name)
+            if vals.dtype == numpy.int32:
+                return bmi_pb2.GetValueResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
+            if vals.dtype == numpy.float32:
+                return bmi_pb2.GetValueResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
+            if vals.dtype == numpy.float64:
+                return bmi_pb2.GetValueResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
+            raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getValuePtr(self, request, context):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def getValueAtIndices(self, request, context):
-        indices = numpy.array(request.indices)
-        vals = self.bmi_model_.get_value_at_indices(request.name, indices)
-        if vals.dtype == numpy.int32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
-        if vals.dtype == numpy.float32:
-            return bmi_pb2.GetValueAtIndicesResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
-        if vals.dtype == numpy.float64:
-            return bmi_pb2.GetValueAtIndicesResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
-        raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
+        try:
+            indices = numpy.array(request.indices)
+            vals = self.bmi_model_.get_value_at_indices(request.name, indices)
+            if vals.dtype == numpy.int32:
+                return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=vals.flatten()))
+            if vals.dtype == numpy.float32:
+                return bmi_pb2.GetValueAtIndicesResponse(values_float=bmi_pb2.FloatArrayMessage(values=vals.flatten()))
+            if vals.dtype == numpy.float64:
+                return bmi_pb2.GetValueAtIndicesResponse(values_double=bmi_pb2.DoubleArrayMessage(values=vals.flatten()))
+            raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % vals.dtype)
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def setValue(self, request, context):
-        if request.HasField("values_int"):
-            self.bmi_model_.set_value(request.name, request.values_int.values)
-        if request.HasField("values_float"):
-            self.bmi_model_.set_value(request.name, request.values_float.values)
-        if request.HasField("values_double"):
-            self.bmi_model_.set_value(request.name, request.values_double.values)
-        return bmi_pb2.Empty()
+        try:
+            if request.HasField("values_int"):
+                self.bmi_model_.set_value(request.name, request.values_int.values)
+            if request.HasField("values_float"):
+                self.bmi_model_.set_value(request.name, request.values_float.values)
+            if request.HasField("values_double"):
+                self.bmi_model_.set_value(request.name, request.values_double.values)
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def setValuePtr(self, request, context):
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
     def setValueAtIndices(self, request, context):
-        index_array = numpy.array(request.indices)
-        if request.HasField("values_int"):
-            array = numpy.array(request.values_int.values, dtype=numpy.int32)
-            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
-        if request.HasField("values_float"):
-            array = numpy.array(request.values_int.values, dtype=numpy.float32)
-            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
-        if request.HasField("values_double"):
-            array = numpy.array(request.values_double.values, dtype=numpy.float64)
-            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
-        return bmi_pb2.Empty()
+        try:
+            index_array = numpy.array(request.indices)
+            if request.HasField("values_int"):
+                array = numpy.array(request.values_int.values, dtype=numpy.int32)
+                self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
+            if request.HasField("values_float"):
+                array = numpy.array(request.values_int.values, dtype=numpy.float32)
+                self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
+            if request.HasField("values_double"):
+                array = numpy.array(request.values_double.values, dtype=numpy.float64)
+                self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridSize(self, request, context):
-        return bmi_pb2.GetGridSizeResponse(size=self.bmi_model_.get_grid_size(request.grid_id))
+        try:
+            return bmi_pb2.GetGridSizeResponse(size=self.bmi_model_.get_grid_size(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridRank(self, request, context):
-        return bmi_pb2.GetGridRankResponse(rank=self.bmi_model_.get_grid_rank(request.grid_id))
+        try:
+            return bmi_pb2.GetGridRankResponse(rank=self.bmi_model_.get_grid_rank(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridType(self, request, context):
-        return bmi_pb2.GetGridTypeResponse(type=self.bmi_model_.get_grid_type(request.grid_id))
+        try:
+            return bmi_pb2.GetGridTypeResponse(type=self.bmi_model_.get_grid_type(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridShape(self, request, context):
-        return bmi_pb2.GetGridShapeResponse(shape=self.bmi_model_.get_grid_shape(request.grid_id))
+        try:
+            return bmi_pb2.GetGridShapeResponse(shape=self.bmi_model_.get_grid_shape(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridSpacing(self, request, context):
-        return bmi_pb2.GetGridSpacingResponse(spacing=self.bmi_model_.get_grid_spacing(request.grid_id))
+        try:
+            return bmi_pb2.GetGridSpacingResponse(spacing=self.bmi_model_.get_grid_spacing(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridOrigin(self, request, context):
-        return bmi_pb2.GetGridOriginResponse(origin=self.bmi_model_.get_grid_origin(request.grid_id))
+        try:
+            return bmi_pb2.GetGridOriginResponse(origin=self.bmi_model_.get_grid_origin(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridX(self, request, context):
-        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_x(request.grid_id))
+        try:
+            return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_x(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridY(self, request, context):
-        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_y(request.grid_id))
+        try:
+            return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_y(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridZ(self, request, context):
-        return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_z(request.grid_id))
+        try:
+            return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_z(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridConnectivity(self, request, context):
-        return bmi_pb2.GetGridConnectivityResponse(links=self.bmi_model_.get_grid_connectivity(request.grid_id))
+        try:
+            return bmi_pb2.GetGridConnectivityResponse(links=self.bmi_model_.get_grid_connectivity(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
 
     def getGridOffset(self, request, context):
-        return bmi_pb2.GetGridOffsetResponse(offsets=self.bmi_model_.get_grid_offset(request.grid_id))
+        try:
+            return bmi_pb2.GetGridOffsetResponse(offsets=self.bmi_model_.get_grid_offset(request.grid_id))
+        except Exception as e:
+            self.exception_handler(e, context)
+
+    def __repr__(self) -> str:
+        return self.bmi_model_.__repr__()
+
