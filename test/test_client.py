@@ -1,11 +1,15 @@
 import logging
 
+import grpc
 import numpy
 import numpy.random
 import pytest
+from google.protobuf import any_pb2
+from google.rpc import error_details_pb2, status_pb2, code_pb2
+from grpc_status import rpc_status
 
 from grpc4bmi.bmi_grpc_server import BmiServer
-from grpc4bmi.bmi_grpc_client import BmiClient
+from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
 from test.flatbmiheat import FlatBmiHeat
 
 logging.basicConfig(level=logging.DEBUG)
@@ -260,3 +264,65 @@ def test_get_grid_points():
     assert numpy.array_equal(client.get_grid_x(grid_id), local_x)
     assert numpy.array_equal(client.get_grid_y(grid_id), local_y)
     assert numpy.array_equal(client.get_grid_z(grid_id), local_z)
+
+
+class MyCall(grpc.RpcError):
+    def __init__(self, message, exc, stack_entries):
+        super().__init__(message)
+        if stack_entries is not None:
+            detail = any_pb2.Any()
+            detail.Pack(
+                error_details_pb2.DebugInfo(
+                    stack_entries=stack_entries,
+                    detail=repr(exc)
+                )
+            )
+            status = status_pb2.Status(
+                code=code_pb2.INTERNAL,
+                message=str(exc),
+                details=[detail]
+            )
+        else:
+            status = status_pb2.Status(
+                code=code_pb2.INTERNAL,
+                message=str(exc)
+            )
+        self.impl = rpc_status.to_status(status)
+
+    def trailing_metadata(self):
+        return self.impl.trailing_metadata
+
+    def code(self):
+        return self.impl.code
+
+    def details(self):
+        return self.impl.details
+
+
+def test_handle_error_with_stacktrace():
+    exc = Exception('Some exception thrown by model on server')
+    stack_entries = [
+        '  File "/somewhere/on/server/model.py, line 42, in initialize\n  open(fn)',
+    ]
+    call = MyCall('Server error message', exc, stack_entries)
+
+    with pytest.raises(RemoteException) as excinfo:
+        handle_error(call)
+
+        assert excinfo.value.remote_stacktrace == stack_entries
+        assert str(excinfo.value) == 'Some exception thrown by model on server'
+        assert excinfo.value.__cause == exc
+
+
+def test_handle_error_without_stacktrace():
+    exc = Exception('Some exception thrown by model on server')
+    stack_entries = None
+    call = MyCall('Server error message', exc, stack_entries)
+
+    with pytest.raises(MyCall) as excinfo:
+        try:
+            raise call
+        except MyCall:
+            handle_error(call)
+
+        assert excinfo.value == exc

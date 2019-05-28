@@ -25,7 +25,7 @@ def handle_error(exc):
     """Parsers DebugInfo (https://github.com/googleapis/googleapis/blob/07244bb797ddd6e0c1c15b02b4467a9a5729299f/google/rpc/error_details.proto#L46-L52) from the trailing metadata of a grpc.RpcError
 
     Args:
-        exc:
+        exc (grpc.RpcError): Exception to handle
 
     Raises: original exception or RemoteException
 

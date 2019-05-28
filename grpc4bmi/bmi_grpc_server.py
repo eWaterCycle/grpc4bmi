@@ -17,10 +17,15 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     BMI Server class, wrapping an existing python implementation and exposing it via GRPC across the memory space (to
     listening client processes). The class takes a package, module and class name and instantiates the BMI
     implementation by assuming a default constructor with no arguments.
+
+    Args:
+        model: Bmi model object which must be wrapped by grpc
+        debug: If true then returns stacktrace in an error response.
+                The stacktrace is returned in the trailing metadata as a DebugInfo (https://github.com/googleapis/googleapis/blob/07244bb797ddd6e0c1c15b02b4467a9a5729299f/google/rpc/error_details.proto#L46-L52) message.
     """
 
     def __init__(self, model, debug=False):
-        # type: (BmiServer, Bmi) -> None
+        # type: (BmiServer, Bmi, bool) -> None
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         self.bmi_model_ = model
         self.debug = debug
