@@ -326,3 +326,31 @@ def test_handle_error_without_stacktrace():
             handle_error(call)
 
         assert excinfo.value == exc
+
+
+class OtherCall(grpc.RpcError):
+    def __init__(self, message, exc):
+        super().__init__(message)
+        self.exc = exc
+
+    def trailing_metadata(self):
+        return []
+
+    def code(self):
+        return code_pb2.INTERNAL
+
+    def details(self):
+        return str(self.exc)
+
+
+def test_handle_error_without_status():
+    exc = Exception('Some exception thrown by model on server')
+    call = OtherCall('Server error message', exc)
+
+    with pytest.raises(OtherCall) as excinfo:
+        try:
+            raise call
+        except MyCall:
+            handle_error(call)
+
+        assert excinfo.value == call

@@ -31,6 +31,8 @@ def handle_error(exc):
 
     """
     status = rpc_status.from_call(exc)
+    if status is None:
+        raise
     for detail in status.details:
         if detail.Is(error_details_pb2.DebugInfo.DESCRIPTOR):
             info = error_details_pb2.DebugInfo()
