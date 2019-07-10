@@ -1,10 +1,14 @@
 import logging
+from unittest.mock import Mock
 
 import numpy
 import numpy.random
 import pytest
+import grpc
+from google.rpc import error_details_pb2, status_pb2
+from basic_modeling_interface import Bmi
 
-
+from grpc4bmi import bmi_pb2
 from grpc4bmi.bmi_grpc_server import BmiServer
 from test.flatbmiheat import FlatBmiHeat
 
@@ -306,3 +310,169 @@ def test_get_grid_connectivity():
     grid_id = local.get_var_grid(varname)
     setattr(request, "grid_id", grid_id)
     assert server.getGridConnectivity(request, None).links == make_list(local.get_grid_connectivity(grid_id))
+
+
+class SomeException(Exception):
+    pass
+
+
+class FailingModel(Bmi):
+    def __init__(self, exc):
+        self.exc = exc
+
+    def initialize(self, filename):
+        raise self.exc
+
+    def update(self):
+        raise self.exc
+
+    def update_until(self, time):
+        raise self.exc
+
+    def update_frac(self, time_frac):
+        raise self.exc
+
+    def finalize(self):
+        raise self.exc
+
+    def get_component_name(self):
+        raise self.exc
+
+    def get_input_var_names(self):
+        raise self.exc
+
+    def get_output_var_names(self):
+        raise self.exc
+
+    def get_start_time(self):
+        raise self.exc
+
+    def get_current_time(self):
+        raise self.exc
+
+    def get_end_time(self):
+        raise self.exc
+
+    def get_time_step(self):
+        raise self.exc
+
+    def get_time_units(self):
+        raise self.exc
+
+    def get_var_type(self, var_name):
+        raise self.exc
+
+    def get_var_units(self, var_name):
+        raise self.exc
+
+    def get_var_itemsize(self, var_name):
+        raise self.exc
+
+    def get_var_nbytes(self, var_name):
+        raise self.exc
+
+    def get_var_grid(self, var_name):
+        raise self.exc
+
+    def get_value(self, var_name):
+        raise self.exc
+
+    def get_value_ref(self, var_name):
+        raise self.exc
+
+    def get_value_at_indices(self, var_name, indices):
+        raise self.exc
+
+    def set_value(self, var_name, src):
+        raise self.exc
+
+    def set_value_at_indices(self, var_name, indices, src):
+        raise self.exc
+
+    def get_grid_shape(self, grid_id):
+        raise self.exc
+
+    def get_grid_x(self, grid_id):
+        raise self.exc
+
+    def get_grid_y(self, grid_id):
+        raise self.exc
+
+    def get_grid_z(self, grid_id):
+        raise self.exc
+
+    def get_grid_spacing(self, grid_id):
+        raise self.exc
+
+    def get_grid_origin(self, grid_id):
+        raise self.exc
+
+    def get_grid_connectivity(self, grid_id):
+        raise self.exc
+
+    def get_grid_offset(self, grid_id):
+        raise self.exc
+
+    def get_grid_rank(self, grid_id):
+        raise self.exc
+
+    def get_grid_size(self, grid_id):
+        raise self.exc
+
+    def get_grid_type(self, grid_id):
+        raise self.exc
+
+
+@pytest.mark.parametrize("server_method,server_request", [
+    ('initialize', bmi_pb2.InitializeRequest(config_file='/data/config.ini')),
+    ('update', bmi_pb2.Empty()),
+    ('updateUntil', bmi_pb2.UpdateUntilRequest(until=42)),
+    ('updateFrac', bmi_pb2.UpdateFracRequest(frac=0.5)),
+    ('finalize', bmi_pb2.Empty()),
+    ('getComponentName', bmi_pb2.Empty()),
+    ('getInputVarNames', bmi_pb2.Empty()),
+    ('getOutputVarNames', bmi_pb2.Empty()),
+    ('getTimeUnits', bmi_pb2.Empty()),
+    ('getTimeStep', bmi_pb2.Empty()),
+    ('getCurrentTime', bmi_pb2.Empty()),
+    ('getStartTime', bmi_pb2.Empty()),
+    ('getEndTime', bmi_pb2.Empty()),
+    ('getVarGrid', bmi_pb2.GetVarRequest(name='something')),
+    ('getVarType', bmi_pb2.GetVarRequest(name='something')),
+    ('getVarItemSize', bmi_pb2.GetVarRequest(name='something')),
+    ('getVarUnits', bmi_pb2.GetVarRequest(name='something')),
+    ('getVarNBytes', bmi_pb2.GetVarRequest(name='something')),
+    ('getValue', bmi_pb2.GetVarRequest(name='something')),
+    ('getValueAtIndices', bmi_pb2.GetValueAtIndicesRequest(name='something', indices=(42,))),
+    ('setValue', bmi_pb2.SetValueRequest(name='something', values_int=bmi_pb2.IntArrayMessage(values=(42,)))),
+    ('setValueAtIndices', bmi_pb2.SetValueAtIndicesRequest(name='something', indices=(43,),
+                                                           values_int=bmi_pb2.IntArrayMessage(values=(1234,)))),
+    ('getGridSize', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridType', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridRank', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridShape', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridSpacing', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridOrigin', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridX', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridY', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridZ', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridConnectivity', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridOffset', bmi_pb2.GridRequest(grid_id=42)),
+])
+def test_method_exceptions_with_stacktrace(server_method, server_request):
+    exc = SomeException('Bmi method always fails')
+    model = FailingModel(exc)
+    server = BmiServer(model, True)
+    context = Mock(grpc.ServicerContext)
+
+    getattr(server, server_method)(server_request, context)
+
+    context.abort_with_status.assert_called_once()
+    status = context.abort_with_status.call_args[0][0]
+    assert status.code == grpc.StatusCode.INTERNAL
+    assert status.details == 'Bmi method always fails'
+    metadata = status_pb2.Status.FromString(status.trailing_metadata[0][1])
+    debuginfo = error_details_pb2.DebugInfo()
+    metadata.details[0].Unpack(debuginfo)
+    assert debuginfo.detail == "SomeException('Bmi method always fails',)"
+    assert len(debuginfo.stack_entries) > 0

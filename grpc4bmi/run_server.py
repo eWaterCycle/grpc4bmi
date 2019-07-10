@@ -98,10 +98,13 @@ def serve(model, port):
         server.stop(0)
 
 
-def main():
+def main(argv=sys.argv[1:]):
     parser = build_parser()
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
 
     if args.language == "R":
         model = build_r(args.name, args.path)
@@ -116,7 +119,7 @@ def main():
             s.bind(("", 0))
             port = int(s.getsockname()[1])
 
-    serve(BmiServer(model), port)
+    serve(BmiServer(model, args.debug), port)
 
 
 def build_parser():
@@ -134,6 +137,9 @@ def build_parser():
         lang_choices.append('R')
     parser.add_argument("--language", default="python", choices=lang_choices,
                         help="Language in which BMI implementation class is written")
+    parser.add_argument("--debug", action="store_true",
+                        help="Run server in debug mode. "
+                             "Logs errors with stacktraces and returns stacktrace in error response")
     return parser
 
 
