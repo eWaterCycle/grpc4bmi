@@ -3,7 +3,7 @@ import os
 import socket
 from contextlib import closing
 
-import basic_modeling_interface.bmi as bmi
+from bmipy import Bmi
 import grpc
 import numpy
 
@@ -12,7 +12,7 @@ from . import bmi_pb2, bmi_pb2_grpc
 log = logging.getLogger(__name__)
 
 
-class BmiClient(bmi.Bmi):
+class BmiClient(Bmi):
     """
     Client BMI interface, implementing BMI by forwarding every function call via GRPC to the server connected to the
     same port. A GRPC channel can be passed to the constructor; if not, it constructs an insecure channel on a free
@@ -64,12 +64,6 @@ class BmiClient(bmi.Bmi):
 
     def update(self):
         self.stub.update(bmi_pb2.Empty())
-
-    def update_frac(self, time_frac):
-        self.stub.updateFrac(bmi_pb2.UpdateFracRequest(frac=time_frac))
-
-    def update_until(self, time):
-        self.stub.updateUntil(bmi_pb2.UpdateUntilRequest(until=time))
 
     def finalize(self):
         self.stub.finalize(bmi_pb2.Empty())
@@ -188,12 +182,6 @@ class BmiClient(bmi.Bmi):
 
     def get_grid_spacing(self, grid_id):
         return tuple(self.stub.getGridSpacing(bmi_pb2.GridRequest(grid_id=grid_id)).spacing)
-
-    def get_grid_offset(self, grid_id):
-        return tuple(self.stub.getGridOffset(bmi_pb2.GridRequest(grid_id=grid_id)).offsets)
-
-    def get_grid_connectivity(self, grid_id):
-        return self.stub.getGridConnectivity(bmi_pb2.GridRequest(grid_id=grid_id)).links
 
     def get_grid_origin(self, grid_id):
         return tuple(self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid_id)).origin)

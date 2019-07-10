@@ -1,4 +1,4 @@
-from basic_modeling_interface import Bmi
+from bmipy import Bmi
 import rpy2.robjects as robjects
 import numpy as np
 

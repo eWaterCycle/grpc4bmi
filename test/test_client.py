@@ -4,7 +4,7 @@ import numpy
 import numpy.random
 import pytest
 
-from grpc4bmi.bmi_grpc_server import BmiServer
+from grpc4bmi.bmi_grpc_server import BmiLegacyServer02
 from grpc4bmi.bmi_grpc_client import BmiClient
 from test.flatbmiheat import FlatBmiHeat
 
@@ -32,7 +32,7 @@ class ServerWrapper(object):
 
 
 def make_bmi_classes(init=False):
-    client = BmiClient(stub=ServerWrapper(BmiServer(FlatBmiHeat())))
+    client = BmiClient(stub=ServerWrapper(BmiLegacyServer02(FlatBmiHeat())))
     local = FlatBmiHeat()
     if init:
         numpy.random.seed(0)

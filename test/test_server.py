@@ -5,7 +5,7 @@ import numpy.random
 import pytest
 
 
-from grpc4bmi.bmi_grpc_server import BmiServer
+from grpc4bmi.bmi_grpc_server import BmiLegacyServer02
 from test.flatbmiheat import FlatBmiHeat
 
 """
@@ -41,7 +41,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiServer(FlatBmiHeat()), FlatBmiHeat()
+    server, local = BmiLegacyServer02(FlatBmiHeat()), FlatBmiHeat()
     if init:
         req = RequestStub()
         numpy.random.seed(0)

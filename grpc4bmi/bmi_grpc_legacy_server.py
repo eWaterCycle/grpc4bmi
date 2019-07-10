@@ -1,14 +1,13 @@
 import logging
 
 import numpy
-from bmipy import Bmi
 
 from . import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
 
 
-class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
+class BmiLegacyServer02(bmi_pb2_grpc.BmiServiceServicer):
     """
     BMI Server class, wrapping an existing python implementation and exposing it via GRPC across the memory space (to
     listening client processes). The class takes a package, module and class name and instantiates the BMI
@@ -16,7 +15,6 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     """
 
     def __init__(self, model):
-        # type: (BmiServer, Bmi) -> None
         super(bmi_pb2_grpc.BmiServiceServicer, self).__init__()
         self.bmi_model_ = model
 
