@@ -103,10 +103,14 @@ def main():
 
     args = parser.parse_args()
 
+    path = args.path
+    if path is None:
+        path = os.environ.get("BMI_PATH", None)
+
     if args.language == "R":
-        model = build_r(args.name, args.path)
+        model = build_r(args.name, path)
     else:
-        model = build(args.name, args.path)
+        model = build(args.name, path)
 
     port = args.port
     if port == 0:
