@@ -45,7 +45,7 @@ class BmiClient(bmi.Bmi):
         if h is None:
             h = "localhost"
         if p == 0:
-            p = os.environ.get("BMI_PORT", 50051)
+            p = os.environ.get("BMI_PORT", 55555)
         elif p in BmiClient.occupied_ports:
             log.error("Attempt to create grpc channel on occupied port %d" % p)
             return None

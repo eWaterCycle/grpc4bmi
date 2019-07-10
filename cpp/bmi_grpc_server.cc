@@ -653,7 +653,7 @@ void run_bmi_server(BMI_Model* model, int argc, char* argv[])
 
 void run_bmi_server(Bmi* model, int argc, char* argv[])
 {
-    std::string server_address("0.0.0.0:50051");
+    std::string server_address("0.0.0.0:55555");
     if(argc > 1)
     {
         server_address = "0.0.0.0:" + std::string(argv[1]);
