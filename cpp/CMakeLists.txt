@@ -34,7 +34,7 @@ set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc ${CMAKE_CURRENT_BINARY_
 set(GRPC_HDR_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.h)
 link_libraries(${PROTOBUF_LIBRARY} ${GRPCPP_UNSECURE} ${GRPC} ${BMIC})
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/bmi-c/bmi)
+include_directories(${CMAKE_SOURCE_DIR}/bmi-c)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library (grpc4bmi SHARED bmi_class.h bmi_cpp_extension.h bmi_cpp_extension.cc
     bmi_c_wrapper.h bmi_c_wrapper.cc bmi_grpc_server.cc bmi_grpc_server.h ${GRPC_SRC_FILES} ${GRPC_HDR_FILES})
