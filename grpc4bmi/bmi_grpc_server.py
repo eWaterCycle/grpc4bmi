@@ -3,6 +3,7 @@ import logging
 import numpy
 from bmipy import Bmi
 
+from grpc4bmi.reserve import reserve_values, reserve_grid_values, reserve_shape
 from . import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
@@ -83,15 +84,8 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         }
         return bmi_pb2.GetVarLocationResponse(location=lookup[location])
 
-    def _reserve_values(self, name):
-        dtype = self.bmi_model_.get_var_type(name)
-        item_size = self.bmi_model_.get_var_itemsize(name)
-        total_size = self.bmi_model_.get_var_nbytes(name)
-        size = total_size // item_size
-        return numpy.empty(size, dtype=dtype)
-
     def getValue(self, request, context):
-        values = self._reserve_values(request.name)
+        values = reserve_values(self.bmi_model_, request.name)
         values = self.bmi_model_.get_value(request.name, values)
         if values.dtype == numpy.int32:
             return bmi_pb2.GetValueResponse(values_int=bmi_pb2.IntArrayMessage(values=values.flatten()))
@@ -150,35 +144,28 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getGridType(self, request, context):
         return bmi_pb2.GetGridTypeResponse(type=self.bmi_model_.get_grid_type(request.grid_id))
 
-    def _reserve_grid_values(self, grid_id):
-        return numpy.empty(self.bmi_model_.get_grid_rank(grid_id), dtype=numpy.int32)
-
     def getGridShape(self, request, context):
-        values = self._reserve_grid_values(request.grid_id)
+        values = reserve_grid_values(self.bmi_model_, request.grid_id)
         return bmi_pb2.GetGridShapeResponse(shape=self.bmi_model_.get_grid_shape(request.grid_id, values))
 
     def getGridSpacing(self, request, context):
-        values = self._reserve_grid_values(request.grid_id)
+        values = reserve_grid_values(self.bmi_model_, request.grid_id)
         return bmi_pb2.GetGridSpacingResponse(spacing=self.bmi_model_.get_grid_spacing(request.grid_id, values))
 
     def getGridOrigin(self, request, context):
-        values = self._reserve_grid_values(request.grid_id)
+        values = reserve_grid_values(self.bmi_model_, request.grid_id)
         return bmi_pb2.GetGridOriginResponse(origin=self.bmi_model_.get_grid_origin(request.grid_id, values))
 
-    def _reserve_shape(self, grid_id, dim_index):
-        shape = self.bmi_model_.get_grid_shape(grid_id, self._reserve_grid_values(grid_id))
-        return numpy.empty(shape[dim_index], dtype=numpy.float64)
-
     def getGridX(self, request, context):
-        values = self._reserve_shape(request.grid_id, 0)
+        values = reserve_shape(self.bmi_model_, request.grid_id, 0)
         return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_x(request.grid_id, values))
 
     def getGridY(self, request, context):
-        values = self._reserve_shape(request.grid_id, 1)
+        values = reserve_shape(self.bmi_model_, request.grid_id, 1)
         return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_y(request.grid_id, values))
 
     def getGridZ(self, request, context):
-        values = self._reserve_shape(request.grid_id, 2)
+        values = reserve_shape(self.bmi_model_, request.grid_id, 2)
         return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_z(request.grid_id, values))
 
     def getGridNodeCount(self, request, context):

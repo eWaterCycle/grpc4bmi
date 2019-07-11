@@ -3,9 +3,10 @@ import logging
 import numpy
 import numpy.random
 import pytest
-from heat import BmiHeat
 
 from grpc4bmi.bmi_grpc_server import BmiServer
+from grpc4bmi.reserve import reserve_values
+from test.flatbmiheat import FlatBmiHeat
 
 """
 Unit tests for the BMI server class. Every test performs cross-checking with a local instance of the BMI heat toy model.
@@ -40,7 +41,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiServer(BmiHeat()), BmiHeat()
+    server, local = BmiServer(FlatBmiHeat()), FlatBmiHeat()
     if init:
         req = RequestStub()
         numpy.random.seed(0)
@@ -164,8 +165,8 @@ def test_get_var_values():
     request = RequestStub()
     varname = local.get_output_var_names()[0]
     setattr(request, "name", varname)
-    values = local.get_value(varname)
-    numpy.testing.assert_allclose(numpy.reshape(server.getValue(request, None).values_double.values, values.shape), values)
+    values = local.get_value(varname, reserve_values(local, varname))
+    numpy.testing.assert_allclose(numpy.reshape(server.getValue(request, reserve_values(local, varname)).values_double.values, values.shape), values)
 
 
 def test_get_var_ptr():
@@ -185,7 +186,8 @@ def test_get_vals_indices():
     setattr(request, "name", varname)
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 1)
-    values = local.get_value_at_indices(varname, indices)
+    dest = numpy.empty(4)
+    values = local.get_value_at_indices(varname, dest, indices)
     numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
@@ -197,7 +199,8 @@ def test_get_vals_indices_2d():
     setattr(request, "name", varname)
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 2)
-    values = local.get_value_at_indices(varname, indices)
+    dest = numpy.empty(6)
+    values = local.get_value_at_indices(varname, dest, indices)
     numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
@@ -205,7 +208,8 @@ def test_set_var_values():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
-    values = 0.123 * local.get_value(varname)
+    dest = reserve_values(local, varname)
+    values = 0.123 * local.get_value(varname, dest)
     setattr(request, "name", varname)
     setattr(request, "values_double", value_wrapper(values))
     setattr(request, "shape", values.shape)
