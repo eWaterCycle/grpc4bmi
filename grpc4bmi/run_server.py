@@ -14,9 +14,10 @@ from concurrent import futures
 import grpc
 from grpc_reflection.v1alpha import reflection
 
+from grpc4bmi.bmi_grpc_legacy_server import BmiLegacyServer02
 from . import bmi_pb2
 from . import bmi_pb2_grpc
-from .bmi_grpc_server import BmiLegacyServer02, BmiServer
+from .bmi_grpc_server import BmiServer
 
 try:
     from .bmi_r_model import BmiR

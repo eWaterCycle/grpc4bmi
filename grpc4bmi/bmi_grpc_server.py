@@ -309,6 +309,11 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         except Exception as e:
             self.exception_handler(e, context)
 
+    def _get_grid_nodes_per_face(self, grid_id):
+        size = self.bmi_model_.get_grid_face_count(grid_id)
+        links = numpy.empty(size, dtype=numpy.int64)
+        return self.bmi_model_.get_grid_nodes_per_face(grid_id, links)
+
     def getGridFaceNodes(self, request, context):
         try:
             nodes_per_face = self._get_grid_nodes_per_face(request.grid_id)
@@ -316,14 +321,6 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             links = numpy.empty(size, dtype=numpy.int64)
             links = self.bmi_model_.get_grid_face_nodes(request.grid_id, links)
             return bmi_pb2.GetGridFaceNodesResponse(links=links)
-        except Exception as e:
-            self.exception_handler(e, context)
-
-    def _get_grid_nodes_per_face(self, grid_id):
-        try:
-            size = self.bmi_model_.get_grid_face_count(grid_id)
-            links = numpy.empty(size, dtype=numpy.int64)
-            return self.bmi_model_.get_grid_nodes_per_face(grid_id, links)
         except Exception as e:
             self.exception_handler(e, context)
 
