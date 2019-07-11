@@ -52,8 +52,9 @@ class BmiGRPCService final: public BmiService::Service
     private:
         BmiClass* const bmi;
         char find_type(const std::string& varname) const;
-        int get_grid_dimensions(int id, int* vec3d) const;
-        static grpc::Status translate_status(int);
+        void get_grid_dimensions(int id, int* vec3d) const;
+        static void process_status(std::string, int);
+        static grpc::Status handle_exception(const std::exception&);
 };
 
 void run_bmi_server(BMIModel* model, int argc, char* argv[]);
