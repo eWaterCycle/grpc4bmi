@@ -2,21 +2,24 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
-#include "bmi_class.h"
-#include "bmi/bmi.h"
+#ifndef BMI_INCLUDED
+#define BMI_INCLUDED
+#include "bmi.h"
+#include "bmi.hxx"
+#endif
+
+typedef Bmi BMIModel;
+typedef bmi::Bmi BmiClass;
 
 using bmi::BmiService;
 
 class BmiGRPCService final: public BmiService::Service
 {
     public:
-        BmiGRPCService(Bmi*);
+        BmiGRPCService(BmiClass*);
         ~BmiGRPCService();
         grpc::Status initialize(grpc::ServerContext* context, const bmi::InitializeRequest* request, bmi::Empty* response) override;
         grpc::Status update(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response) override;
-        grpc::Status updateUntil(grpc::ServerContext* context, const bmi::UpdateUntilRequest* request, bmi::Empty* response) override;
-        grpc::Status updateFrac(grpc::ServerContext* context, const bmi::UpdateFracRequest* request, bmi::Empty* response) override;
-        grpc::Status runModel(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response);
         grpc::Status finalize(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response) override;
         grpc::Status getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) override;
         grpc::Status getInputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) override;
@@ -46,16 +49,14 @@ class BmiGRPCService final: public BmiService::Service
         grpc::Status getGridX(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
         grpc::Status getGridY(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
         grpc::Status getGridZ(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
-        grpc::Status getGridConnectivity(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridConnectivityResponse* response) override;
-        grpc::Status getGridOffset(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridOffsetResponse* response) override;
     private:
-        Bmi* const bmi;
+        BmiClass* const bmi;
         char find_type(const std::string& varname) const;
         int get_grid_dimensions(int id, int* vec3d) const;
         static grpc::Status translate_status(int);
 };
 
-void run_bmi_server(BMI_Model* model, int argc, char* argv[]);
-void run_bmi_server(Bmi* model, int argc, char* argv[]);
+void run_bmi_server(BMIModel* model, int argc, char* argv[]);
+void run_bmi_server(BmiClass* model, int argc, char* argv[]);
 
 #endif

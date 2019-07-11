@@ -3,43 +3,26 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
-#include "bmi-c/bmi/bmilib.h"
 #include "bmi_grpc_server.h"
 #include "bmi_c_wrapper.h"
 
-
-BmiGRPCService::BmiGRPCService(Bmi* bmi_):bmi(bmi_){}
+BmiGRPCService::BmiGRPCService(BmiClass* bmi_):bmi(bmi_){}
 
 BmiGRPCService::~BmiGRPCService(){}
 
 grpc::Status BmiGRPCService::initialize(grpc::ServerContext* context, const bmi::InitializeRequest* request, bmi::Empty* response)
 {
-    return BmiGRPCService::translate_status(this->bmi->initialize(request->config_file().c_str()));
+    return BmiGRPCService::translate_status(this->bmi->Initialize(request->config_file().c_str()));
 }
 
 grpc::Status BmiGRPCService::update(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response)
 {
-    return BmiGRPCService::translate_status(this->bmi->update());
-}
-
-grpc::Status BmiGRPCService::updateUntil(grpc::ServerContext* context, const bmi::UpdateUntilRequest* request, bmi::Empty* response)
-{
-    return BmiGRPCService::translate_status(this->bmi->update_until(request->until()));
-}
-
-grpc::Status BmiGRPCService::updateFrac(grpc::ServerContext* context, const bmi::UpdateFracRequest* request, bmi::Empty* response)
-{
-    return BmiGRPCService::translate_status(this->bmi->update_frac(request->frac()));
-}
-
-grpc::Status BmiGRPCService::runModel(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response)
-{
-    return BmiGRPCService::translate_status(this->bmi->run_model());
+    return BmiGRPCService::translate_status(this->bmi->Update());
 }
 
 grpc::Status BmiGRPCService::finalize(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response)
 {
-    return BmiGRPCService::translate_status(this->bmi->finalize());
+    return BmiGRPCService::translate_status(this->bmi->Finalize());
 }
 
 grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response)
