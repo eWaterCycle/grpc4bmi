@@ -6,11 +6,11 @@ import numpy.random
 import pytest
 import grpc
 from google.rpc import error_details_pb2, status_pb2
-from basic_modeling_interface import Bmi
+from bmipy import Bmi
 
 from grpc4bmi import bmi_pb2
 from grpc4bmi.bmi_grpc_server import BmiServer
-from grpc4bmi.reserve import reserve_values
+from grpc4bmi.reserve import reserve_values, reserve_shape, reserve_grid_values
 from test.flatbmiheat import FlatBmiHeat
 
 """
@@ -275,7 +275,8 @@ def test_get_grid_shape():
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
     setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridShape(request, None).shape) == local.get_grid_shape(grid_id)
+    dest = reserve_grid_values(local, grid_id)
+    assert tuple(server.getGridShape(request, None).shape) == local.get_grid_shape(grid_id, dest)
 
 
 def test_get_grid_spacing():
@@ -302,9 +303,15 @@ def test_get_grid_points():
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
     setattr(request, "grid_id", grid_id)
-    assert server.getGridX(request, None).coordinates == make_list(local.get_grid_x(grid_id))
-    assert server.getGridY(request, None).coordinates == make_list(local.get_grid_y(grid_id))
-    assert server.getGridZ(request, None).coordinates == make_list(local.get_grid_z(grid_id))
+    expected = (
+        make_list(local.get_grid_x(grid_id, reserve_shape(local, grid_id, 0))),
+        make_list(local.get_grid_y(grid_id, reserve_shape(local, grid_id, 1))),
+        make_list(local.get_grid_z(grid_id, reserve_shape(local, grid_id, 2))),
+    )
+    assert server.getGridX(request, None).coordinates == expected[0]
+    assert server.getGridY(request, None).coordinates == expected[0]
+    assert server.getGridZ(request, None).coordinates == expected[0]
+
 
 class SomeException(Exception):
     pass
@@ -318,12 +325,6 @@ class FailingModel(Bmi):
         raise self.exc
 
     def update(self):
-        raise self.exc
-
-    def update_until(self, time):
-        raise self.exc
-
-    def update_frac(self, time_frac):
         raise self.exc
 
     def finalize(self):
@@ -368,13 +369,13 @@ class FailingModel(Bmi):
     def get_var_grid(self, var_name):
         raise self.exc
 
-    def get_value(self, var_name):
+    def get_value(self, var_name, dest):
         raise self.exc
 
     def get_value_ref(self, var_name):
         raise self.exc
 
-    def get_value_at_indices(self, var_name, indices):
+    def get_value_at_indices(self, var_name, dest, indices):
         raise self.exc
 
     def set_value(self, var_name, src):
@@ -383,22 +384,22 @@ class FailingModel(Bmi):
     def set_value_at_indices(self, var_name, indices, src):
         raise self.exc
 
-    def get_grid_shape(self, grid_id):
+    def get_grid_shape(self, grid_id, dest):
         raise self.exc
 
-    def get_grid_x(self, grid_id):
+    def get_grid_x(self, grid_id, dest):
         raise self.exc
 
-    def get_grid_y(self, grid_id):
+    def get_grid_y(self, grid_id, dest):
         raise self.exc
 
-    def get_grid_z(self, grid_id):
+    def get_grid_z(self, grid_id, dest):
         raise self.exc
 
-    def get_grid_spacing(self, grid_id):
+    def get_grid_spacing(self, grid_id, dest):
         raise self.exc
 
-    def get_grid_origin(self, grid_id):
+    def get_grid_origin(self, grid_id, dest):
         raise self.exc
 
     def get_grid_rank(self, grid_id):
@@ -414,8 +415,6 @@ class FailingModel(Bmi):
 @pytest.mark.parametrize("server_method,server_request", [
     ('initialize', bmi_pb2.InitializeRequest(config_file='/data/config.ini')),
     ('update', bmi_pb2.Empty()),
-    ('updateUntil', bmi_pb2.UpdateUntilRequest(until=42)),
-    ('updateFrac', bmi_pb2.UpdateFracRequest(frac=0.5)),
     ('finalize', bmi_pb2.Empty()),
     ('getComponentName', bmi_pb2.Empty()),
     ('getInputVarNames', bmi_pb2.Empty()),

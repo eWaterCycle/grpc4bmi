@@ -10,6 +10,7 @@ from grpc_status import rpc_status
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
+from grpc4bmi.reserve import reserve_values, reserve_grid_values, reserve_shape
 from test.flatbmiheat import FlatBmiHeat
 
 logging.basicConfig(level=logging.DEBUG)
@@ -150,9 +151,9 @@ def test_get_var_nbytes():
 def test_get_var_values():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
-    actual = client.get_value(varname)
-    desired = local.get_value(varname)
-    numpy.testing.assert_allclose(actual, desired)
+    actual = client.get_value(varname, reserve_values(client, varname))
+    expected = local.get_value(varname, reserve_values(local, varname))
+    numpy.testing.assert_allclose(actual, expected)
     del client
 
 
@@ -160,31 +161,26 @@ def test_get_var_ptr():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     with pytest.raises(NotImplementedError):
-        client.get_value_ref(varname)
+        client.get_value_ptr(varname)
 
 
 def test_get_vals_indices():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     indices = numpy.array([29, 8, 19, 81])
-    numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices),
-                                  local.get_value_at_indices(varname, indices))
-
-
-def test_get_vals_indices_2d():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
-    numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices),
-                                  local.get_value_at_indices(varname, indices))
+    result = numpy.empty(len(indices), dtype=client.get_var_type(varname))
+    result = client.get_value_at_indices(varname, result, indices)
+    expected = numpy.empty(len(indices), dtype=local.get_var_type(varname))
+    expected = local.get_value_at_indices(varname, expected, indices)
+    numpy.testing.assert_allclose(result, expected)
 
 
 def test_set_var_values():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
-    values = 0.123 * local.get_value(varname)
+    values = 0.123 * local.get_value(varname, reserve_values(local, varname))
     client.set_value(varname, values)
-    numpy.testing.assert_allclose(client.get_value(varname), values)
+    numpy.testing.assert_allclose(client.get_value(varname, reserve_values(client, varname)), values)
 
 
 def test_set_values_indices():
@@ -193,7 +189,9 @@ def test_set_values_indices():
     indices = numpy.array([1, 11, 21])
     values = numpy.array([0.123, 4.567, 8.901])
     client.set_value_at_indices(varname, indices, values)
-    numpy.testing.assert_allclose(client.get_value_at_indices(varname, indices), values)
+    expected = numpy.empty(len(indices), dtype=client.get_var_type(varname))
+    expected = client.get_value_at_indices(varname, expected, indices)
+    numpy.testing.assert_allclose(expected, values)
 
 
 def test_get_grid_size():
@@ -221,49 +219,35 @@ def test_get_grid_shape():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_shape(grid_id) == local.get_grid_shape(grid_id)
+    result = client.get_grid_shape(grid_id, reserve_grid_values(client, grid_id))
+    expected = local.get_grid_shape(grid_id, reserve_grid_values(local, grid_id))
+    assert result == expected
 
 
 def test_get_grid_spacing():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_spacing(grid_id) == local.get_grid_spacing(grid_id)
-
-
-def test_get_grid_offset():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_offset = () if local.get_grid_offset(grid_id) is None else local.get_grid_offset(grid_id)
-    assert client.get_grid_offset(grid_id) == local_offset
+    assert client.get_grid_spacing(grid_id, reserve_grid_values(client, grid_id)) == local.get_grid_spacing(grid_id)
 
 
 def test_get_grid_origin():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_origin(grid_id) == local.get_grid_origin(grid_id)
-
-
-def test_get_grid_connectivity():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_connect = [] if local.get_grid_connectivity(grid_id) is None else local.get_grid_connectivity(grid_id)
-    assert client.get_grid_connectivity(grid_id) == local_connect
+    assert client.get_grid_origin(grid_id, reserve_grid_values(client, grid_id)) == local.get_grid_origin(grid_id)
 
 
 def test_get_grid_points():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    local_x = [] if local.get_grid_x(grid_id) is None else numpy.array(local.get_grid_x(grid_id))
-    local_y = [] if local.get_grid_y(grid_id) is None else numpy.array(local.get_grid_y(grid_id))
-    local_z = [] if local.get_grid_z(grid_id) is None else numpy.array(local.get_grid_z(grid_id))
-    assert numpy.array_equal(client.get_grid_x(grid_id), local_x)
-    assert numpy.array_equal(client.get_grid_y(grid_id), local_y)
-    assert numpy.array_equal(client.get_grid_z(grid_id), local_z)
+    local_x = local.get_grid_x(grid_id, reserve_shape(local, grid_id, 0))
+    local_y = local.get_grid_y(grid_id, reserve_shape(local, grid_id, 1))
+    local_z = local.get_grid_z(grid_id, reserve_shape(local, grid_id, 2))
+    assert numpy.array_equal(client.get_grid_x(grid_id, reserve_shape(client, grid_id, 0)), local_x)
+    assert numpy.array_equal(client.get_grid_y(grid_id, reserve_shape(client, grid_id, 1)), local_y)
+    assert numpy.array_equal(client.get_grid_z(grid_id, reserve_shape(client, grid_id, 2)), local_z)
 
 
 class MyCall(grpc.RpcError):

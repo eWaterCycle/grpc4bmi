@@ -3,6 +3,7 @@ import os
 import socket
 from contextlib import closing
 
+import numpy as np
 from bmipy import Bmi
 import grpc
 import numpy
@@ -43,7 +44,7 @@ def handle_error(exc):
     raise
 
 
-class BmiClient(bmi.Bmi):
+class BmiClient(Bmi):
     """
     Client BMI interface, implementing BMI by forwarding every function call via GRPC to the server connected to the
     same port. A GRPC channel can be passed to the constructor; if not, it constructs an insecure channel on a free
@@ -55,7 +56,6 @@ class BmiClient(bmi.Bmi):
     >>> print(mymodel.get_component_name())
     Hello world
     """
-
     occupied_ports = set()
 
     def __init__(self, channel=None, timeout=None, stub=None):
@@ -157,91 +157,105 @@ class BmiClient(bmi.Bmi):
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_var_grid(self, var_name):
+    def get_var_grid(self, name):
         try:
-            return self.stub.getVarGrid(bmi_pb2.GetVarRequest(name=var_name)).grid_id
+            return self.stub.getVarGrid(bmi_pb2.GetVarRequest(name=name)).grid_id
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_var_type(self, var_name):
+    def get_var_type(self, name):
         try:
-            return str(self.stub.getVarType(bmi_pb2.GetVarRequest(name=var_name)).type)
+            return str(self.stub.getVarType(bmi_pb2.GetVarRequest(name=name)).type)
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_var_itemsize(self, var_name):
+    def get_var_itemsize(self, name):
         try:
-            return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=var_name)).size
+            return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=name)).size
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_var_units(self, var_name):
+    def get_var_units(self, name):
         try:
-            response = str(self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=var_name)).units)
+            response = str(self.stub.getVarUnits(bmi_pb2.GetVarRequest(name=name)).units)
             return None if not response else response
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_var_nbytes(self, var_name):
+    def get_var_nbytes(self, name):
         try:
-            return self.stub.getVarNBytes(bmi_pb2.GetVarRequest(name=var_name)).nbytes
+            return self.stub.getVarNBytes(bmi_pb2.GetVarRequest(name=name)).nbytes
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_value(self, var_name):
+    def get_var_location(self, name: str) -> str:
         try:
-            response = self.stub.getValue(bmi_pb2.GetVarRequest(name=var_name))
-            return BmiClient.make_array(response)
+            location = self.stub.getVarLocation(bmi_pb2.GetVarRequest(name=name)).location
+            lookup = {
+                bmi_pb2.GetVarLocationResponse.Location.NODE: "node",
+                bmi_pb2.GetVarLocationResponse.Location.EDGE: "edge",
+                bmi_pb2.GetVarLocationResponse.Location.FACE: "face",
+            }
+            return lookup[location]
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_value_ref(self, var_name):
+    def get_value(self, name, dest):
+        try:
+            response = self.stub.getValue(bmi_pb2.GetVarRequest(name=name))
+            numpy.copyto(src=BmiClient.make_array(response), dst=dest)
+            return dest
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_value_ptr(self, name: str) -> np.ndarray:
         """Not possible, unable give reference to data structure in another process and possibly another machine"""
         raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
 
-    def get_value_at_indices(self, var_name, indices):
+    def get_value_at_indices(self, name, dest, indices):
         try:
             index_array = indices
             if indices is list:
                 index_array = numpy.array(indices)
-            response = self.stub.getValueAtIndices(bmi_pb2.GetValueAtIndicesRequest(name=var_name,
+            response = self.stub.getValueAtIndices(bmi_pb2.GetValueAtIndicesRequest(name=name,
                                                                                     indices=index_array.flatten()))
-            return BmiClient.make_array(response)
+            numpy.copyto(src=BmiClient.make_array(response), dst=dest)
+            return dest
         except grpc.RpcError as e:
             handle_error(e)
 
-    def set_value(self, var_name, src):
+    def set_value(self, name, values):
         try:
-            if src.dtype in [numpy.int32, numpy.int64]:
-                request = bmi_pb2.SetValueRequest(name=var_name,
-                                                  values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
-            elif src.dtype == numpy.float32:
-                request = bmi_pb2.SetValueRequest(name=var_name,
-                                                  values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()))
-            elif src.dtype == numpy.float64:
-                request = bmi_pb2.SetValueRequest(name=var_name,
-                                                  values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()))
+            if values.dtype in [numpy.int32, numpy.int64]:
+                request = bmi_pb2.SetValueRequest(name=name,
+                                                  values_int=bmi_pb2.IntArrayMessage(values=values.flatten()))
+            elif values.dtype == numpy.float32:
+                request = bmi_pb2.SetValueRequest(name=name,
+                                                  values_float=bmi_pb2.FloatArrayMessage(values=values.flatten()))
+            elif values.dtype == numpy.float64:
+                request = bmi_pb2.SetValueRequest(name=name,
+                                                  values_double=bmi_pb2.DoubleArrayMessage(values=values.flatten()))
             else:
-                raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % src.dtype)
+                raise NotImplementedError("Arrays with type %s cannot be transmitted through this GRPC channel" % values.dtype)
             self.stub.setValue(request)
         except grpc.RpcError as e:
             handle_error(e)
 
-    def set_value_at_indices(self, var_name, indices, src):
+    def set_value_at_indices(self, name, inds, src):
         try:
-            index_array = indices
-            if indices is list:
-                index_array = numpy.array(indices)
+            index_array = inds
+            if inds is list:
+                index_array = numpy.array(inds)
             if src.dtype in [numpy.int32, numpy.int64]:
-                request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
+                request = bmi_pb2.SetValueAtIndicesRequest(name=name,
                                                            indices=index_array.flatten(),
                                                            values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
             elif src.dtype == numpy.float32:
-                request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
+                request = bmi_pb2.SetValueAtIndicesRequest(name=name,
                                                            indices=index_array.flatten(),
                                                            values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()))
             elif src.dtype == numpy.float64:
-                request = bmi_pb2.SetValueAtIndicesRequest(name=var_name,
+                request = bmi_pb2.SetValueAtIndicesRequest(name=name,
                                                            indices=index_array.flatten(),
                                                            values_double=bmi_pb2.DoubleArrayMessage(values=src.flatten()))
             else:
@@ -250,57 +264,111 @@ class BmiClient(bmi.Bmi):
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_size(self, grid_id):
+    def get_grid_size(self, grid):
         try:
-            return self.stub.getGridSize(bmi_pb2.GridRequest(grid_id=grid_id)).size
+            return self.stub.getGridSize(bmi_pb2.GridRequest(grid_id=grid)).size
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_rank(self, grid_id):
+    def get_grid_rank(self, grid):
         try:
-            return self.stub.getGridRank(bmi_pb2.GridRequest(grid_id=grid_id)).rank
+            return self.stub.getGridRank(bmi_pb2.GridRequest(grid_id=grid)).rank
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_type(self, grid_id):
+    def get_grid_type(self, grid):
         try:
-            return str(self.stub.getGridType(bmi_pb2.GridRequest(grid_id=grid_id)).type)
+            return str(self.stub.getGridType(bmi_pb2.GridRequest(grid_id=grid)).type)
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_x(self, grid_id):
+    def get_grid_x(self, grid, dest):
         try:
-            return numpy.array(self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates)
+            src = numpy.array(self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid)).coordinates)
+            numpy.copyto(src=src, dst=dest)
+            return dest
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_y(self, grid_id):
+    def get_grid_y(self, grid, dest):
         try:
-            return numpy.array(self.stub.getGridY(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates)
+            src = numpy.array(self.stub.getGridY(bmi_pb2.GridRequest(grid_id=grid)).coordinates)
+            numpy.copyto(src=src, dst=dest)
+            return dest
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_z(self, grid_id):
+    def get_grid_z(self, grid, dest):
         try:
-            return numpy.array(self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid_id)).coordinates)
+            src = numpy.array(self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid)).coordinates)
+            numpy.copyto(src=src, dst=dest)
+            return dest
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_shape(self, grid_id):
+    def get_grid_shape(self, grid, shape):
         try:
-            return tuple(self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid_id)).shape)
+            src = tuple(self.stub.getGridShape(bmi_pb2.GridRequest(grid_id=grid)).shape)
+            numpy.copyto(src=src, dst=shape)
+            return shape
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_spacing(self, grid_id):
+    def get_grid_spacing(self, grid, spacing):
         try:
-            return tuple(self.stub.getGridSpacing(bmi_pb2.GridRequest(grid_id=grid_id)).spacing)
+            src = tuple(self.stub.getGridSpacing(bmi_pb2.GridRequest(grid_id=grid)).spacing)
+            numpy.copyto(src=src, dst=spacing)
+            return spacing
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_origin(self, grid_id):
+    def get_grid_origin(self, grid, origin):
         try:
-            return tuple(self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid_id)).origin)
+            src = tuple(self.stub.getGridOrigin(bmi_pb2.GridRequest(grid_id=grid)).origin)
+            numpy.copyto(src=src, dst=origin)
+            return origin
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_grid_node_count(self, grid: int) -> int:
+        try:
+            return self.stub.getGridNodeCount(bmi_pb2.GridRequest(grid_id=grid)).count
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_grid_edge_count(self, grid: int) -> int:
+        try:
+            return self.stub.getGridEdgeCount(bmi_pb2.GridRequest(grid_id=grid)).count
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_grid_face_count(self, grid: int) -> int:
+        try:
+            return self.stub.getGridFaceCount(bmi_pb2.GridRequest(grid_id=grid)).count
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_grid_edge_nodes(self, grid: int, edge_nodes: np.ndarray) -> np.ndarray:
+        try:
+            links =  self.stub.getGridEdgeNodes(bmi_pb2.GridRequest(grid_id=grid)).links
+            numpy.copyto(src=links, dest=edge_nodes)
+            return edge_nodes
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_grid_face_nodes(self, grid: int, face_nodes: np.ndarray) -> np.ndarray:
+        try:
+            links =  self.stub.getGridFaceNodes(bmi_pb2.GridRequest(grid_id=grid)).links
+            numpy.copyto(src=links, dest=face_nodes)
+            return face_nodes
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def get_grid_nodes_per_face(self, grid: int, nodes_per_face: np.ndarray) -> np.ndarray:
+        try:
+            links = self.stub.getGridNodesPerFace(bmi_pb2.GridRequest(grid_id=grid)).links
+            numpy.copyto(src=links, dest=nodes_per_face)
+            return nodes_per_face
         except grpc.RpcError as e:
             handle_error(e)
 

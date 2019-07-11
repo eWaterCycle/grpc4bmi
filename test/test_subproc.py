@@ -232,29 +232,11 @@ def test_get_grid_spacing():
     del client
 
 
-def test_get_grid_offset():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_offset = () if local.get_grid_offset(grid_id) is None else local.get_grid_offset(grid_id)
-    assert client.get_grid_offset(grid_id) == local_offset
-    del client
-
-
 def test_get_grid_origin():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
     assert client.get_grid_origin(grid_id) == local.get_grid_origin(grid_id)
-    del client
-
-
-def test_get_grid_connectivity():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_connect = [] if local.get_grid_connectivity(grid_id) is None else local.get_grid_connectivity(grid_id)
-    assert client.get_grid_connectivity(grid_id) == local_connect
     del client
 
 
