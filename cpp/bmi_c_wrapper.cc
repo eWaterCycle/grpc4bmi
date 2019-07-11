@@ -1,182 +1,253 @@
-#include "bmi-c/bmi/bmilib.h"
 #include "bmi_c_wrapper.h"
+#include <stdexcept>
 
-BmiCWrapper::BmiCWrapper(BMI_Model* m):model(m){}
+BmiCWrapper::BmiCWrapper(BMIModel* m):model(m){}
 
-BmiCWrapper::~BmiCWrapper()
+BmiCWrapper::~BmiCWrapper(){}
+
+void checkStatus(int status)
 {
-    free(this->model);
-}
-
-int BmiCWrapper::initialize(const char* configfile)
-{
-    return BMI_Initialize(this->model, configfile);
-}
-
-int BmiCWrapper::update()
-{
-    return BMI_Update(this->model);
+    if(status == BMI_FAILURE)
+    {
+        throw std::runtime_error("BMI failure from C intercepted");
+    }
 }
 
-int BmiCWrapper::update_until(double time)
+void BmiCWrapper::Initialize(const char* configfile)
 {
-    return BMI_Update_until(this->model, time);
+    checkStatus(this->model->initialize(this->model->self, const_cast<char*>(configfile)));
 }
 
-int BmiCWrapper::update_frac(double time)
+void BmiCWrapper::Update()
 {
-    return BMI_Update_frac(this->model, time);
+    double curtime, timestep;
+    checkStatus(this->model->get_current_time(this->model->self, &curtime));
+    checkStatus(this->model->get_time_step(this->model->self, &timestep));
+    checkStatus(this->model->update(this->model->self, curtime + timestep));
 }
 
-int BmiCWrapper::finalize()
+void BmiCWrapper::UpdateUntil(double time)
 {
-    return BMI_Finalize(this->model);
+    checkStatus(this->model->update(this->model->self, time));
 }
 
-int BmiCWrapper::run_model()
+void BmiCWrapper::Finalize()
 {
-    return BMI_Run_model(this->model);
+    checkStatus(this->model->finalize(this->model->self));
 }
 
-int BmiCWrapper::get_component_name(char* dest) const
+void BmiCWrapper::GetComponentName(char* const dest)
 {
-    return BMI_Get_component_name(this->model, dest);
+    checkStatus(this->model->get_component_name(this->model->self, dest));
 }
 
-int BmiCWrapper::get_input_var_name_count(int* dest) const
+int BmiCWrapper::GetInputVarNameCount()
 {
-    return BMI_Get_input_var_name_count(this->model, dest);
+    int dest;
+    checkStatus(this->model->get_input_item_count(this->model->self, &dest));
+    return dest;
 }
-int BmiCWrapper::get_output_var_name_count(int* dest) const
+
+int BmiCWrapper::GetOutputVarNameCount()
 {
-    return BMI_Get_output_var_name_count(this->model, dest);
+    int dest;
+    checkStatus(this->model->get_output_item_count(this->model->self, &dest));
+    return dest;
 }
-int BmiCWrapper::get_input_var_names(char** dest) const
+
+void BmiCWrapper::GetInputVarNames(char** dest)
 {
-    return BMI_Get_input_var_names(this->model, dest);
+    checkStatus(this->model->get_input_var_names(this->model->self, dest));
 }
-int BmiCWrapper::get_output_var_names(char** dest) const
+
+void BmiCWrapper::GetOutputVarNames(char** dest)
 {
-    return BMI_Get_output_var_names(this->model, dest);
+    checkStatus(this->model->get_output_var_names(this->model->self, dest));
 }
-int BmiCWrapper::get_var_grid(const char* name, int* dest) const
+
+int BmiCWrapper::GetVarGrid(const char* name)
 {
-    return BMI_Get_var_grid(this->model, name, dest);
+    int dest;
+    checkStatus(this->model->get_var_grid(this->model->self, const_cast<char*>(name), &dest));
+    return dest;
 }
-int BmiCWrapper::get_var_type(const char* name, char* dest) const
+
+void BmiCWrapper::GetVarType(const char* name, char* vtype)
 {
-    return BMI_Get_var_type(this->model, name, dest);
+    checkStatus(this->model->get_var_type(this->model->self, const_cast<char*>(name), vtype));
 }
-int BmiCWrapper::get_var_itemsize(const char* name, int* dest) const
+
+int BmiCWrapper::GetVarItemsize(const char* name)
 {
-    if (!this->model || !this->model->self) return BMI_FAILURE;
-    return this->model->get_var_itemsize(this->model, name, dest);
+    int dest;
+    checkStatus(this->model->get_var_itemsize(this->model->self, const_cast<char*>(name), &dest));
+    return dest;
 }
-int BmiCWrapper::get_var_units(const char* name, char* dest) const
+
+void BmiCWrapper::GetVarUnits(const char* name, char* const dest)
 {
-    return BMI_Get_var_units(this->model, name, dest);
+    checkStatus(this->model->get_var_units(this->model->self, const_cast<char*>(name), dest));
 }
-int BmiCWrapper::get_var_nbytes(const char* name, int* dest) const
+
+int BmiCWrapper::GetVarNbytes(const char* name)
 {
-    return BMI_Get_var_nbytes(this->model, name, dest);
+    int dest;
+    checkStatus(this->model->get_var_nbytes(this->model->self, const_cast<char*>(name), &dest));
+    return dest;
 }
-int BmiCWrapper::get_current_time(double* dest) const
+
+void BmiCWrapper::GetVarLocation(const char* name, char* location)
 {
-    return BMI_Get_current_time(this->model, dest);
+    checkStatus(this->model->get_var_location(this->model->self, const_cast<char*>(name), location));
 }
-int BmiCWrapper::get_start_time(double* dest) const
+
+double BmiCWrapper::GetCurrentTime()
 {
-    return BMI_Get_start_time(this->model, dest);
+    double dest;
+    checkStatus(this->model->get_current_time(this->model->self, &dest));
+    return dest;
 }
-int BmiCWrapper::get_end_time(double* dest) const
+
+double BmiCWrapper::GetStartTime()
 {
-    return BMI_Get_end_time(this->model, dest);
+    double dest;
+    checkStatus(this->model->get_start_time(this->model->self, &dest));
+    return dest;
 }
-int BmiCWrapper::get_time_units(char* dest) const
+
+double BmiCWrapper::GetEndTime()
 {
-    return BMI_Get_time_units(this->model, dest);
+    double dest;
+    checkStatus(this->model->get_end_time(this->model->self, &dest));
+    return dest;
 }
-int BmiCWrapper::get_time_step(double* dest) const
+
+void BmiCWrapper::GetTimeUnits(char* dest)
 {
-    return BMI_Get_time_step(this->model, dest);
+    checkStatus(this->model->get_time_units(this->model->self, dest));
 }
-int BmiCWrapper::get_value(const char* name, void* dest) const
+
+double BmiCWrapper::GetTimeStep()
 {
-    return BMI_Get_value(this->model, name, dest);
+    double dest;
+    checkStatus(this->model->get_time_step(this->model->self, &dest));
+    return dest;
 }
-int BmiCWrapper::get_value_ptr(const char* name, void** dest)
+
+void BmiCWrapper::GetValue(const char* name, void* dest)
 {
-    return BMI_Get_value_ptr(this->model, name, dest);
+    checkStatus(this->model->get_value(this->model->self, const_cast<char*>(name), dest));
 }
-int BmiCWrapper::get_value_at_indices(const char* name, void* dest, const int* pts, int numpts) const
+
+void* BmiCWrapper::GetValuePtr(const char* name)
 {
-    return BMI_Get_value_at_indices(this->model, name, dest, (int*)pts, numpts);
+    void* dest;
+    checkStatus(this->model->get_value_ptr(this->model->self, const_cast<char*>(name), &dest));
+    return dest;
 }
-int BmiCWrapper::set_value(const char* name, const void* src)
+
+void* BmiCWrapper::GetValueAtIndices(const char* name, void* dest, int* pts, int numpts)
 {
-    return BMI_Set_value(this->model, name, (void*)src);
+    checkStatus(this->model->get_value_at_indices(this->model->self, const_cast<char*>(name), dest, const_cast<int*>(pts), numpts));
+    return dest; // Is this the idea?
 }
-int BmiCWrapper::set_value_ptr(const char* name, void** src)
+
+void BmiCWrapper::SetValue(const char* name, void* src)
 {
-    return BMI_Set_value_ptr(this->model, name, src);
+    checkStatus(this->model->set_value(this->model->self, const_cast<char*>(name), src));
 }
-int BmiCWrapper::set_value_at_indices(const char* name, const int* pts, int numpts, const void* src)
+
+void BmiCWrapper::SetValueAtIndices(const char* name, void* values, int* pts, int numpts)
 {
-    return BMI_Set_value_at_indices(this->model, name, (int*)pts, numpts, (void*)src);
+    checkStatus(this->model->set_value_at_indices(this->model->self, const_cast<char*>(name), values, pts, numpts));
 }
-int BmiCWrapper::get_grid_size(int id, int* dest) const
+
+int BmiCWrapper::GetGridSize(int id)
 {
-    return BMI_Get_grid_size(this->model, id, dest);
+    int dest;
+    checkStatus(this->model->get_grid_size(this->model->self, id, &dest));
+    return dest;
 }
-int BmiCWrapper::get_grid_rank(int id, int* dest) const
+
+int BmiCWrapper::GetGridRank(int id)
 {
-    return BMI_Get_grid_rank(this->model, id, dest);
+    int dest;
+    checkStatus(this->model->get_grid_size(this->model->self, id, &dest));
+    return dest;
 }
-int BmiCWrapper::get_grid_type(int id, char* dest) const
+
+void BmiCWrapper::GetGridType(int id, char* dest)
 {
-    return BMI_Get_grid_type(this->model, id, dest);
+    checkStatus(this->model->get_grid_type(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_shape(int id, int* dest) const
+
+void BmiCWrapper::GetGridShape(int id, int* dest)
 {
-    return BMI_Get_grid_shape(this->model, id, dest);
+    checkStatus(this->model->get_grid_shape(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_spacing(int id, double* dest) const
+
+void BmiCWrapper::GetGridSpacing(int id, double* dest)
 {
-    return BMI_Get_grid_spacing(this->model, id, dest);
+    checkStatus(this->model->get_grid_spacing(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_origin(int id, double* dest) const
+
+void BmiCWrapper::GetGridOrigin(int id, double* dest)
 {
-    return BMI_Get_grid_origin(this->model, id, dest);
+    checkStatus(this->model->get_grid_origin(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_x(int id, double* dest) const
+
+void BmiCWrapper::GetGridX(int id, double* dest)
 {
-    return BMI_Get_grid_x(this->model, id, dest);
+    checkStatus(this->model->get_grid_x(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_y(int id, double* dest) const
+
+void BmiCWrapper::GetGridY(int id, double* dest)
 {
-    return BMI_Get_grid_y(this->model, id, dest);
+    checkStatus(this->model->get_grid_y(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_z(int id, double* dest) const
+
+void BmiCWrapper::GetGridZ(int id, double* dest)
 {
-    return BMI_Get_grid_z(this->model, id, dest);
+    checkStatus(this->model->get_grid_z(this->model->self, id, dest));
 }
-int BmiCWrapper::get_grid_cell_count(int id, int* dest) const
+
+int BmiCWrapper::GetGridNodeCount(int grid)
 {
-    return BMI_Get_grid_cell_count(this->model, id, dest);
+    int dest;
+    checkStatus(this->model->get_grid_node_count(this->model->self, grid, &dest));
+    return dest;
 }
-int BmiCWrapper::get_grid_point_count(int id, int* dest) const
+
+int BmiCWrapper::GetGridEdgeCount(int grid)
 {
-    return BMI_Get_grid_point_count(this->model, id, dest);
+    int dest;
+    checkStatus(this->model->get_grid_edge_count(this->model->self, grid, &dest));
+    return dest;
 }
-int BmiCWrapper::get_grid_vertex_count(int id, int* dest) const
+
+int BmiCWrapper::GetGridFaceCount(int grid)
 {
-    return BMI_Get_grid_vertex_count(this->model, id, dest);
+    int dest;
+    checkStatus(this->model->get_grid_face_count(this->model->self, grid, &dest));
+    return dest;
 }
-int BmiCWrapper::get_grid_connectivity(int id, int* dest) const
+
+void BmiCWrapper::GetGridEdgeNodes(int grid, int *edge_nodes)
 {
-    return BMI_Get_grid_connectivity(this->model, id, dest);
+    checkStatus(this->model->get_grid_edge_nodes(this->model->self, grid, edge_nodes));
 }
-int BmiCWrapper::get_grid_offset(int id, int* dest) const
+
+void BmiCWrapper::GetGridFaceEdges(int grid, int *face_edges)
 {
-    return BMI_Get_grid_offset(this->model, id, dest);
+    checkStatus(this->model->get_grid_edge_nodes(this->model->self, grid, face_edges));
+}
+
+void BmiCWrapper::GetGridFaceNodes(int grid, int *face_nodes)
+{
+    checkStatus(this->model->get_grid_face_nodes(this->model->self, grid, face_nodes));
+}
+
+void BmiCWrapper::GetGridNodesPerFace(int grid, int *nodes_per_face)
+{
+    checkStatus(this->model->get_grid_nodes_per_face(this->model->self, grid, nodes_per_face));
 }

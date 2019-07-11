@@ -1,64 +1,80 @@
 #ifndef BMI_C_WRAPPER_H_INCLUDED
 #define BMI_C_WRAPPER_H_INCLUDED
 
-#include "bmi_class.h"
-#include "bmi-c/bmi/bmi.h"
+#ifndef BMI_INCLUDED
+#define BMI_INCLUDED
+#include "bmi.h"
+#include "bmi.hxx"
+#endif
+  
+typedef Bmi BMIModel;
 
-class BmiCWrapper: public Bmi
+class BmiCWrapper: public bmi::Bmi
 {
   public:
-    BmiCWrapper(BMI_Model*);
-    ~BmiCWrapper() override;
+    BmiCWrapper(BMIModel*);
+    ~BmiCWrapper();
 
-    int initialize(const char* configfile) override;
-    int update() override;
-    int update_until(double time) override;
-    int update_frac(double time) override;
-    int finalize() override;
-    int run_model() override;
+    // Model control functions.
+    virtual void Initialize(const char *config_file) override;
+    virtual void Update() override;
+    virtual void UpdateUntil(double time) override;
+    virtual void Finalize() override;
 
-    int get_component_name(char* dest) const override;
-    int get_input_var_name_count(int* dest) const override;
-    int get_output_var_name_count(int* dest) const override;
-    int get_input_var_names(char** dest) const override;
-    int get_output_var_names(char** dest) const override;
-    
-    int get_var_grid(const char* name, int* dest) const override;
-    int get_var_type(const char* name, char* dest) const override;
-    int get_var_itemsize(const char* name, int* dest) const override;
-    int get_var_units(const char* name, char* dest) const override;
-    int get_var_nbytes(const char* name, int* dest) const override;
-    int get_current_time(double* dest) const override;
-    int get_start_time(double* dest) const override;
-    int get_end_time(double* dest) const override;
-    int get_time_units(char* dest) const override;
-    int get_time_step(double* dest) const override;
-    
-    int get_value(const char* name, void* dest) const override;
-    int get_value_ptr(const char* name, void** dest) override;
-    int get_value_at_indices(const char* name, void* dest, const int* pts, int numpts) const override;
+    // Model information functions.
+    virtual void GetComponentName(char * const name) override;
+    virtual int GetInputVarNameCount(void) override;
+    virtual int GetOutputVarNameCount(void) override;
+    virtual void GetInputVarNames(char **names) override;
+    virtual void GetOutputVarNames(char **names) override;
 
-    int set_value(const char* name, const void* src) override;
-    int set_value_ptr(const char* name, void** src) override;
-    int set_value_at_indices(const char* name, const int* pts, int numpts, const void* src) override;
+    // Variable information functions
+    virtual int GetVarGrid(const char *name) override;
+    virtual void GetVarType(const char *name, char *vtype) override;
+    virtual void GetVarUnits (const char *name, char *units) override;
+    virtual int GetVarItemsize(const char *name) override;
+    virtual int GetVarNbytes(const char *name) override;
+    virtual void GetVarLocation(const char *name, char *location) override;
 
-    int get_grid_size(int id, int* dest) const override;
-    int get_grid_rank(int id, int* dest) const override;
-    int get_grid_type(int id, char* dest) const override;
-    int get_grid_shape(int id, int* dest) const override;
-    int get_grid_spacing(int id, double* dest) const override;
-    int get_grid_origin(int id, double* dest) const override;
-    int get_grid_x(int id, double* dest) const override;
-    int get_grid_y(int id, double* dest) const override;
-    int get_grid_z(int id, double* dest) const override;
-    int get_grid_cell_count(int id, int* dest) const override;
-    int get_grid_point_count(int id, int* dest) const override;
-    int get_grid_vertex_count(int id, int* dest) const override;
-    int get_grid_connectivity(int id, int* dest) const override;
-    int get_grid_offset(int id, int* dest) const override;
+    virtual double GetCurrentTime(void) override;
+    virtual double GetStartTime(void) override;
+    virtual double GetEndTime(void) override;
+    virtual void GetTimeUnits(char *units) override;
+    virtual double GetTimeStep(void) override;
+
+    // Variable getters
+    virtual void GetValue(const char *name, void *dest) override;
+    virtual void *GetValuePtr(const char *name) override;
+    virtual void *GetValueAtIndices(const char *name, void *dest, int *inds, int count) override;
+
+    // Variable setters
+    virtual void SetValue(const char *name, void *values) override;
+    virtual void SetValueAtIndices(const char *name, void *values, int *inds, int count) override;
+
+    // Grid information functions
+    virtual int GetGridRank(const int grid) override;
+    virtual int GetGridSize(const int grid) override;
+    virtual void GetGridType(const int grid, char *gtype) override;
+
+    virtual void GetGridShape(const int grid, int *shape) override;
+    virtual void GetGridSpacing(const int grid, double *spacing) override;
+    virtual void GetGridOrigin(const int grid, double *origin) override;
+
+    virtual void GetGridX(const int grid, double *dest) override;
+    virtual void GetGridY(const int grid, double *dest) override;
+    virtual void GetGridZ(const int grid, double *dest) override;
+
+    virtual int GetGridNodeCount(const int grid) override;
+    virtual int GetGridEdgeCount(const int grid) override;
+    virtual int GetGridFaceCount(const int grid) override;
+
+    virtual void GetGridEdgeNodes(const int grid, int *edge_nodes) override;
+    virtual void GetGridFaceEdges(const int grid, int *face_edges) override;
+    virtual void GetGridFaceNodes(const int grid, int *face_nodes) override;
+    virtual void GetGridNodesPerFace(const int, int *nodes_per_face) override;
 
   private:
-    BMI_Model* const model;
+    BMIModel* const model;
 };
 
 #endif /*BMI_C_WRAPPER_H_INCLUDED*/

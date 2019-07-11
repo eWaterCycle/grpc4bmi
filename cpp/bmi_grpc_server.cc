@@ -3,7 +3,6 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
-#include "bmi-c/bmi/bmilib.h"
 #include "bmi_grpc_server.h"
 #include "bmi_c_wrapper.h"
 
