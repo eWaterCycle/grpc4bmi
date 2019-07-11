@@ -112,13 +112,13 @@ class BmiLegacyServer02(bmi_pb2_grpc.BmiServiceServicer):
         index_array = numpy.array(request.indices)
         if request.HasField("values_int"):
             array = numpy.array(request.values_int.values, dtype=numpy.int32)
-            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
+            self.bmi_model_.set_value_at_indices(request.name, index_array, src=array)
         if request.HasField("values_float"):
             array = numpy.array(request.values_int.values, dtype=numpy.float32)
-            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
+            self.bmi_model_.set_value_at_indices(request.name, index_array, src=array)
         if request.HasField("values_double"):
             array = numpy.array(request.values_double.values, dtype=numpy.float64)
-            self.bmi_model_.set_value_at_indices(request.name, indices=index_array, src=array)
+            self.bmi_model_.set_value_at_indices(request.name, index_array, src=array)
         return bmi_pb2.Empty()
 
     def getGridSize(self, request, context):

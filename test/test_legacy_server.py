@@ -3,9 +3,9 @@ import logging
 import numpy
 import numpy.random
 import pytest
-from heat import BmiHeat
 
-from grpc4bmi.bmi_grpc_server import BmiServer
+from grpc4bmi.bmi_grpc_legacy_server import BmiLegacyServer02
+from test.flatbmiheat import FlatBmiHeat
 
 """
 Unit tests for the BMI server class. Every test performs cross-checking with a local instance of the BMI heat toy model.
@@ -40,7 +40,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiServer(BmiHeat()), BmiHeat()
+    server, local = BmiLegacyServer02(FlatBmiHeat()), FlatBmiHeat()
     if init:
         req = RequestStub()
         numpy.random.seed(0)
@@ -296,3 +296,12 @@ def test_get_grid_points():
     assert server.getGridX(request, None).coordinates == make_list(local.get_grid_x(grid_id))
     assert server.getGridY(request, None).coordinates == make_list(local.get_grid_y(grid_id))
     assert server.getGridZ(request, None).coordinates == make_list(local.get_grid_z(grid_id))
+
+
+def test_get_grid_connectivity():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    assert server.getGridConnectivity(request, None).links == make_list(local.get_grid_connectivity(grid_id))
