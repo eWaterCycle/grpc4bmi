@@ -67,9 +67,9 @@ message GetVarNBytesResponse
 message GetVarLocationResponse
 {
     enum Location {
-        NODES = 0;
-        EDGES = 1;
-        FACES = 2;
+        NODE = 0;
+        EDGE = 1;
+        FACE = 2;
     }
     Location location = 1;
 }
