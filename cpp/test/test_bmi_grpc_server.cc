@@ -188,6 +188,22 @@ void test_var_grid(BmiGRPCService* s, Bmi* b)
     delete response;
 }
 
+void test_var_grid_unknownvar(BmiGRPCService* s, Bmi* b)
+{
+    std::string name = "name_which_model_does_not_know";
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    request->set_name(name);
+    bmi::GetVarGridResponse* response = new bmi::GetVarGridResponse();
+
+    grpc::Status status = s->getVarGrid(NULL, request, response);
+    // Never get here, due to thrown exception in getVarGrid
+    assert(status.error_code() == grpc::StatusCode::INTERNAL);
+    assert(status.error_message() == "unknown variable: " + name);
+
+    delete request;
+    delete response;
+}
+
 void test_var_type(BmiGRPCService* s, Bmi* b)
 {
     std::vector<std::string> names = get_bmi_varnames(b);
@@ -597,6 +613,10 @@ int main(int argc, char* argv[])
     else if(testfunc == "var_grid")
     {
         test_var_grid(bmi_service, bmi);
+    }
+    else if(testfunc == "var_grid_unknownvar")
+    {
+        test_var_grid_unknownvar(bmi_service, bmi);
     }
     else if(testfunc == "var_type")
     {

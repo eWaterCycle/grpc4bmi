@@ -95,15 +95,22 @@ def serve(model, port):
         server.stop(0)
 
 
-def main():
+def main(argv=sys.argv[1:]):
     parser = build_parser()
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+
+    path = args.path
+    if path is None:
+        path = os.environ.get("BMI_PATH", None)
 
     if args.language == "R":
-        model = build_r(args.name, args.path)
+        model = build_r(args.name, path)
     else:
-        model = build(args.name, args.path)
+        model = build(args.name, path)
 
     port = args.port
     if port == 0:
@@ -114,9 +121,9 @@ def main():
             port = int(s.getsockname()[1])
 
     if args.bmi_version == '0.2':
-        serve(BmiLegacyServer02(model), port)
+        serve(BmiLegacyServer02(model, args.debug), port)
     else:
-        serve(BmiServer(model), port)
+        serve(BmiServer(model, args.debug), port)
 
 
 def build_parser():
@@ -136,6 +143,9 @@ def build_parser():
                         help="Language in which BMI implementation class is written")
     parser.add_argument("--bmi-version", default="1.0.0", choices=["1.0.0", "0.2"],
                         help="Version of BMI interface implemented by model")
+    parser.add_argument("--debug", action="store_true",
+                        help="Run server in debug mode. "
+                             "Logs errors with stacktraces and returns stacktrace in error response")
     return parser
 
 
