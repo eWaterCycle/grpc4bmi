@@ -21,7 +21,19 @@ class FlatBmiHeat(BmiHeat):
         numpy.copyto(src=val.flatten(), dst=dest)
         return dest
 
-    def get_grid_shape(self, grid_id, dest):
+    def get_grid_shape(self, grid_id, dest=None):
         val = super(FlatBmiHeat, self).get_grid_shape(grid_id)
+        if dest is None:
+            return numpy.array(val)
+        numpy.copyto(src=val, dst=dest)
+        return dest
+
+    def get_grid_spacing(self, grid_id, dest):
+        val = super(FlatBmiHeat, self).get_grid_spacing(grid_id)
+        numpy.copyto(src=val, dst=dest)
+        return dest
+
+    def get_grid_origin(self, grid_id, dest):
+        val = super(FlatBmiHeat, self).get_grid_origin(grid_id)
         numpy.copyto(src=val, dst=dest)
         return dest

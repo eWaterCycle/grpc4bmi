@@ -191,12 +191,7 @@ class BmiClient(Bmi):
     def get_var_location(self, name: str) -> str:
         try:
             location = self.stub.getVarLocation(bmi_pb2.GetVarRequest(name=name)).location
-            lookup = {
-                bmi_pb2.GetVarLocationResponse.Location.NODE: "node",
-                bmi_pb2.GetVarLocationResponse.Location.EDGE: "edge",
-                bmi_pb2.GetVarLocationResponse.Location.FACE: "face",
-            }
-            return lookup[location]
+            return bmi_pb2.GetVarLocationResponse.Location.Name(location).lower()
         except grpc.RpcError as e:
             handle_error(e)
 
@@ -282,27 +277,27 @@ class BmiClient(Bmi):
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_x(self, grid, dest):
+    def get_grid_x(self, grid, x):
         try:
             src = numpy.array(self.stub.getGridX(bmi_pb2.GridRequest(grid_id=grid)).coordinates)
-            numpy.copyto(src=src, dst=dest)
-            return dest
+            numpy.copyto(src=src, dst=x)
+            return x
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_y(self, grid, dest):
+    def get_grid_y(self, grid, y):
         try:
             src = numpy.array(self.stub.getGridY(bmi_pb2.GridRequest(grid_id=grid)).coordinates)
-            numpy.copyto(src=src, dst=dest)
-            return dest
+            numpy.copyto(src=src, dst=y)
+            return y
         except grpc.RpcError as e:
             handle_error(e)
 
-    def get_grid_z(self, grid, dest):
+    def get_grid_z(self, grid, z):
         try:
             src = numpy.array(self.stub.getGridZ(bmi_pb2.GridRequest(grid_id=grid)).coordinates)
-            numpy.copyto(src=src, dst=dest)
-            return dest
+            numpy.copyto(src=src, dst=z)
+            return z
         except grpc.RpcError as e:
             handle_error(e)
 
@@ -350,7 +345,7 @@ class BmiClient(Bmi):
 
     def get_grid_edge_nodes(self, grid: int, edge_nodes: np.ndarray) -> np.ndarray:
         try:
-            links =  self.stub.getGridEdgeNodes(bmi_pb2.GridRequest(grid_id=grid)).links
+            links = self.stub.getGridEdgeNodes(bmi_pb2.GridRequest(grid_id=grid)).links
             numpy.copyto(src=links, dest=edge_nodes)
             return edge_nodes
         except grpc.RpcError as e:
@@ -358,7 +353,7 @@ class BmiClient(Bmi):
 
     def get_grid_face_nodes(self, grid: int, face_nodes: np.ndarray) -> np.ndarray:
         try:
-            links =  self.stub.getGridFaceNodes(bmi_pb2.GridRequest(grid_id=grid)).links
+            links = self.stub.getGridFaceNodes(bmi_pb2.GridRequest(grid_id=grid)).links
             numpy.copyto(src=links, dest=face_nodes)
             return face_nodes
         except grpc.RpcError as e:
