@@ -164,5 +164,7 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-
-
+intersphinx_mapping = {
+    'https://docs.python.org/': None,
+    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+}

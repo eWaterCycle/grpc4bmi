@@ -14,7 +14,7 @@ The grpc4bmi Python package should be :ref:`installed <pip-install>`.
 Creating
 --------
 
-To obtain a python BMI for your model, install the `python bmi package <https://github.com/csdms/bmi-python>`_ and implement the ``Bmi`` abstract base class for your model. For exposing this model as a GRPC service, it is necessary to have a constructor without arguments: all initialization state will be presented to the model via the configuration file in the ``initialize`` method.
+To obtain a python BMI for your model, install the `Python bmi package (bmipy) <https://pypi.org/project/bmipy/>`_ and implement the :class:`bmipy.Bmi` abstract base class for your model. For exposing this model as a GRPC service, it is necessary to have a constructor without arguments: all initialization state will be presented to the model via the configuration file in the ``initialize`` method.
 
 .. _running-python:
 
