@@ -1,18 +1,16 @@
 import logging
-from typing import Tuple
 from unittest.mock import Mock
 
 import numpy
-import numpy as np
 import numpy.random
 import pytest
 import grpc
 from google.rpc import error_details_pb2, status_pb2
-from bmipy import Bmi
 
 from grpc4bmi import bmi_pb2
 from grpc4bmi.bmi_grpc_server import BmiServer
-from grpc4bmi.reserve import reserve_values, reserve_grid_nodes, reserve_grid_shape, reserve_grid_padding
+from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_padding
+from test.conftest import SomeException, FailingModel, RectGridBmiModel, UnstructuredGridBmiModel
 from test.flatbmiheat import FlatBmiHeat
 
 """
@@ -311,126 +309,6 @@ def test_get_grid_origin():
     numpy.testing.assert_allclose(result, expected)
 
 
-class SomeException(Exception):
-    pass
-
-
-class FailingModel(Bmi):
-    def __init__(self, exc):
-        self.exc = exc
-
-    def initialize(self, filename):
-        raise self.exc
-
-    def update(self):
-        raise self.exc
-
-    def finalize(self):
-        raise self.exc
-
-    def get_component_name(self):
-        raise self.exc
-
-    def get_input_var_names(self):
-        raise self.exc
-
-    def get_output_var_names(self):
-        raise self.exc
-
-    def get_start_time(self):
-        raise self.exc
-
-    def get_current_time(self):
-        raise self.exc
-
-    def get_end_time(self):
-        raise self.exc
-
-    def get_time_step(self):
-        raise self.exc
-
-    def get_time_units(self):
-        raise self.exc
-
-    def get_var_type(self, var_name):
-        raise self.exc
-
-    def get_var_units(self, var_name):
-        raise self.exc
-
-    def get_var_itemsize(self, var_name):
-        raise self.exc
-
-    def get_var_nbytes(self, var_name):
-        raise self.exc
-
-    def get_var_grid(self, var_name):
-        raise self.exc
-
-    def get_value(self, var_name, dest):
-        raise self.exc
-
-    def get_value_ptr(self, var_name):
-        raise self.exc
-
-    def get_value_at_indices(self, var_name, dest, indices):
-        raise self.exc
-
-    def set_value(self, var_name, src):
-        raise self.exc
-
-    def set_value_at_indices(self, var_name, indices, src):
-        raise self.exc
-
-    def get_grid_shape(self, grid_id, dest):
-        raise self.exc
-
-    def get_grid_x(self, grid_id, dest):
-        raise self.exc
-
-    def get_grid_y(self, grid_id, dest):
-        raise self.exc
-
-    def get_grid_z(self, grid_id, dest):
-        raise self.exc
-
-    def get_grid_spacing(self, grid_id, dest):
-        raise self.exc
-
-    def get_grid_origin(self, grid_id, dest):
-        raise self.exc
-
-    def get_grid_rank(self, grid_id):
-        raise self.exc
-
-    def get_grid_size(self, grid_id):
-        raise self.exc
-
-    def get_grid_type(self, grid_id):
-        raise self.exc
-
-    def get_var_location(self, name: str) -> str:
-        raise self.exc
-
-    def get_grid_node_count(self, grid: int) -> int:
-        raise self.exc
-
-    def get_grid_edge_count(self, grid: int) -> int:
-        raise self.exc
-
-    def get_grid_face_count(self, grid: int) -> int:
-        raise self.exc
-
-    def get_grid_edge_nodes(self, grid: int, edge_nodes: np.ndarray) -> np.ndarray:
-        raise self.exc
-
-    def get_grid_face_nodes(self, grid: int, face_nodes: np.ndarray) -> np.ndarray:
-        raise self.exc
-
-    def get_grid_nodes_per_face(self, grid: int, nodes_per_face: np.ndarray) -> np.ndarray:
-        raise self.exc
-
-
 @pytest.mark.parametrize("server_method,server_request", [
     ('initialize', bmi_pb2.InitializeRequest(config_file='/data/config.ini')),
     ('update', bmi_pb2.Empty()),
@@ -489,39 +367,6 @@ def test_method_exceptions_with_stacktrace(server_method, server_request):
     assert len(debuginfo.stack_entries) > 0
 
 
-class RectGridBmiModel(FailingModel):
-    def __init__(self):
-        super(RectGridBmiModel, self).__init__(SomeException('not used'))
-
-    def get_grid_type(self, grid):
-        return 'rectilinear'
-
-    def get_output_var_names(self) -> Tuple[str]:
-        return 'plate_surface__temperature',
-
-    def get_grid_rank(self, grid: int) -> int:
-        return 3
-
-    def get_var_grid(self, name):
-        return 0
-
-    def get_grid_shape(self, grid: int, shape: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[4, 3, 2], dst=shape)
-        return shape
-
-    def get_grid_x(self, grid: int, x: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[0.1, 0.2, 0.3, 0.4], dst=x)
-        return x
-
-    def get_grid_y(self, grid: int, y: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[1.1, 1.2, 1.3], dst=y)
-        return y
-
-    def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[2.1, 2.2], dst=z)
-        return z
-
-
 def test_get_grid_x():
     model = RectGridBmiModel()
     server = BmiServer(model, True)
@@ -553,44 +398,6 @@ def test_get_grid_z():
 
     expected = numpy.array([2.1, 2.2])
     numpy.testing.assert_allclose(result, expected)
-
-
-class UnstructuredGridBmiModel(RectGridBmiModel):
-    # Grid shape:
-    #    0
-    #   /|\
-    #  / | \
-    # 3  |  1
-    #  \ |  /
-    #   \| /
-    #    2
-    #
-    def get_grid_type(self, grid):
-        return 'unstructured'
-
-    def get_grid_rank(self, grid: int) -> int:
-        return 2
-
-    def get_grid_node_count(self, grid: int) -> int:
-        return 4
-
-    def get_grid_edge_count(self, grid: int) -> int:
-        return 5
-
-    def get_grid_face_count(self, grid: int) -> int:
-        return 2
-
-    def get_grid_edge_nodes(self, grid: int, edge_nodes: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=(0, 3, 3, 1, 2, 1, 1, 0, 2, 0), dst=edge_nodes)
-        return edge_nodes
-
-    def get_grid_face_nodes(self, grid: int, face_nodes: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=(0, 3, 2, 0, 2, 1), dst=face_nodes)
-        return face_nodes
-
-    def get_grid_nodes_per_face(self, grid: int, nodes_per_face: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=(3, 3,), dst=nodes_per_face)
-        return nodes_per_face
 
 
 def test_grid_node_count():
