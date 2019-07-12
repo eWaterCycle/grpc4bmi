@@ -49,6 +49,12 @@ class BmiGRPCService final: public BmiService::Service
         grpc::Status getGridX(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
         grpc::Status getGridY(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
         grpc::Status getGridZ(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
+        grpc::Status getGridNodeCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridElementCountResponse* response) override;
+        grpc::Status getGridEdgeCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridElementCountResponse* response) override;
+        grpc::Status getGridFaceCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridElementCountResponse* response) override;
+        grpc::Status getGridEdgeNodes(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridEdgeNodesResponse* response) override;
+        grpc::Status getGridFaceNodes(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridFaceNodesResponse* response) override;
+        grpc::Status getGridNodesPerFace(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridNodesPerFaceResponse* response) override;
     private:
         BmiClass* const bmi;
         char find_type(const std::string& varname) const;

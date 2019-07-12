@@ -4,153 +4,143 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include "bmi_class.h"
 
+#ifndef BMI_INCLUDED
+#define BMI_INCLUDED
+#include "bmi.h"
+#include "bmi.hxx"
+#endif
 
-class BmiCppExtension: public Bmi 
+class BmiCppExtension: public bmi::Bmi 
 {
   public:
       
     BmiCppExtension();
     virtual ~BmiCppExtension();
-    virtual void initialize (std::string configfile) = 0;
+    virtual void Initialize (const std::string& configfile) = 0;
 
-    virtual std::string get_component_name() const = 0;
-    virtual std::vector<std::string> get_input_var_names() const = 0;
-    virtual std::vector<std::string> get_output_var_names() const = 0;
+    virtual std::string GetComponentName() const = 0;
+    virtual std::vector<std::string> GetInputVarNames() const = 0;
+    virtual std::vector<std::string> GetOutputVarNames() const = 0;
 
-    virtual int get_var_grid(std::string name) const = 0;
-    virtual std::string get_var_type(std::string name) const = 0;
-    virtual int get_var_itemsize(std::string name) const = 0;
-    virtual std::string get_var_units(std::string name) const = 0;
-    virtual int get_var_nbytes(std::string name) const = 0;
-    virtual double get_current_time() const = 0;
-    virtual double get_start_time() const = 0;
-    virtual double get_end_time() const = 0;
-    virtual std::string get_time_units() const = 0;
-    virtual double get_time_step() const = 0;
+    virtual int GetVarGrid(const std::string& name) const = 0;
+    virtual std::string GetVarType(const std::string& name) const = 0;
+    virtual int GetVarItemsize(const std::string& name) const = 0;
+    virtual std::string GetVarUnits(const std::string& name) const = 0;
+    virtual int GetVarNbytes(const std::string& name) const = 0;
+    virtual std::string GetVarLocation(const std::string& name) const = 0;
+    virtual std::string GetTimeUnits() const = 0;
 
-    template<typename T> std::vector<T> get_value(std::string name) const
+    virtual std::string GetGridType(int id) const = 0;
+    virtual std::vector<int> GetGridShape(int id) const = 0;
+    virtual std::vector<double> GetGridSpacing(int id) const = 0;
+    virtual std::vector<double> GetGridOrigin(int id) const = 0;
+
+    virtual std::vector<double> GetGridX(int id) const = 0;
+    virtual std::vector<double> GetGridY(int id) const = 0;
+    virtual std::vector<double> GetGridZ(int id) const = 0;
+
+    virtual std::vector<int> GetGridEdgeNodes(int id) const = 0;
+    virtual std::vector<int> GetGridFaceEdges(int id) const = 0;
+    virtual std::vector<int> GetGridFaceNodes(int id) const = 0;
+    virtual std::vector<int> GetGridNodesPerFace(int id) const = 0;
+
+    template<typename T> std::vector<T> GetValue(const std::string& name)
     {
-        std::vector<T> result(this->get_var_nbytes(name.c_str())/sizeof(T));
-        this->get_value(name.c_str(), (void*)result.data());
+        std::vector<T> result(this->GetVarNbytes(name.c_str())/sizeof(T));
+        this->GetValue(name.c_str(), (void*)result.data());
         return result;
     }
-    template<typename T> T* get_value_ptr(std::string name)
+    template<typename T> T* GetValuePtr(const std::string& name)
     {
-        T* ptr;
-        this->get_value_ptr(name.c_str(), (void**)&ptr);
-        return ptr;
+        return static_cast<T*>(this->GetValuePtr(name.c_str()));
     }
-    template<typename T> std::vector<T> get_value_at_indices(std::string name, const std::vector<int>& indices) const
+    template<typename T> std::vector<T> GetValueAtIndices(std::string name, std::vector<int>& indices)
     {
         std::vector<T> result(indices.size());
-        this->get_value_at_indices(name.c_str(), (void*)result.data(), indices.data(), indices.size());
+        this->GetValueAtIndices(name.c_str(), (void*)result.data(), indices.data(), indices.size());
         return result;
     }
 
-    template<typename T> void set_value(std::string name, const std::vector<T>& src)
+    template<typename T> void SetValue(std::string name, const std::vector<T>& src)
     {
-        this->set_value(name.c_str(), static_cast<const void*>(src.data()));
+        this->SetValue(name.c_str(), static_cast<void*>(src.data()));
     }
-    template<typename T> void set_value_ptr(std::string name, T* const ptr)
+    template<typename T> void SetValueAtIndices(std::string name, const std::vector<T>& values, std::vector<int>& indices)
     {
-        this->set_value_ptr(name.c_str(), (void**)(&ptr));
-    }
-    template<typename T> void set_value_at_indices(std::string name, const std::vector<int>& indices, const std::vector<T>& values)
-    {
-        this->set_value_at_indices(name.c_str(), indices.data(), indices.size(), static_cast<const void*>(values.data()));
+        this->SetValueAtIndices(name.c_str(), static_cast<void*>(values.data()), indices.data(), indices.size());
     }
 
-    virtual int get_grid_rank(int id) const = 0;
-    virtual int get_grid_size(int id) const = 0;
-    virtual std::string get_grid_type(int id) const = 0;
-    virtual std::vector<int> get_grid_shape(int id) const = 0;
-    virtual std::vector<double> get_grid_spacing(int id) const = 0;
-    virtual std::vector<double> get_grid_origin(int id) const = 0;
+    // Model control functions.
+    virtual void Initialize(const char *config_file) override;
 
-    virtual std::vector<double> get_grid_x(int id) const = 0;
-    virtual std::vector<double> get_grid_y(int id) const = 0;
-    virtual std::vector<double> get_grid_z(int id) const = 0;
+    // Model information functions.
+    virtual void GetComponentName(char * const name) override;
+    virtual int GetInputVarNameCount() override;
+    virtual int GetOutputVarNameCount() override;
+    virtual void GetInputVarNames(char **names) override;
+    virtual void GetOutputVarNames(char **names) override;
 
-    virtual int get_grid_cell_count(int id) const = 0;
-    virtual int get_grid_point_count(int id) const = 0;
-    virtual int get_grid_vertex_count(int id) const = 0;
+    // Variable information functions
+    virtual int GetVarGrid(const char *name) override;
+    virtual void GetVarType(const char *name, char *vtype) override;
+    virtual void GetVarUnits (const char *name, char *units) override;
+    virtual int GetVarItemsize(const char *name) override;
+    virtual int GetVarNbytes(const char *name) override;
+    virtual void GetVarLocation(const char *name, char *location) override;
 
-    virtual std::vector<int> get_grid_connectivity(int id) const = 0;
-    virtual std::vector<int> get_grid_offset(int id) const = 0;
+    virtual void GetTimeUnits(char *units) override;
 
-    int initialize(const char* configfile) override;
+    // Variable getters
+    virtual void GetValue(const char *name, void *dest) override;
+    virtual void *GetValuePtr(const char *name) override;
+    virtual void *GetValueAtIndices(const char *name, void *dest, int *inds, int count) override;
 
-    int get_component_name(char* dest) const override;
-    int get_input_var_name_count(int* dest) const override;
-    int get_output_var_name_count(int* dest) const override;
-    int get_input_var_names(char** dest) const override;
-    int get_output_var_names(char** dest) const override;
-    
-    int get_var_grid(const char* name, int* dest) const override;
-    int get_var_type(const char* name, char* dest) const override;
-    int get_var_itemsize(const char* name, int* dest) const override;
-    int get_var_units(const char* name, char* dest) const override;
-    int get_var_nbytes(const char* name, int* dest) const override;
-    int get_current_time(double* dest) const override;
-    int get_start_time(double* dest) const override;
-    int get_end_time(double* dest) const override;
-    int get_time_units(char* dest) const override;
-    int get_time_step(double* dest) const override;
-    
-    int get_value(const char* name, void* dest) const override;
-    int get_value_ptr(const char* name, void** dest) override;
-    int get_value_at_indices(const char* name, void* dest, const int* pts, int numpts) const override;
+    // Variable setters
+    virtual void SetValue(const char *name, void *values) override;
+    virtual void SetValueAtIndices(const char *name, void *values, int *inds, int count) override;
 
-    int set_value(const char* name, const void* src) override;
-    int set_value_ptr(const char* name, void** src) override;
-    int set_value_at_indices(const char* name, const int* pts, int numpts, const void* src) override;
+    // Grid information functions
+    virtual void GetGridType(const int grid, char *gtype) override;
 
-    int get_grid_size(int id, int* dest) const override;
-    int get_grid_rank(int id, int* dest) const override;
-    int get_grid_type(int id, char* dest) const override;
-    int get_grid_shape(int id, int* dest) const override;
-    int get_grid_spacing(int id, double* dest) const override;
-    int get_grid_origin(int id, double* dest) const override;
-    int get_grid_x(int id, double* dest) const override;
-    int get_grid_y(int id, double* dest) const override;
-    int get_grid_z(int id, double* dest) const override;
-    int get_grid_cell_count(int id, int* dest) const override;
-    int get_grid_point_count(int id, int* dest) const override;
-    int get_grid_vertex_count(int id, int* dest) const override;
-    int get_grid_connectivity(int id, int* dest) const override;
-    int get_grid_offset(int id, int* dest) const override;
+    virtual void GetGridShape(const int grid, int *shape) override;
+    virtual void GetGridSpacing(const int grid, double *spacing) override;
+    virtual void GetGridOrigin(const int grid, double *origin) override;
+
+    virtual void GetGridX(const int grid, double *dest) override;
+    virtual void GetGridY(const int grid, double *dest) override;
+    virtual void GetGridZ(const int grid, double *dest) override;
+
+    virtual void GetGridEdgeNodes(const int grid, int *edge_nodes) override;
+    virtual void GetGridFaceEdges(const int grid, int *face_edges) override;
+    virtual void GetGridFaceNodes(const int grid, int *face_nodes) override;
+    virtual void GetGridNodesPerFace(const int, int *nodes_per_face) override;
 
   protected:
 
-    virtual std::vector<int> get_value_int(const std::string& name) const = 0;
-    virtual std::vector<float> get_value_float(const std::string& name) const = 0;
-    virtual std::vector<double> get_value_double(const std::string& name) const = 0;
+    virtual std::vector<int> GetValueInt(const std::string& name) const = 0;
+    virtual std::vector<float> GetValueFloat(const std::string& name) const = 0;
+    virtual std::vector<double> GetValueDouble(const std::string& name) const = 0;
 
-    virtual int* get_value_int_ptr(const std::string& name) = 0;
-    virtual float* get_value_float_ptr(const std::string& name) = 0;
-    virtual double* get_value_double_ptr(const std::string& name) = 0;
+    virtual int* GetValueIntPtr(const std::string& name) = 0;
+    virtual float* GetValueFloatPtr(const std::string& name) = 0;
+    virtual double* GetValueDoublePtr(const std::string& name) = 0;
 
-    virtual std::vector<int> get_value_int_at_indices(std::string name, const std::vector<int>& indices) const = 0;
-    virtual std::vector<float> get_value_float_at_indices(std::string name, const std::vector<int>& indices) const = 0;
-    virtual std::vector<double> get_value_double_at_indices(std::string name, const std::vector<int>& indices) const = 0;
+    virtual std::vector<int> GetValueIntAtIndices(std::string name, const std::vector<int>& indices) const = 0;
+    virtual std::vector<float> GetValueFloatAtIndices(std::string name, const std::vector<int>& indices) const = 0;
+    virtual std::vector<double> GetValueDoubleAtIndices(std::string name, const std::vector<int>& indices) const = 0;
 
-    virtual void set_value_int(std::string name, const std::vector<int>& src) = 0;
-    virtual void set_value_float(std::string name, const std::vector<float>& src) = 0;
-    virtual void set_value_double(std::string name, const std::vector<double>& src) = 0;
+    virtual void SetValueInt(std::string name, const std::vector<int>& src) = 0;
+    virtual void SetValueFloat(std::string name, const std::vector<float>& src) = 0;
+    virtual void SetValueDouble(std::string name, const std::vector<double>& src) = 0;
 
-    virtual void set_value_int_ptr(std::string name, int* const ptr) = 0;
-    virtual void set_value_float_ptr(std::string name, float* const ptr) = 0;
-    virtual void set_value_double_ptr(std::string name, double* const ptr) = 0;
-
-    virtual void set_value_int_at_indices(std::string name, const std::vector<int>& indices, const std::vector<int>& values) = 0;
-    virtual void set_value_float_at_indices(std::string name, const std::vector<int>& indices, const std::vector<float>& values) = 0;
-    virtual void set_value_double_at_indices(std::string name, const std::vector<int>& indices, const std::vector<double>& values) = 0;
+    virtual void SetValueIntAtIndices(std::string name, const std::vector<int>& indices, const std::vector<int>& values) = 0;
+    virtual void SetValueFloatAtIndices(std::string name, const std::vector<int>& indices, const std::vector<float>& values) = 0;
+    virtual void SetValueDoubleAtIndices(std::string name, const std::vector<int>& indices, const std::vector<double>& values) = 0;
 
   private:
 
-    char find_type(const std::string& name) const;
+    char FindType(const std::string& name) const;
 };
 
 #endif /*BMI_CPP_EXTENSION_H_INCLUDED*/
