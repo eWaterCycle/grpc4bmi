@@ -7,7 +7,7 @@ from google.protobuf import any_pb2
 from google.rpc import code_pb2, status_pb2, error_details_pb2
 import traceback
 
-from grpc4bmi.reserve import reserve_values, reserve_grid_values, reserve_shape
+from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_nodes, reserve_grid_padding
 from . import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
@@ -151,13 +151,9 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             self.exception_handler(e, context)
 
     def getVarLocation(self, request, context):
-        location = self.bmi_model_.get_var_location(request.name)
-        lookup = {
-            "node": bmi_pb2.GetVarLocationResponse.Location.NODE,
-            "edge": bmi_pb2.GetVarLocationResponse.Location.EDGE,
-            "face": bmi_pb2.GetVarLocationResponse.Location.FACE,
-        }
-        return bmi_pb2.GetVarLocationResponse(location=lookup[location])
+        location_name = self.bmi_model_.get_var_location(request.name)
+        location = bmi_pb2.GetVarLocationResponse.Location.Value(location_name.upper())
+        return bmi_pb2.GetVarLocationResponse(location=location)
 
     def getValue(self, request, context):
         try:
@@ -203,9 +199,6 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         except Exception as e:
             self.exception_handler(e, context)
 
-    def setValuePtr(self, request, context):
-        raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
-
     def setValueAtIndices(self, request, context):
         try:
             index_array = numpy.array(request.indices)
@@ -242,42 +235,42 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getGridShape(self, request, context):
         try:
-            values = reserve_grid_values(self.bmi_model_, request.grid_id)
+            values = reserve_grid_shape(self.bmi_model_, request.grid_id)
             return bmi_pb2.GetGridShapeResponse(shape=self.bmi_model_.get_grid_shape(request.grid_id, values))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridSpacing(self, request, context):
         try:
-            values = reserve_grid_values(self.bmi_model_, request.grid_id)
+            values = reserve_grid_padding(self.bmi_model_, request.grid_id)
             return bmi_pb2.GetGridSpacingResponse(spacing=self.bmi_model_.get_grid_spacing(request.grid_id, values))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridOrigin(self, request, context):
         try:
-            values = reserve_grid_values(self.bmi_model_, request.grid_id)
+            values = reserve_grid_padding(self.bmi_model_, request.grid_id)
             return bmi_pb2.GetGridOriginResponse(origin=self.bmi_model_.get_grid_origin(request.grid_id, values))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridX(self, request, context):
         try:
-            values = reserve_shape(self.bmi_model_, request.grid_id, 0)
+            values = reserve_grid_nodes(self.bmi_model_, request.grid_id, 0)
             return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_x(request.grid_id, values))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridY(self, request, context):
         try:
-            values = reserve_shape(self.bmi_model_, request.grid_id, 1)
+            values = reserve_grid_nodes(self.bmi_model_, request.grid_id, 1)
             return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_y(request.grid_id, values))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridZ(self, request, context):
         try:
-            values = reserve_shape(self.bmi_model_, request.grid_id, 2)
+            values = reserve_grid_nodes(self.bmi_model_, request.grid_id, 2)
             return bmi_pb2.GetGridPointsResponse(coordinates=self.bmi_model_.get_grid_z(request.grid_id, values))
         except Exception as e:
             self.exception_handler(e, context)
@@ -296,18 +289,23 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getGridFaceCount(self, request, context):
         try:
-            return bmi_pb2.GetGridElementCountResponse(count=self.bmi_model_.get_grid_edge_count(request.grid_id))
+            return bmi_pb2.GetGridElementCountResponse(count=self.bmi_model_.get_grid_face_count(request.grid_id))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridEdgeNodes(self, request, context):
         try:
-            size = 2 * self.bmi_model_.get_grid_node_count(request.grid_id)
+            size = 2 * self.bmi_model_.get_grid_edge_count(request.grid_id)
             links = numpy.empty(size, dtype=numpy.int64)
             links = self.bmi_model_.get_grid_edge_nodes(request.grid_id, links)
             return bmi_pb2.GetGridEdgeNodesResponse(links=links)
         except Exception as e:
             self.exception_handler(e, context)
+
+    def _get_grid_nodes_per_face(self, grid_id):
+        size = self.bmi_model_.get_grid_face_count(grid_id)
+        links = numpy.empty(size, dtype=numpy.int64)
+        return self.bmi_model_.get_grid_nodes_per_face(grid_id, links)
 
     def getGridFaceNodes(self, request, context):
         try:
@@ -316,14 +314,6 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             links = numpy.empty(size, dtype=numpy.int64)
             links = self.bmi_model_.get_grid_face_nodes(request.grid_id, links)
             return bmi_pb2.GetGridFaceNodesResponse(links=links)
-        except Exception as e:
-            self.exception_handler(e, context)
-
-    def _get_grid_nodes_per_face(self, grid_id):
-        try:
-            size = self.bmi_model_.get_grid_face_count(grid_id)
-            links = numpy.empty(size, dtype=numpy.int64)
-            return self.bmi_model_.get_grid_nodes_per_face(grid_id, links)
         except Exception as e:
             self.exception_handler(e, context)
 

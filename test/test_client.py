@@ -10,7 +10,7 @@ from grpc_status import rpc_status
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
-from grpc4bmi.reserve import reserve_values, reserve_grid_values, reserve_shape
+from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_nodes, reserve_grid_padding
 from test.flatbmiheat import FlatBmiHeat
 
 logging.basicConfig(level=logging.DEBUG)
@@ -219,8 +219,8 @@ def test_get_grid_shape():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    result = client.get_grid_shape(grid_id, reserve_grid_values(client, grid_id))
-    expected = local.get_grid_shape(grid_id, reserve_grid_values(local, grid_id))
+    result = client.get_grid_shape(grid_id, reserve_grid_shape(client, grid_id))
+    expected = local.get_grid_shape(grid_id, reserve_grid_shape(local, grid_id))
     assert result == expected
 
 
@@ -228,26 +228,30 @@ def test_get_grid_spacing():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_spacing(grid_id, reserve_grid_values(client, grid_id)) == local.get_grid_spacing(grid_id)
+    result = client.get_grid_spacing(grid_id, reserve_grid_padding(client, grid_id))
+    expected = local.get_grid_spacing(grid_id, reserve_grid_padding(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
 
 
 def test_get_grid_origin():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_origin(grid_id, reserve_grid_values(client, grid_id)) == local.get_grid_origin(grid_id)
+    result = client.get_grid_spacing(grid_id, reserve_grid_padding(client, grid_id))
+    expected = local.get_grid_origin(grid_id, reserve_grid_padding(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
 
 
 def test_get_grid_points():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    local_x = local.get_grid_x(grid_id, reserve_shape(local, grid_id, 0))
-    local_y = local.get_grid_y(grid_id, reserve_shape(local, grid_id, 1))
-    local_z = local.get_grid_z(grid_id, reserve_shape(local, grid_id, 2))
-    assert numpy.array_equal(client.get_grid_x(grid_id, reserve_shape(client, grid_id, 0)), local_x)
-    assert numpy.array_equal(client.get_grid_y(grid_id, reserve_shape(client, grid_id, 1)), local_y)
-    assert numpy.array_equal(client.get_grid_z(grid_id, reserve_shape(client, grid_id, 2)), local_z)
+    local_x = local.get_grid_x(grid_id, reserve_grid_nodes(local, grid_id, 0))
+    local_y = local.get_grid_y(grid_id, reserve_grid_nodes(local, grid_id, 1))
+    local_z = local.get_grid_z(grid_id, reserve_grid_nodes(local, grid_id, 2))
+    assert numpy.array_equal(client.get_grid_x(grid_id, reserve_grid_nodes(client, grid_id, 0)), local_x)
+    assert numpy.array_equal(client.get_grid_y(grid_id, reserve_grid_nodes(client, grid_id, 1)), local_y)
+    assert numpy.array_equal(client.get_grid_z(grid_id, reserve_grid_nodes(client, grid_id, 2)), local_z)
 
 
 class MyCall(grpc.RpcError):
