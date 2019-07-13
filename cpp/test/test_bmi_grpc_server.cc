@@ -17,11 +17,13 @@ std::vector<std::string> get_bmi_varnames(BmiClass* b, int selector=SELECT_ALL)
     int output_count = 0;
     if((selector & SELECT_INPUT) > 0)
     {
-        count += b->GetInputVarNameCount();
+        input_count = b->GetInputVarNameCount();
+        count += input_count;
     }
     if((selector & SELECT_OUTPUT) > 0)
     {
-        count += b->GetOutputVarNameCount();
+        output_count = b->GetOutputVarNameCount();
+        count += output_count;
     }
     if(count == 0)
     {
@@ -47,6 +49,10 @@ std::vector<std::string> get_bmi_varnames(BmiClass* b, int selector=SELECT_ALL)
         free(names[i]);
     }
     free(names);
+    for(int i=0;i < result.size(); ++i)
+    {
+        std::cerr<<"THE VARIABLE NAME "<<i<<" IS "<<result[i]<<std::endl;
+    }
     return result;
 }
 
