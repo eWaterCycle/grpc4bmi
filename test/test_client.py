@@ -1,4 +1,5 @@
 import logging
+from unittest.mock import Mock
 
 import grpc
 import numpy
@@ -11,6 +12,7 @@ from grpc_status import rpc_status
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
 from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_nodes, reserve_grid_padding
+from test.conftest import RectGridBmiModel, UnstructuredGridBmiModel, SomeException, FailingModel
 from test.flatbmiheat import FlatBmiHeat
 
 logging.basicConfig(level=logging.DEBUG)
@@ -20,16 +22,27 @@ Unit tests for the BMI client class. Every test performs cross-checking with a l
 """
 
 
+class MyRpcError(grpc.RpcError):
+    def trailing_metadata(self):
+        return []
+
+
 class ServerWrapper(object):
 
     def __init__(self, server):
         self.server = server
+        self.context = Mock(grpc.ServicerContext)
+
+        def forward(status):
+            raise MyRpcError(status.details)
+
+        self.context.abort_with_status.side_effect = forward
 
     def __getattr__(self, item):
         orig_attr = self.server.__getattribute__(item)
         if callable(orig_attr):
             def add_context(*args, **kwargs):
-                kwargs["context"] = None
+                kwargs["context"] = self.context
                 return orig_attr(*args, **kwargs)
 
             return add_context
@@ -148,7 +161,16 @@ def test_get_var_nbytes():
     del client
 
 
-def test_get_var_values():
+def test_get_var_location():
+    client, local = make_bmi_classes(True)
+    varname = local.get_output_var_names()[0]
+
+    assert client.get_var_location(varname) == local.get_var_location(varname)
+
+    del client
+
+
+def test_get_var_value():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     actual = client.get_value(varname, reserve_values(client, varname))
@@ -157,7 +179,7 @@ def test_get_var_values():
     del client
 
 
-def test_get_var_ptr():
+def test_get_value_ptr():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     with pytest.raises(NotImplementedError):
@@ -175,7 +197,7 @@ def test_get_vals_indices():
     numpy.testing.assert_allclose(result, expected)
 
 
-def test_set_var_values():
+def test_set_var_value():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     values = 0.123 * local.get_value(varname, reserve_values(local, varname))
@@ -219,16 +241,20 @@ def test_get_grid_shape():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
+
     result = client.get_grid_shape(grid_id, reserve_grid_shape(client, grid_id))
+
     expected = local.get_grid_shape(grid_id, reserve_grid_shape(local, grid_id))
-    assert result == expected
+    numpy.testing.assert_allclose(result, expected)
 
 
 def test_get_grid_spacing():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
+
     result = client.get_grid_spacing(grid_id, reserve_grid_padding(client, grid_id))
+
     expected = local.get_grid_spacing(grid_id, reserve_grid_padding(local, grid_id))
     numpy.testing.assert_allclose(result, expected)
 
@@ -237,21 +263,168 @@ def test_get_grid_origin():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    result = client.get_grid_spacing(grid_id, reserve_grid_padding(client, grid_id))
+
+    result = client.get_grid_origin(grid_id, reserve_grid_padding(client, grid_id))
+
     expected = local.get_grid_origin(grid_id, reserve_grid_padding(local, grid_id))
     numpy.testing.assert_allclose(result, expected)
 
 
-def test_get_grid_points():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_x = local.get_grid_x(grid_id, reserve_grid_nodes(local, grid_id, 0))
-    local_y = local.get_grid_y(grid_id, reserve_grid_nodes(local, grid_id, 1))
-    local_z = local.get_grid_z(grid_id, reserve_grid_nodes(local, grid_id, 2))
-    assert numpy.array_equal(client.get_grid_x(grid_id, reserve_grid_nodes(client, grid_id, 0)), local_x)
-    assert numpy.array_equal(client.get_grid_y(grid_id, reserve_grid_nodes(client, grid_id, 1)), local_y)
-    assert numpy.array_equal(client.get_grid_z(grid_id, reserve_grid_nodes(client, grid_id, 2)), local_z)
+def test_get_grid_x():
+    model = RectGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+
+    result = client.get_grid_x(grid_id, reserve_grid_nodes(client, grid_id, 0))
+
+    expected = model.get_grid_x(grid_id, reserve_grid_nodes(model, grid_id, 0))
+    assert numpy.array_equal(result, expected)
+
+
+def test_get_grid_y():
+    model = RectGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+
+    result = client.get_grid_y(grid_id, reserve_grid_nodes(client, grid_id, 1))
+
+    expected = model.get_grid_y(grid_id, reserve_grid_nodes(model, grid_id, 1))
+    assert numpy.array_equal(result, expected)
+
+
+def test_get_grid_z():
+    model = RectGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+
+    result = client.get_grid_z(grid_id, reserve_grid_nodes(client, grid_id, 2))
+
+    expected = model.get_grid_z(grid_id, reserve_grid_nodes(model, grid_id, 2))
+    assert numpy.array_equal(result, expected)
+
+
+def test_get_grid_node_count():
+    model = UnstructuredGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+
+    result = client.get_grid_node_count(grid_id)
+
+    assert result == 4
+
+
+def test_get_grid_edge_count():
+    model = UnstructuredGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+
+    result = client.get_grid_edge_count(grid_id)
+
+    assert result == 5
+
+
+def test_get_grid_face_count():
+    model = UnstructuredGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+
+    result = client.get_grid_face_count(grid_id)
+
+    assert result == 2
+
+
+def test_get_grid_edge_nodes():
+    model = UnstructuredGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+    placeholder = numpy.empty(10, dtype=numpy.int)
+
+    result = client.get_grid_edge_nodes(grid_id, placeholder)
+
+    expected = (0, 3, 3, 1, 2, 1, 1, 0, 2, 0)
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_grid_face_nodes():
+    model = UnstructuredGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+    placeholder = numpy.empty(6, dtype=numpy.int)
+
+    result = client.get_grid_face_nodes(grid_id, placeholder)
+
+    expected = (0, 3, 2, 0, 2, 1)
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_grid_nodes_per_face():
+    model = UnstructuredGridBmiModel()
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+    varname = model.get_output_var_names()[0]
+    grid_id = model.get_var_grid(varname)
+    placeholder = numpy.empty(2, dtype=numpy.int)
+
+    result = client.get_grid_nodes_per_face(grid_id, placeholder)
+
+    expected = (3, 3,)
+    numpy.testing.assert_allclose(result, expected)
+
+
+@pytest.mark.parametrize("client_method,client_request", [
+    ('initialize', ('config.ini',)),
+    ('update', ()),
+    ('finalize', ()),
+    ('get_component_name', ()),
+    ('get_input_var_names', ()),
+    ('get_output_var_names', ()),
+    ('get_time_units', ()),
+    ('get_time_step', ()),
+    ('get_current_time', ()),
+    ('get_start_time', ()),
+    ('get_end_time', ()),
+    ('get_var_grid', ('something',)),
+    ('get_var_type', ('something',)),
+    ('get_var_itemsize', ('something',)),
+    ('get_var_units', ('something',)),
+    ('get_var_nbytes', ('something',)),
+    ('get_var_location', ('something',)),
+    ('get_value', ('something', numpy.empty(0))),
+    ('get_value_at_indices', ('something', numpy.empty(0), numpy.array([42]))),
+    ('set_value', ('something', numpy.array([1234]))),
+    ('set_value_at_indices', ('something', numpy.array([42]), numpy.array([1234]))),
+    ('get_grid_size', (42,)),
+    ('get_grid_type', (42,)),
+    ('get_grid_rank', (42,)),
+    ('get_grid_x', (42, numpy.empty(0))),
+    ('get_grid_y', (42, numpy.empty(0))),
+    ('get_grid_z', (42, numpy.empty(0))),
+    ('get_grid_shape', (42, numpy.empty(0))),
+    ('get_grid_spacing', (42, numpy.empty(0))),
+    ('get_grid_origin', (42, numpy.empty(0))),
+    ('get_grid_node_count', (42,)),
+    ('get_grid_edge_count', (42,)),
+    ('get_grid_face_count', (42,)),
+    ('get_grid_edge_nodes', (42, numpy.empty(0))),
+    ('get_grid_face_nodes', (42, numpy.empty(0))),
+    ('get_grid_nodes_per_face', (42, numpy.empty(0))),
+])
+def test_method_exception(client_method, client_request):
+    exc = SomeException('bmi method always fails')
+    model = FailingModel(exc)
+    client = BmiClient(stub=ServerWrapper(BmiServer(model)))
+
+    with pytest.raises(Exception) as excinfo:
+        getattr(client, client_method)(*client_request)
+
+    assert "bmi method always fails" in str(excinfo.value)
 
 
 class MyCall(grpc.RpcError):
