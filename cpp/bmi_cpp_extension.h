@@ -101,20 +101,20 @@ class BmiCppExtension: public bmi::Bmi
     virtual void SetValueAtIndices(const char *name, void *values, int *inds, int count) override;
 
     // Grid information functions
-    virtual void GetGridType(const int grid, char *gtype) override;
+    virtual void GetGridType(int grid, char *gtype) override;
 
-    virtual void GetGridShape(const int grid, int *shape) override;
-    virtual void GetGridSpacing(const int grid, double *spacing) override;
-    virtual void GetGridOrigin(const int grid, double *origin) override;
+    virtual void GetGridShape(int grid, int *shape) override;
+    virtual void GetGridSpacing(int grid, double *spacing) override;
+    virtual void GetGridOrigin(int grid, double *origin) override;
 
-    virtual void GetGridX(const int grid, double *dest) override;
-    virtual void GetGridY(const int grid, double *dest) override;
-    virtual void GetGridZ(const int grid, double *dest) override;
+    virtual void GetGridX(int grid, double *dest) override;
+    virtual void GetGridY(int grid, double *dest) override;
+    virtual void GetGridZ(int grid, double *dest) override;
 
-    virtual void GetGridEdgeNodes(const int grid, int *edge_nodes) override;
-    virtual void GetGridFaceEdges(const int grid, int *face_edges) override;
-    virtual void GetGridFaceNodes(const int grid, int *face_nodes) override;
-    virtual void GetGridNodesPerFace(const int, int *nodes_per_face) override;
+    virtual void GetGridEdgeNodes(int grid, int *dest) override;
+    virtual void GetGridFaceEdges(int grid, int *dest) override;
+    virtual void GetGridFaceNodes(int grid, int *dest) override;
+    virtual void GetGridNodesPerFace(int grid, int *dest) override;
 
   protected:
 
@@ -126,17 +126,17 @@ class BmiCppExtension: public bmi::Bmi
     virtual float* GetValueFloatPtr(const std::string& name) = 0;
     virtual double* GetValueDoublePtr(const std::string& name) = 0;
 
-    virtual std::vector<int> GetValueIntAtIndices(std::string name, const std::vector<int>& indices) const = 0;
-    virtual std::vector<float> GetValueFloatAtIndices(std::string name, const std::vector<int>& indices) const = 0;
-    virtual std::vector<double> GetValueDoubleAtIndices(std::string name, const std::vector<int>& indices) const = 0;
+    virtual std::vector<int> GetValueIntAtIndices(const std::string& name, const std::vector<int>& indices) const = 0;
+    virtual std::vector<float> GetValueFloatAtIndices(const std::string& name, const std::vector<int>& indices) const = 0;
+    virtual std::vector<double> GetValueDoubleAtIndices(const std::string& name, const std::vector<int>& indices) const = 0;
 
-    virtual void SetValueInt(std::string name, const std::vector<int>& src) = 0;
-    virtual void SetValueFloat(std::string name, const std::vector<float>& src) = 0;
-    virtual void SetValueDouble(std::string name, const std::vector<double>& src) = 0;
+    virtual void SetValueInt(const std::string& name, const std::vector<int>& src) = 0;
+    virtual void SetValueFloat(const std::string& name, const std::vector<float>& src) = 0;
+    virtual void SetValueDouble(const std::string& name, const std::vector<double>& src) = 0;
 
-    virtual void SetValueIntAtIndices(std::string name, const std::vector<int>& indices, const std::vector<int>& values) = 0;
-    virtual void SetValueFloatAtIndices(std::string name, const std::vector<int>& indices, const std::vector<float>& values) = 0;
-    virtual void SetValueDoubleAtIndices(std::string name, const std::vector<int>& indices, const std::vector<double>& values) = 0;
+    virtual void SetValueIntAtIndices(const std::string& name, const std::vector<int>& indices, const std::vector<int>& values) = 0;
+    virtual void SetValueFloatAtIndices(const std::string& name, const std::vector<int>& indices, const std::vector<float>& values) = 0;
+    virtual void SetValueDoubleAtIndices(const std::string& name, const std::vector<int>& indices, const std::vector<double>& values) = 0;
 
   private:
 

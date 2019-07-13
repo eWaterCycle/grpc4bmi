@@ -60,6 +60,11 @@ int BmiCppExtension::GetVarItemsize(const char* name)
     return this->GetVarItemsize(std::string(name));
 }
 
+int BmiCppExtension::GetVarGrid(const char* name)
+{
+    return this->GetVarGrid(std::string(name));
+}
+
 void BmiCppExtension::GetVarUnits(const char* name, char* dest)
 {
     std::string units = this->GetVarUnits(std::string(name));
@@ -239,25 +244,25 @@ void BmiCppExtension::GetGridZ(int id, double* dest)
     memcpy(dest, x.data(), x.size()*sizeof(double));
 }
 
-void GetGridEdgeNodes(const int grid, int *edge_nodes)
+void BmiCppExtension::GetGridEdgeNodes(int grid, int *dest)
 {
     std::vector<int> x = this->GetGridEdgeNodes(grid);
     memcpy(dest, x.data(), x.size()*sizeof(double));
 }
 
-void GetGridFaceEdges(const int grid, int *face_edges)
+void BmiCppExtension::GetGridFaceEdges(int grid, int *dest)
 {
     std::vector<int> x = this->GetGridFaceEdges(grid);
     memcpy(dest, x.data(), x.size()*sizeof(double));
 }
 
-void GetGridFaceNodes(const int grid, int *face_nodes)
+void BmiCppExtension::GetGridFaceNodes(int grid, int *dest)
 {
     std::vector<int> x = this->GetGridFaceNodes(grid);
     memcpy(dest, x.data(), x.size()*sizeof(double));
 }
 
-void GetGridNodesPerFace(const int, int *nodes_per_face)
+void BmiCppExtension::GetGridNodesPerFace(int grid, int *dest)
 {
     std::vector<int> x = this->GetGridNodesPerFace(grid);
     memcpy(dest, x.data(), x.size()*sizeof(double));
