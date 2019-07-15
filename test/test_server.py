@@ -208,7 +208,7 @@ def test_get_var_ptr():
         server.getValuePtr(request, None)
 
 
-def test_get_vals_indices():
+def test_get_value_at_indices():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
