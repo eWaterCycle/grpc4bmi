@@ -122,61 +122,61 @@ class FailingModel(Bmi):
     def get_time_units(self):
         raise self.exc
 
-    def get_var_type(self, var_name):
+    def get_var_type(self, name):
         raise self.exc
 
-    def get_var_units(self, var_name):
+    def get_var_units(self, name):
         raise self.exc
 
-    def get_var_itemsize(self, var_name):
+    def get_var_itemsize(self, name):
         raise self.exc
 
-    def get_var_nbytes(self, var_name):
+    def get_var_nbytes(self, name):
         raise self.exc
 
-    def get_var_grid(self, var_name):
+    def get_var_grid(self, name):
         raise self.exc
 
-    def get_value(self, var_name, dest):
+    def get_value(self, name, dest):
         raise self.exc
 
-    def get_value_ptr(self, var_name):
+    def get_value_ptr(self, name):
         raise self.exc
 
-    def get_value_at_indices(self, var_name, dest, indices):
+    def get_value_at_indices(self, name, dest, inds):
         raise self.exc
 
-    def set_value(self, var_name, src):
+    def set_value(self, name, src):
         raise self.exc
 
-    def set_value_at_indices(self, var_name, indices, src):
+    def set_value_at_indices(self, name, inds, src):
         raise self.exc
 
-    def get_grid_shape(self, grid_id, dest):
+    def get_grid_shape(self, grid, shape):
         raise self.exc
 
-    def get_grid_x(self, grid_id, dest):
+    def get_grid_x(self, grid, x):
         raise self.exc
 
-    def get_grid_y(self, grid_id, dest):
+    def get_grid_y(self, grid, y):
         raise self.exc
 
-    def get_grid_z(self, grid_id, dest):
+    def get_grid_z(self, grid, z):
         raise self.exc
 
-    def get_grid_spacing(self, grid_id, dest):
+    def get_grid_spacing(self, grid, spacing):
         raise self.exc
 
-    def get_grid_origin(self, grid_id, dest):
+    def get_grid_origin(self, grid, origin):
         raise self.exc
 
-    def get_grid_rank(self, grid_id):
+    def get_grid_rank(self, grid):
         raise self.exc
 
-    def get_grid_size(self, grid_id):
+    def get_grid_size(self, grid):
         raise self.exc
 
-    def get_grid_type(self, grid_id):
+    def get_grid_type(self, grid):
         raise self.exc
 
     def get_var_location(self, name: str) -> str:
@@ -201,24 +201,56 @@ class FailingModel(Bmi):
         raise self.exc
 
 
-class RectGridBmiModel(FailingModel):
+class TestGridMethodsBmiModel(FailingModel):
     def __init__(self):
-        super(RectGridBmiModel, self).__init__(SomeException('not used'))
-
-    def get_grid_type(self, grid):
-        return 'rectilinear'
+        super(TestGridMethodsBmiModel, self).__init__(SomeException('not used'))
 
     def get_output_var_names(self) -> Tuple[str]:
         return 'plate_surface__temperature',
 
-    def get_grid_rank(self, grid: int) -> int:
-        return 3
-
     def get_var_grid(self, name):
         return 0
 
+    def get_value(self, name, dest):
+        numpy.copyto(src=[v for v in range(self.get_grid_size(0))], dst=dest)
+        return dest
+
+
+class UniRectGridMethodsBmiModel(TestGridMethodsBmiModel):
+    def get_grid_type(self, grid):
+        return 'uniform_rectilinear'
+
+    def get_grid_rank(self, grid):
+        return 3
+
+    def get_grid_size(self, grid):
+        return 24
+
     def get_grid_shape(self, grid: int, shape: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[4, 3, 2], dst=shape)
+        numpy.copyto(src=[2, 3, 4], dst=shape)
+        return shape
+
+    def get_grid_origin(self, grid, dest):
+        numpy.copyto(src=[0.1, 1.1, 2.1], dst=dest)
+        return dest
+
+    def get_grid_spacing(self, grid, dest):
+        numpy.copyto(src=[0.1, 0.2, 0.3], dst=dest)
+        return dest
+
+
+class RectGridBmiModel(TestGridMethodsBmiModel):
+    def get_grid_type(self, grid):
+        return 'rectilinear'
+
+    def get_grid_size(self, grid):
+        return 24  # 4*3*2
+
+    def get_grid_rank(self, grid: int) -> int:
+        return 3
+
+    def get_grid_shape(self, grid: int, shape: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=[2, 3, 4], dst=shape)
         return shape
 
     def get_grid_x(self, grid: int, x: np.ndarray) -> np.ndarray:
@@ -234,7 +266,89 @@ class RectGridBmiModel(FailingModel):
         return z
 
 
-class UnstructuredGridBmiModel(RectGridBmiModel):
+class Rect2DGridBmiModel(RectGridBmiModel):
+    def get_grid_size(self, grid):
+        return 12  # 4*3
+
+    def get_grid_rank(self, grid: int) -> int:
+        return 2
+
+    def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
+        raise NotImplementedError('Do not know what z is')
+
+
+class Structured3DQuadrilateralsGridBmiModel(TestGridMethodsBmiModel):
+    # Grid shape:
+    #    0
+    #   / \
+    #  /   \
+    # 3     1
+    #  \    /
+    #   \  /
+    #    2
+    #
+    def get_grid_type(self, grid):
+        return 'structured_quadrilateral'
+
+    def get_grid_rank(self, grid: int) -> int:
+        return 3
+
+    def get_grid_size(self, grid):
+        return 4
+
+    def get_grid_shape(self, grid, shape):
+        numpy.copyto(src=[1, 2, 2], dst=shape)
+        return shape
+
+    def get_grid_x(self, grid, x):
+        numpy.copyto(src=[1.1, 0.1, 1.1, 2.1], dst=x)
+        return x
+
+    def get_grid_y(self, grid: int, y: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=[2.2, 1.2, 0.2, 2.2], dst=y)
+        return y
+
+    def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=[1.1, 2.2, 3.3, 4.4], dst=z)
+        return z
+
+
+class Structured2DQuadrilateralsGridBmiModel(TestGridMethodsBmiModel):
+    # Grid shape:
+    #    0
+    #   / \
+    #  /   \
+    # 3     1
+    #  \    /
+    #   \  /
+    #    2
+    #
+    def get_grid_type(self, grid):
+        return 'structured_quadrilateral'
+
+    def get_grid_rank(self, grid: int) -> int:
+        return 2
+
+    def get_grid_size(self, grid):
+        return 4
+
+    def get_grid_shape(self, grid, shape):
+        numpy.copyto(src=[2, 2], dst=shape)
+        return shape
+
+    def get_grid_x(self, grid, x):
+        numpy.copyto(src=[1.1, 0.1, 1.1, 2.1], dst=x)
+        return x
+
+    def get_grid_y(self, grid: int, y: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=[2.2, 1.2, 0.2, 2.2], dst=y)
+        return y
+
+    def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
+        raise NotImplementedError('Do not know what z is')
+
+
+class UnstructuredGridBmiModel(TestGridMethodsBmiModel):
     # Grid shape:
     #    0
     #   /|\
@@ -246,6 +360,12 @@ class UnstructuredGridBmiModel(RectGridBmiModel):
     #
     def get_grid_type(self, grid):
         return 'unstructured'
+
+    def get_grid_shape(self, grid, dest):
+        raise NotImplementedError('Do not know what shape is')
+
+    def get_grid_size(self, grid):
+        return 4
 
     def get_grid_rank(self, grid: int) -> int:
         return 2
@@ -270,3 +390,14 @@ class UnstructuredGridBmiModel(RectGridBmiModel):
     def get_grid_nodes_per_face(self, grid: int, nodes_per_face: np.ndarray) -> np.ndarray:
         numpy.copyto(src=(3, 3,), dst=nodes_per_face)
         return nodes_per_face
+
+    def get_grid_x(self, grid: int, x: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=[0.1, 0.2, 0.3, 0.4], dst=x)
+        return x
+
+    def get_grid_y(self, grid: int, y: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=[1.1, 1.2, 1.3, 1.4], dst=y)
+        return y
+
+    def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
+        raise NotImplementedError('Do not know what z is')

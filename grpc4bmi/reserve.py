@@ -1,7 +1,5 @@
 """Helpers to reserve numpy arrays for use in some of the Bmi methods as output argument
 """
-from typing import List
-
 import numpy
 
 from bmipy import Bmi
