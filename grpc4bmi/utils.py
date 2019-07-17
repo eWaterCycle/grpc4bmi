@@ -14,8 +14,8 @@ def stage_config_file(filename, input_dir, input_mount_point, home_mounted=False
         home_mounted (bool): True if home directory is mounted inside container
     """
     fn = filename
-    is_filename_inside_input_dir = input_dir and abspath(input_dir) < abspath(filename)
-    is_filename_inside_home_dir = home_mounted and expanduser('~') < abspath(filename)
+    is_filename_inside_input_dir = input_dir and abspath(filename).startswith(abspath(input_dir))
+    is_filename_inside_home_dir = home_mounted and abspath(filename).startswith(expanduser('~'))
     filename_exists = exists(filename)
     if is_filename_inside_input_dir:
         # Replace input dir outside container by input dir inside container

@@ -23,6 +23,17 @@ class BmiClientDocker(BmiClient):
         output_dir (str): Directory for input files of model
         user (str): Username or UID of Docker container
         remove (bool): Automatically remove the container when it exits
+        extra_volumes (Dict[str,Dict]): Extra volumes to attach to Docker container.
+            The key is either the hosts path or a volume name and the value is a dictionary with the keys:
+
+            - ``bind`` The path to mount the volume inside the container
+            - ``mode`` Either ``rw`` to mount the volume read/write, or ``ro`` to mount it read-only.
+
+            For example:
+
+            .. code-block:: python
+
+                    {'/data/shared/forcings/': {'bind': '/forcings', 'mode': 'ro'}}
 
     """
 
@@ -31,10 +42,13 @@ class BmiClientDocker(BmiClient):
 
     def __init__(self, image, image_port=55555, host=None,
                  input_dir=None, output_dir=None,
-                 user=os.getuid(), remove=True):
+                 user=os.getuid(), remove=True,
+                 extra_volumes=None):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
+        if extra_volumes is not None:
+            volumes.update(extra_volumes)
         self.input_dir = None
         if input_dir is not None:
             self.input_dir = os.path.abspath(input_dir)
