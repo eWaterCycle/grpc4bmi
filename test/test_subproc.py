@@ -4,6 +4,8 @@ import numpy
 import numpy.random
 import pytest
 import os
+
+from grpc4bmi.reserve import reserve_values_at_indices, reserve_values, reserve_grid_shape, reserve_grid_padding
 from test.flatbmiheat import FlatBmiHeat
 
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
@@ -131,11 +133,13 @@ def test_get_var_nbytes():
 def test_get_var_values():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
-    server_values = client.get_value(varname)
+    server_values = client.get_value(varname, reserve_values(client, varname))
     local.set_value(varname, server_values)
     client.update()
     local.update()
-    assert numpy.array_equal(client.get_value(varname), local.get_value(varname))
+    result = client.get_value(varname, reserve_values(client, varname))
+    expected = local.get_value(varname, reserve_values(local, varname))
+    assert numpy.array_equal(result, expected)
     del client
 
 
@@ -150,35 +154,23 @@ def test_get_var_ptr():
 def test_get_vals_indices():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
-    server_values = client.get_value(varname)
+    server_values = client.get_value(varname, reserve_values(client, varname))
     local.set_value(varname, server_values)
     client.update()
     local.update()
     indices = numpy.array([29, 8, 19, 81])
-    assert numpy.array_equal(client.get_value_at_indices(varname, indices),
-                             local.get_value_at_indices(varname, indices))
-    del client
-
-
-def test_get_vals_indices_2d():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    server_values = client.get_value(varname)
-    local.set_value(varname, server_values)
-    client.update()
-    local.update()
-    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
-    assert numpy.array_equal(client.get_value_at_indices(varname, indices),
-                             local.get_value_at_indices(varname, indices))
+    result = client.get_value_at_indices(varname, reserve_values_at_indices(client, varname, indices), indices)
+    expected = local.get_value_at_indices(varname, reserve_values_at_indices(local, varname, indices), indices)
+    assert numpy.array_equal(result, expected)
     del client
 
 
 def test_set_var_values():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
-    values = 0.123 * local.get_value(varname)
+    values = 0.123 * local.get_value(varname, reserve_values(local, varname))
     client.set_value(varname, values)
-    assert numpy.array_equal(client.get_value(varname), values)
+    assert numpy.array_equal(client.get_value(varname, reserve_values(client, varname)), values)
     del client
 
 
@@ -188,7 +180,8 @@ def test_set_values_indices():
     indices = numpy.array([1, 11, 21])
     values = numpy.array([0.123, 4.567, 8.901])
     client.set_value_at_indices(varname, indices, values)
-    assert numpy.array_equal(client.get_value_at_indices(varname, indices), values)
+    expected = client.get_value_at_indices(varname, reserve_values_at_indices(client, varname, indices), indices)
+    assert numpy.array_equal(expected, values)
     del client
 
 
@@ -220,7 +213,9 @@ def test_get_grid_shape():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_shape(grid_id) == local.get_grid_shape(grid_id)
+    result = client.get_grid_shape(grid_id, reserve_grid_shape(client, grid_id))
+    expected = local.get_grid_shape(grid_id, reserve_grid_shape(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
     del client
 
 
@@ -228,7 +223,9 @@ def test_get_grid_spacing():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_spacing(grid_id) == local.get_grid_spacing(grid_id)
+    result = client.get_grid_spacing(grid_id, reserve_grid_padding(client, grid_id))
+    expected = local.get_grid_spacing(grid_id, reserve_grid_padding(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
     del client
 
 
@@ -236,18 +233,7 @@ def test_get_grid_origin():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
-    assert client.get_grid_origin(grid_id) == local.get_grid_origin(grid_id)
-    del client
-
-
-def test_get_grid_points():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_x = [] if local.get_grid_x(grid_id) is None else numpy.array(local.get_grid_x(grid_id))
-    local_y = [] if local.get_grid_y(grid_id) is None else numpy.array(local.get_grid_y(grid_id))
-    local_z = [] if local.get_grid_z(grid_id) is None else numpy.array(local.get_grid_z(grid_id))
-    assert numpy.array_equal(client.get_grid_x(grid_id), local_x)
-    assert numpy.array_equal(client.get_grid_y(grid_id), local_y)
-    assert numpy.array_equal(client.get_grid_z(grid_id), local_z)
+    result = client.get_grid_origin(grid_id, reserve_grid_padding(client, grid_id))
+    expected = local.get_grid_origin(grid_id, reserve_grid_padding(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
     del client

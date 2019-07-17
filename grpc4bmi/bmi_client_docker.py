@@ -11,7 +11,7 @@ from grpc4bmi.utils import stage_config_file
 class BmiClientDocker(BmiClient):
     """
     BMI GRPC client for dockerized server processes: the initialization launches the docker container which should have the
-    run-bmi-server as its command. Also, it should expose the tcp port 50001 for communication with this client. Upon
+    run-bmi-server as its command. Also, it should expose the tcp port 55555 for communication with this client. Upon
     destruction, this class terminates the corresponding docker server.
 
 
@@ -40,7 +40,7 @@ class BmiClientDocker(BmiClient):
     input_mount_point = "/data/input"
     output_mount_point = "/data/output"
 
-    def __init__(self, image, image_port=50051, host=None,
+    def __init__(self, image, image_port=55555, host=None,
                  input_dir=None, output_dir=None,
                  user=os.getuid(), remove=True,
                  extra_volumes=None):

@@ -7,7 +7,8 @@ from google.protobuf import any_pb2
 from google.rpc import code_pb2, status_pb2, error_details_pb2
 import traceback
 
-from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_nodes, reserve_grid_padding
+from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_nodes, reserve_grid_padding, \
+    reserve_values_at_indices
 from . import bmi_pb2, bmi_pb2_grpc
 
 log = logging.getLogger(__name__)
@@ -175,7 +176,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getValueAtIndices(self, request, context):
         try:
             indices = numpy.array(request.indices)
-            values = numpy.empty(len(indices), dtype=self.bmi_model_.get_var_type(request.name))
+            values = reserve_values_at_indices(self.bmi_model_, request.name, indices)
             values = self.bmi_model_.get_value_at_indices(request.name, values, indices)
             if values.dtype == numpy.int32:
                 return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=values.flatten()))
