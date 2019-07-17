@@ -63,7 +63,7 @@ run-bmi-server --lang R [--path <R file with BMI model>] --name [<PACKAGE>::]<CL
 
 For example with [WALRUS](https://github.com/eWaterCycle/grpc4bmi-examples/tree/master/walrus) use
 ```bash
-run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 50051
+run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 55555
 ```
 
 ### The client side
