@@ -57,7 +57,6 @@ matrix:
                 else
                   echo "using cached builds of protobuf and grpc"
                 fi
-                cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c && mkdir -p build && cd build
                 cmake .. && sudo make install
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
