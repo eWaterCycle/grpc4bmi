@@ -73,7 +73,7 @@ For the WALRUS model the command is
 
 .. code-block:: sh
 
-    run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 50051
+    run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 55555
 
 The Python grpc4bmi :ref:`usage` can then be used to connect to the server.
 Note that the ``--port`` and ``--path`` arguments also can be specified as the respective environment variables ``BMI_PORT`` and ``BMI_PATH``.
