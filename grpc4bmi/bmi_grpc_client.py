@@ -221,10 +221,10 @@ class BmiClient(Bmi):
 
     def set_value(self, name, values):
         try:
-            if values.dtype in [numpy.int32, numpy.int64]:
+            if values.dtype in (numpy.int16, numpy.int32, numpy.int64):
                 request = bmi_pb2.SetValueRequest(name=name,
                                                   values_int=bmi_pb2.IntArrayMessage(values=values.flatten()))
-            elif values.dtype == numpy.float32:
+            elif values.dtype in (numpy.float32, numpy.float16):
                 request = bmi_pb2.SetValueRequest(name=name,
                                                   values_float=bmi_pb2.FloatArrayMessage(values=values.flatten()))
             elif values.dtype == numpy.float64:
@@ -241,11 +241,11 @@ class BmiClient(Bmi):
             index_array = inds
             if inds is list:
                 index_array = numpy.array(inds)
-            if src.dtype in [numpy.int32, numpy.int64]:
+            if src.dtype in (numpy.int32, numpy.int64):
                 request = bmi_pb2.SetValueAtIndicesRequest(name=name,
                                                            indices=index_array.flatten(),
                                                            values_int=bmi_pb2.IntArrayMessage(values=src.flatten()))
-            elif src.dtype == numpy.float32:
+            elif src.dtype in (numpy.float32, numpy.float16):
                 request = bmi_pb2.SetValueAtIndicesRequest(name=name,
                                                            indices=index_array.flatten(),
                                                            values_float=bmi_pb2.FloatArrayMessage(values=src.flatten()))

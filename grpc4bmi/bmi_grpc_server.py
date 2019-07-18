@@ -160,9 +160,9 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         try:
             values = reserve_values(self.bmi_model_, request.name)
             values = self.bmi_model_.get_value(request.name, values)
-            if values.dtype == numpy.int32:
+            if values.dtype in (numpy.int64, numpy.int32, numpy.int16):
                 return bmi_pb2.GetValueResponse(values_int=bmi_pb2.IntArrayMessage(values=values.flatten()))
-            if values.dtype == numpy.float32:
+            if values.dtype in (numpy.float32, numpy.float16):
                 return bmi_pb2.GetValueResponse(values_float=bmi_pb2.FloatArrayMessage(values=values.flatten()))
             if values.dtype == numpy.float64:
                 return bmi_pb2.GetValueResponse(values_double=bmi_pb2.DoubleArrayMessage(values=values.flatten()))
@@ -178,9 +178,9 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             indices = numpy.array(request.indices)
             values = reserve_values_at_indices(self.bmi_model_, request.name, indices)
             values = self.bmi_model_.get_value_at_indices(request.name, values, indices)
-            if values.dtype == numpy.int32:
+            if values.dtype in (numpy.int64, numpy.int32, numpy.int16):
                 return bmi_pb2.GetValueAtIndicesResponse(values_int=bmi_pb2.IntArrayMessage(values=values.flatten()))
-            if values.dtype == numpy.float32:
+            if values.dtype in (numpy.float32, numpy.float16):
                 return bmi_pb2.GetValueAtIndicesResponse(values_float=bmi_pb2.FloatArrayMessage(values=values.flatten()))
             if values.dtype == numpy.float64:
                 return bmi_pb2.GetValueAtIndicesResponse(values_double=bmi_pb2.DoubleArrayMessage(values=values.flatten()))
@@ -204,10 +204,10 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         try:
             index_array = numpy.array(request.indices)
             if request.HasField("values_int"):
-                array = numpy.array(request.values_int.values, dtype=numpy.int32)
+                array = numpy.array(request.values_int.values, dtype=numpy.int64)
                 self.bmi_model_.set_value_at_indices(request.name, index_array, array)
             if request.HasField("values_float"):
-                array = numpy.array(request.values_int.values, dtype=numpy.float32)
+                array = numpy.array(request.values_float.values, dtype=numpy.float32)
                 self.bmi_model_.set_value_at_indices(request.name, index_array, array)
             if request.HasField("values_double"):
                 array = numpy.array(request.values_double.values, dtype=numpy.float64)
@@ -324,6 +324,3 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             return bmi_pb2.GetGridNodesPerFaceResponse(links=links)
         except Exception as e:
             self.exception_handler(e, context)
-
-    def __repr__(self) -> str:
-        return self.bmi_model_.__repr__()

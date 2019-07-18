@@ -10,7 +10,7 @@ from google.rpc import error_details_pb2, status_pb2
 from grpc4bmi import bmi_pb2
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_padding
-from test.conftest import SomeException, FailingModel, RectGridBmiModel, UnstructuredGridBmiModel
+from test.fake_models import SomeException, FailingModel, Rect3DGridModel, UnstructuredGridBmiModel
 from test.flatbmiheat import FlatBmiHeat
 
 """
@@ -368,7 +368,7 @@ def test_method_exceptions_with_stacktrace(server_method, server_request):
 
 
 def test_get_grid_x():
-    model = RectGridBmiModel()
+    model = Rect3DGridModel()
     server = BmiServer(model, True)
     grid_id, request = make_grid_request(model)
 
@@ -379,7 +379,7 @@ def test_get_grid_x():
 
 
 def test_get_grid_y():
-    model = RectGridBmiModel()
+    model = Rect3DGridModel()
     server = BmiServer(model, True)
     grid_id, request = make_grid_request(model)
 
@@ -390,7 +390,7 @@ def test_get_grid_y():
 
 
 def test_get_grid_z():
-    model = RectGridBmiModel()
+    model = Rect3DGridModel()
     server = BmiServer(model, True)
     grid_id, request = make_grid_request(model)
 
