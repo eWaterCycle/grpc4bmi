@@ -11,7 +11,7 @@ matrix:
             - docker pull ewatercycle/walrus-grpc4bmi:v0.2.0
             - singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
         script:
-            - pytest
+            - pytest --cov=grpc4bmi --cov-report xml
         cache:
          - pip
          - directories:
@@ -40,6 +40,8 @@ matrix:
                 sudo make install
                 cd ${TRAVIS_BUILD_DIR}
               fi
+        after_success:
+          - sonar-scanner -Dsonar.login=$SONAR_TOKEN
       - language: cpp
         before_install:
             - git submodule update --init
@@ -65,3 +67,7 @@ matrix:
         cache:
             directories:
                 - /usr/local
+addons:
+  sonarcloud:
+    organization: ewatercycle
+
