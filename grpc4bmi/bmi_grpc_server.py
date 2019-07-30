@@ -290,6 +290,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         except Exception as e:
             self.exception_handler(e, context)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
+        # type: (BmiServer) -> str
         return self.bmi_model_.__repr__()
 
