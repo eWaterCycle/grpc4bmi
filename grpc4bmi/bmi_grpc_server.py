@@ -324,3 +324,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             return bmi_pb2.GetGridNodesPerFaceResponse(links=links)
         except Exception as e:
             self.exception_handler(e, context)
+
+    def __repr__(self):
+        # type: (BmiServer) -> str
+        return self.bmi_model_.__repr__()
