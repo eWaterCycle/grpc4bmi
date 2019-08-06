@@ -1,5 +1,4 @@
 setuptools
-googleapis-common-protos
 docutils
 PyYAML
 numpydoc
@@ -14,4 +13,3 @@ sphinx
 sphinxcontrib-napoleon
 sphinx-argparse
 sphinx_rtd_theme
-
