@@ -48,3 +48,6 @@ class TestBmiClientDocker:
         # After initialization and update the forcings have been read from the extra volume
         result = reserve_values(walrus_model_with_extra_volume, 'Q')
         assert len(walrus_model_with_extra_volume.get_value('Q', result)) == 1
+
+    def test_get_var_location(self, walrus_model):
+        assert walrus_model.get_var_location('Q') == 'node'
