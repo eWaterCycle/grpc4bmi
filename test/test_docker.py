@@ -6,7 +6,7 @@ from grpc4bmi.reserve import reserve_grid_padding, reserve_values
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.3.0", image_port=55555, input_dir=str(tmp_path))
+    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.3.1", image_port=55555, input_dir=str(tmp_path))
     yield model
     del model
 
@@ -14,7 +14,7 @@ def walrus_model(tmp_path, walrus_input):
 @pytest.fixture()
 def walrus_model_with_extra_volume(tmp_path, walrus_input_on_extra_volume):
     (input_dir, extra_volumes) = walrus_input_on_extra_volume
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.3.0",
+    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.3.1",
                             image_port=55555,
                             input_dir=str(input_dir),
                             extra_volumes=extra_volumes)

@@ -6,7 +6,7 @@ from grpc4bmi.reserve import reserve_grid_padding
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientSingularity(image="docker://ewatercycle/walrus-grpc4bmi:v0.3.0", input_dir=str(tmp_path))
+    model = BmiClientSingularity(image="docker://ewatercycle/walrus-grpc4bmi:v0.3.1", input_dir=str(tmp_path))
     yield model
     del model
 
