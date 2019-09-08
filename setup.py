@@ -36,6 +36,7 @@ setup(name="grpc4bmi",
       ],
       extras_require={
           'R': ['rpy2'],
+          'asyncio': ['grpclib'],
       },
       classifiers=["Development Status :: 3 - Alpha",
                    "Intended Audience :: Science/Research",
