@@ -20,6 +20,7 @@ setup(name="grpc4bmi",
       packages=find_packages(),
       include_package_data=True,
       long_description=read("README.md"),
+      long_description_content_type='text/markdown',
       entry_points={"console_scripts": [
           "run-bmi-server =  grpc4bmi.run_server:main"
       ]},
