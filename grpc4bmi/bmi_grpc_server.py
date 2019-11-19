@@ -191,11 +191,14 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def setValue(self, request, context):
         try:
             if request.HasField("values_int"):
-                self.bmi_model_.set_value(request.name, request.values_int.values)
+                array = numpy.array(request.values_int.values, dtype=numpy.int64)
+                self.bmi_model_.set_value(request.name, array)
             if request.HasField("values_float"):
-                self.bmi_model_.set_value(request.name, request.values_float.values)
+                array = numpy.array(request.values_float.values, dtype=numpy.float32)
+                self.bmi_model_.set_value(request.name, array)
             if request.HasField("values_double"):
-                self.bmi_model_.set_value(request.name, request.values_double.values)
+                array = numpy.array(request.values_double.values, dtype=numpy.float64)
+                self.bmi_model_.set_value(request.name, array)
             return bmi_pb2.Empty()
         except Exception as e:
             self.exception_handler(e, context)
