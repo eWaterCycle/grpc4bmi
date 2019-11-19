@@ -234,6 +234,26 @@ void test_var_itemsize(BmiGRPCService* s, BmiClass* b)
     delete response;
 }
 
+
+void test_var_location(BmiGRPCService* s, BmiClass* b)
+{
+    std::vector<std::string> names = get_bmi_varnames(b);
+    bmi::GetVarRequest* request = new bmi::GetVarRequest();
+    bmi::GetVarLocationResponse* response = new bmi::GetVarLocationResponse();
+    for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
+    {
+        char expected_loc_char[4];
+        b->GetVarLocation(names[i].c_str(), expected_loc_char);
+        request->set_name(names[i]);
+        s->getVarLocation(NULL, request, response);
+        bmi::GetVarLocationResponse::Location expected_location;
+        bmi::GetVarLocationResponse::Location_Parse(std::string(expected_loc_char), &expected_location);
+        assert(expected_location == response->location());
+    }
+    delete request;
+    delete response;
+}
+
 void test_var_nbytes(BmiGRPCService* s, BmiClass* b)
 {
     std::vector<std::string> names = get_bmi_varnames(b);
@@ -610,6 +630,10 @@ int main(int argc, char* argv[])
     else if(testfunc == "var_itemsize")
     {
         test_var_itemsize(bmi_service, bmi);
+    }
+    else if(testfunc == "var_location")
+    {
+        test_var_location(bmi_service, bmi);
     }
     else if(testfunc == "var_nbytes")
     {

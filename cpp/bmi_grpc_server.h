@@ -32,6 +32,7 @@ class BmiGRPCService final: public BmiService::Service
         grpc::Status getVarGrid(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarGridResponse* response) override;
         grpc::Status getVarType(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarTypeResponse* response) override;
         grpc::Status getVarItemSize(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarItemSizeResponse* response) override;
+        grpc::Status getVarLocation(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarLocationResponse* response) override;
         grpc::Status getVarUnits(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarUnitsResponse* response) override;
         grpc::Status getVarNBytes(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetVarNBytesResponse* response) override;
         grpc::Status getValue(grpc::ServerContext* context, const bmi::GetVarRequest* request, bmi::GetValueResponse* response) override;

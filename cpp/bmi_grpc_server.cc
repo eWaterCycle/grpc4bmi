@@ -232,6 +232,24 @@ grpc::Status BmiGRPCService::getVarItemSize(grpc::ServerContext *context, const 
     return grpc::Status::OK;
 }
 
+grpc::Status BmiGRPCService::getVarLocation(grpc::ServerContext *context, const bmi::GetVarRequest *request, bmi::GetVarLocationResponse *response)
+{
+    try
+    {
+        char loc[4];
+        this->bmi->GetVarLocation(request->name().c_str(), loc);
+        bmi::GetVarLocationResponse::Location loce;
+        bmi::GetVarLocationResponse::Location_Parse(std::string(loc), &loce);
+        response->set_location(loce);
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
+
 grpc::Status BmiGRPCService::getVarUnits(grpc::ServerContext *context, const bmi::GetVarRequest *request, bmi::GetVarUnitsResponse *response)
 {
     try
