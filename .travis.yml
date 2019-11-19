@@ -45,11 +45,14 @@ matrix:
             - sudo apt-get install -y build-essential autoconf libtool pkg-config
             - | 
                 if [[ ! -f /usr/local/bin/protoc || ! -f /usr/local/bin/grpc_cpp_plugin ]]; then
-                  git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+                  git clone -b v1.25.0 https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init --recursive
-                  sudo make -j4 install
                   cd third_party/protobuf
+                  ./autogen.sh
+                  ./configure
+                  sudo make -j4 install
+                  cd ../..
                   sudo make -j4 install
                   cd ${TRAVIS_BUILD_DIR}
                 else
