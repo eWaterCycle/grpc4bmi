@@ -1,6 +1,6 @@
 import pytest
 
-from grpc4bmi.bmi_client_docker import BmiClientDocker
+from grpc4bmi.bmi_client_docker import BmiClientDocker, LogsException
 from grpc4bmi.reserve import reserve_grid_padding, reserve_values
 
 
@@ -51,3 +51,7 @@ class TestBmiClientDocker:
 
     def test_get_var_location(self, walrus_model):
         assert walrus_model.get_var_location('Q') == 'node'
+
+    def test_logs(self, walrus_model):
+        lg = walrus_model.logs()
+        assert b"Loading required package:" in lg

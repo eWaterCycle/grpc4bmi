@@ -7,6 +7,9 @@ import docker
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.utils import stage_config_file
 
+class LogsException(Exception):
+    pass
+
 
 class BmiClientDocker(BmiClient):
     """
@@ -83,3 +86,10 @@ class BmiClientDocker(BmiClient):
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
+
+    def logs(self):
+        """Logs of the Docker container"""
+        try:
+            return self.container.logs()
+        except docker.errors.APIError as e:
+            raise LogException("Unable to fetch logs, try pass remove=False to BmiClientDocker constructor, so logs are retained after container dies") from e
