@@ -40,6 +40,6 @@ def reserve_grid_nodes(model: Bmi, grid_id: int, dim_index: int) -> numpy.ndarra
 
 
 def reserve_values_at_indices(model: Bmi, name: str, indices) -> numpy.ndarray:
-    """Reserve dest for :funct:`bmipy.Bmi.get_value_at_indices` """
+    """Reserve dest for :func:`bmipy.Bmi.get_value_at_indices` """
     dtype = model.get_var_type(name)
     return numpy.empty(len(indices), dtype=dtype)
