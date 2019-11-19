@@ -1,0 +1,27 @@
+{
+    "creators": [
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "van den Oord, Gijs"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Verhoeven, Stefan",
+            "orcid": "0000-0002-5821-2060"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Pelupessy, Inti"
+        }
+    ],
+    "keywords": [
+        "grpc",
+        "bmi",
+        "docker",
+        "singularity"
+    ],
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "gRPC wrapper for model with a Basic modeling interface"
+}

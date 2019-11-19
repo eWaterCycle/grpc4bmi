@@ -10,7 +10,7 @@ We assume that service is always dedicated to a single client, addressing a BMI 
 Python BMI Client
 .................
 
-For a given running BMI service process connected to networking port ``<PORT>``, we can start communicating with this server by instantiating the ``BmiClient`` python class:
+For a given running BMI service process connected to networking port ``<PORT>``, we can start communicating with this server by instantiating the :class:`grpc4bmi.bmi_grpc_client.BmiClient` python class:
 
 .. code-block:: python
 

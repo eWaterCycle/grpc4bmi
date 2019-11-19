@@ -14,8 +14,7 @@ from concurrent import futures
 import grpc
 from grpc_reflection.v1alpha import reflection
 
-from basic_modeling_interface import Bmi
-
+from grpc4bmi.bmi_grpc_legacy_server import BmiLegacyServer02
 from . import bmi_pb2
 from . import bmi_pb2_grpc
 from .bmi_grpc_server import BmiServer
@@ -46,7 +45,6 @@ def interrupt(signum, frame):
 
 
 def build(name, path):
-    # type: (str, str) -> Bmi
     """Build a model based on it's location and name"""
     if path is not None:
         sys.path.append(path)
@@ -123,7 +121,10 @@ def main(argv=sys.argv[1:]):
             s.bind(("", 0))
             port = int(s.getsockname()[1])
 
-    serve(BmiServer(model, args.debug), port)
+    if args.bmi_version == '0.2':
+        serve(BmiLegacyServer02(model, args.debug), port)
+    else:
+        serve(BmiServer(model, args.debug), port)
 
 
 def build_parser():
@@ -141,6 +142,8 @@ def build_parser():
         lang_choices.append('R')
     parser.add_argument("--language", default="python", choices=lang_choices,
                         help="Language in which BMI implementation class is written")
+    parser.add_argument("--bmi-version", default="1.0.0", choices=["1.0.0", "0.2"],
+                        help="Version of BMI interface implemented by model")
     parser.add_argument("--debug", action="store_true",
                         help="Run server in debug mode. "
                              "Logs errors with stacktraces and returns stacktrace in error response")

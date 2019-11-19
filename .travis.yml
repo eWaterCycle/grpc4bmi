@@ -1,3 +1,5 @@
+git:
+  submodules: false
 matrix:
     include:
       - language: python
@@ -6,10 +8,10 @@ matrix:
         install:
             - pip install -r requirements.txt
             - python setup.py install
-            - docker pull ewatercycle/walrus-grpc4bmi:v0.2.0
-            - singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
+            - docker pull ewatercycle/walrus-grpc4bmi:v0.3.1
+            - singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.3.1
         script:
-            - pytest
+            - pytest --cov=grpc4bmi --cov-report xml
         cache:
          - pip
          - directories:
@@ -38,6 +40,8 @@ matrix:
                 sudo make install
                 cd ${TRAVIS_BUILD_DIR}
               fi
+        after_success:
+          - sonar-scanner -Dsonar.login=$SONAR_TOKEN
       - language: cpp
         before_install:
             - git submodule update --init
@@ -45,18 +49,19 @@ matrix:
             - sudo apt-get install -y build-essential autoconf libtool pkg-config
             - | 
                 if [[ ! -f /usr/local/bin/protoc || ! -f /usr/local/bin/grpc_cpp_plugin ]]; then
-                  git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+                  git clone -b v1.25.0 https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init --recursive
-                  sudo make -j4 install
                   cd third_party/protobuf
+                  ./autogen.sh
+                  ./configure
+                  sudo make -j4 install
+                  cd ../..
                   sudo make -j4 install
                   cd ${TRAVIS_BUILD_DIR}
                 else
                   echo "using cached builds of protobuf and grpc"
                 fi
-                cd ${TRAVIS_BUILD_DIR}/cpp/bmi-c && mkdir -p build && cd build
-                cmake .. && sudo make install
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - cmake ..
@@ -65,3 +70,7 @@ matrix:
         cache:
             directories:
                 - /usr/local
+addons:
+  sonarcloud:
+    organization: ewatercycle
+

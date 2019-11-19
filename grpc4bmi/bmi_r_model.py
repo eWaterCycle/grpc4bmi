@@ -1,4 +1,4 @@
-from basic_modeling_interface import Bmi
+from bmipy import Bmi
 import rpy2.robjects as robjects
 import numpy as np
 
@@ -16,7 +16,14 @@ def build_model(class_name, source_fn=None):
 
 
 class BmiR(Bmi):
-    """Python Wrapper of a R based sub class of bmi::AbstractBmi"""
+    """Python Wrapper of a R based sub class of bmi::AbstractBmi .
+
+    AbstractBmi is available in https://github.com/eWaterCycle/bmi-r repo.
+
+    Args:
+        class_name (str): Name of R class which extends bmi::AbstractBmi
+        source_fn (str): R file which contains `class_name` class
+    """
     def __init__(self, class_name, source_fn=None):
         self.model = build_model(class_name, source_fn)
 
@@ -26,12 +33,6 @@ class BmiR(Bmi):
 
     def update(self):
         self.model['update']()
-
-    def update_until(self, time):
-        self.model['updateUntil'](time)
-
-    def update_fraq(self, time_frac):
-        self.model['updateFrac '](time_frac)
 
     def finalize(self):
         self.model['bmi_finalize']()
@@ -63,79 +64,118 @@ class BmiR(Bmi):
         return self.model['getTimeUnits']()[0]
 
     # vars
-    def get_var_type(self, var_name):
-        return self.model['getVarType'](var_name)[0]
+    def get_var_type(self, name):
+        return self.model['getVarType'](name)[0]
 
-    def get_var_units(self, var_name):
-        return self.model['getVarUnits'](var_name)[0]
+    def get_var_units(self, name):
+        return self.model['getVarUnits'](name)[0]
 
-    def get_var_itemsize(self, var_name):
-        return self.model['getVarItemSize'](var_name)[0]
+    def get_var_itemsize(self, name):
+        return self.model['getVarItemSize'](name)[0]
 
-    def get_var_nbytes(self, var_name):
-        return self.model['getVarNBytes'](var_name)[0]
+    def get_var_nbytes(self, name):
+        return self.model['getVarNBytes'](name)[0]
 
-    def get_var_grid(self, var_name):
-        return self.model['getVarGrid'](var_name)[0]
+    def get_var_grid(self, name):
+        return self.model['getVarGrid'](name)[0]
+
+    def get_var_location(self, name: str) -> str:
+        return self.model['getVarLocation'](name)[0]
 
     # getter
-    def get_value(self, var_name):
-        val = self.model['getValue'](var_name)
-        return np.array(val)
+    def get_value(self, name, dest):
+        val = self.model['getValue'](name)
+        np.copyto(src=val, dst=dest)
+        return dest
 
-    def get_value_at_indices(self, var_name, indices):
+    def get_value_at_indices(self, name, dest, indices):
         rindices = robjects.IntVector(indices)
-        val = self.model['getValueAtIndices'](var_name, rindices)
-        return np.array(val)
+        val = self.model['getValueAtIndices'](name, rindices)
+        np.copyto(src=val, dst=dest)
+        return dest
+
+    def get_value_ptr(self, name):
+        msg = 'Unable to implement get_value_ptr(), not possible to pass pointer between R and Python'
+        raise NotImplementedError(msg)
 
     # setter
-    def set_value(self, var_name, src):
+    def set_value(self, name, src):
         val = np.array(src)
         if val.dtype == np.int32:
             rsrc = robjects.IntVector(val)
         else:
             rsrc = robjects.FloatVector(val)
-        self.model['setValue'](var_name, rsrc)
+        self.model['setValue'](name, rsrc)
 
-    def set_value_at_indices(self, var_name, indices, src):
+    def set_value_at_indices(self, name, indices, src):
         val = np.array(src)
         if val.dtype == np.int32:
             rsrc = robjects.IntVector(val)
         else:
             rsrc = robjects.FloatVector(val)
         rindices = robjects.IntVector(indices)
-        self.model['setValueAtIndices'](var_name, rindices, rsrc)
+        self.model['setValueAtIndices'](name, rindices, rsrc)
 
     # grid
-    def get_grid_rank(self, grid_id):
-        return self.model['getGridRank'](grid_id)[0]
+    def get_grid_rank(self, grid):
+        return self.model['getGridRank'](grid)[0]
 
-    def get_grid_size(self, grid_id):
-        return self.model['getGridSize'](grid_id)[0]
+    def get_grid_size(self, grid):
+        return self.model['getGridSize'](grid)[0]
 
-    def get_grid_type(self, grid_id):
-        return self.model['getGridType'](grid_id)[0]
+    def get_grid_type(self, grid):
+        return self.model['getGridType'](grid)[0]
 
-    def get_grid_shape(self, grid_id):
-        return np.array(self.model['getGridShape'](grid_id))
+    def get_grid_shape(self, grid, shape):
+        val = self.model['getGridShape'](grid)
+        np.copyto(src=val, dst=shape)
+        return shape
 
-    def get_grid_x(self, grid_id):
-        return np.array(self.model['getGridX'](grid_id))
+    def get_grid_x(self, grid, x):
+        val = np.array(self.model['getGridX'](grid))
+        np.copyto(src=val, dst=x)
+        return x
 
-    def get_grid_y(self, grid_id):
-        return np.array(self.model['getGridY'](grid_id))
+    def get_grid_y(self, grid, y):
+        val = np.array(self.model['getGridY'](grid))
+        np.copyto(src=val, dst=y)
+        return y
 
-    def get_grid_z(self, grid_id):
-        return np.array(self.model['getGridZ'](grid_id))
+    def get_grid_z(self, grid, z):
+        val = np.array(self.model['getGridZ'](grid))
+        np.copyto(src=val, dst=z)
+        return z
 
-    def get_grid_spacing(self, grid_id):
-        return np.array(self.model['getGridSpacing'](grid_id))
+    def get_grid_spacing(self, grid, spacing):
+        val = np.array(self.model['getGridSpacing'](grid))
+        np.copyto(src=val, dst=spacing)
+        return spacing
 
-    def get_grid_origin(self, grid_id):
-        return np.array(self.model['getGridOrigin'](grid_id))
+    def get_grid_origin(self, grid, origin):
+        val = np.array(self.model['getGridOrigin'](grid))
+        np.copyto(src=val, dst=origin)
+        return origin
 
-    def get_grid_connectivity(self, grid_id):
-        return np.array(self.model['getGridConnectivity'](grid_id))
+    def get_grid_node_count(self, grid):
+        return self.model['getGridNodeCount'](grid)[0]
 
-    def get_grid_offset(self, grid_id):
-        return np.array(self.model['getGridOffset'](grid_id))
+    def get_grid_edge_count(self, grid):
+        return self.model['getGridEdgeCount'](grid)[0]
+
+    def get_grid_face_count(self, grid):
+        return self.model['getGridFaceCount'](grid)[0]
+
+    def get_grid_edge_nodes(self, grid, edge_nodes):
+        result = self.model['getGridEdgeNodes'](grid)
+        np.copyto(src=result, dst=edge_nodes)
+        return edge_nodes
+
+    def get_grid_face_nodes(self, grid, face_nodes):
+        result = self.model['getGridFaceNodes'](grid)
+        np.copyto(src=result, dst=face_nodes)
+        return face_nodes
+
+    def get_grid_nodes_per_face(self, grid, edge_nodes):
+        result = self.model['getGridNodesPerFace'](grid)
+        np.copyto(src=result, dst=edge_nodes)
+        return edge_nodes

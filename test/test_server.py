@@ -6,10 +6,11 @@ import numpy.random
 import pytest
 import grpc
 from google.rpc import error_details_pb2, status_pb2
-from basic_modeling_interface import Bmi
 
 from grpc4bmi import bmi_pb2
 from grpc4bmi.bmi_grpc_server import BmiServer
+from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_padding
+from test.fake_models import SomeException, FailingModel, Rect3DGridModel, UnstructuredGridBmiModel
 from test.flatbmiheat import FlatBmiHeat
 
 """
@@ -53,6 +54,21 @@ def make_bmi_classes(init=False):
         numpy.random.seed(0)
         local.initialize(None)
     return server, local
+
+
+def make_var_request(local):
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    setattr(request, "name", varname)
+    return request, varname
+
+
+def make_grid_request(local):
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    grid_id = local.get_var_grid(varname)
+    setattr(request, "grid_id", grid_id)
+    return grid_id, request
 
 
 def test_server_start():
@@ -130,47 +146,57 @@ def test_get_start_end_time():
 
 def test_get_var_grid():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    setattr(request, "name", varname)
+    request, varname = make_var_request(local)
+
     assert server.getVarGrid(request, None).grid_id == local.get_var_grid(varname)
     del server
 
 
 def test_get_var_type():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    setattr(request, "name", varname)
+    request, varname = make_var_request(local)
+
     assert server.getVarType(request, None).type == local.get_var_type(varname)
     del server
 
 
 def test_get_var_units():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    setattr(request, "name", varname)
+    request, varname = make_var_request(local)
+
     assert server.getVarUnits(request, None).units == local.get_var_units(varname)
     del server
 
 
 def test_get_var_nbytes():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    setattr(request, "name", varname)
+    request, varname = make_var_request(local)
+
     assert server.getVarNBytes(request, None).nbytes == local.get_var_nbytes(varname)
     del server
 
 
-def test_get_var_values():
+def test_get_var_location():
+    server, local = make_bmi_classes(True)
+    request, varname = make_var_request(local)
+
+    raw_result = server.getVarLocation(request, None).location
+    result = bmi_pb2.GetVarLocationResponse.Location.Name(raw_result).lower()
+
+    expected = local.get_var_location(varname)
+    assert result == expected
+    del server
+
+
+def test_get_var_value():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
     setattr(request, "name", varname)
-    values = local.get_value(varname)
-    numpy.testing.assert_allclose(numpy.reshape(server.getValue(request, None).values_double.values, values.shape), values)
+    values = local.get_value(varname, reserve_values(local, varname))
+    numpy.testing.assert_allclose(
+        numpy.reshape(server.getValue(request, reserve_values(local, varname)).values_double.values, values.shape),
+        values)
 
 
 def test_get_var_ptr():
@@ -182,7 +208,7 @@ def test_get_var_ptr():
         server.getValuePtr(request, None)
 
 
-def test_get_vals_indices():
+def test_get_value_at_indices():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
@@ -190,7 +216,8 @@ def test_get_vals_indices():
     setattr(request, "name", varname)
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 1)
-    values = local.get_value_at_indices(varname, indices)
+    dest = numpy.empty(4)
+    values = local.get_value_at_indices(varname, dest, indices)
     numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
@@ -202,7 +229,8 @@ def test_get_vals_indices_2d():
     setattr(request, "name", varname)
     setattr(request, "indices", indices.flatten())
     setattr(request, "index_size", 2)
-    values = local.get_value_at_indices(varname, indices)
+    dest = numpy.empty(6)
+    values = local.get_value_at_indices(varname, dest, indices)
     numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
@@ -210,7 +238,8 @@ def test_set_var_values():
     server, local = make_bmi_classes(True)
     request = RequestStub()
     varname = local.get_output_var_names()[0]
-    values = 0.123 * local.get_value(varname)
+    dest = reserve_values(local, varname)
+    values = 0.123 * local.get_value(varname, dest)
     setattr(request, "name", varname)
     setattr(request, "values_double", value_wrapper(values))
     setattr(request, "shape", values.shape)
@@ -240,194 +269,49 @@ def test_set_values_indices():
 
 def test_get_grid_size():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
+    grid_id, request = make_grid_request(local)
     assert server.getGridSize(request, None).size == local.get_grid_size(grid_id)
 
 
 def test_get_grid_rank():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
+    grid_id, request = make_grid_request(local)
     assert server.getGridRank(request, None).rank == local.get_grid_rank(grid_id)
 
 
 def test_get_grid_type():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
+    grid_id, request = make_grid_request(local)
     assert server.getGridType(request, None).type == local.get_grid_type(grid_id)
 
 
 def test_get_grid_shape():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridShape(request, None).shape) == local.get_grid_shape(grid_id)
+    grid_id, request = make_grid_request(local)
+    result = server.getGridShape(request, reserve_grid_shape(local, grid_id)).shape
+    expected = local.get_grid_shape(grid_id, reserve_grid_shape(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
 
 
 def test_get_grid_spacing():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridSpacing(request, None).spacing) == local.get_grid_spacing(grid_id)
+    grid_id, request = make_grid_request(local)
+    result = server.getGridSpacing(request, reserve_grid_padding(local, grid_id)).spacing
+    expected = local.get_grid_spacing(grid_id, reserve_grid_padding(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
 
 
 def test_get_grid_origin():
     server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridOrigin(request, None).origin) == local.get_grid_origin(grid_id)
-
-
-def test_get_grid_points():
-    server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
-    assert server.getGridX(request, None).coordinates == make_list(local.get_grid_x(grid_id))
-    assert server.getGridY(request, None).coordinates == make_list(local.get_grid_y(grid_id))
-    assert server.getGridZ(request, None).coordinates == make_list(local.get_grid_z(grid_id))
-
-
-def test_get_grid_connectivity():
-    server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    setattr(request, "grid_id", grid_id)
-    assert server.getGridConnectivity(request, None).links == make_list(local.get_grid_connectivity(grid_id))
-
-
-class SomeException(Exception):
-    pass
-
-
-class FailingModel(Bmi):
-    def __init__(self, exc):
-        self.exc = exc
-
-    def initialize(self, filename):
-        raise self.exc
-
-    def update(self):
-        raise self.exc
-
-    def update_until(self, time):
-        raise self.exc
-
-    def update_frac(self, time_frac):
-        raise self.exc
-
-    def finalize(self):
-        raise self.exc
-
-    def get_component_name(self):
-        raise self.exc
-
-    def get_input_var_names(self):
-        raise self.exc
-
-    def get_output_var_names(self):
-        raise self.exc
-
-    def get_start_time(self):
-        raise self.exc
-
-    def get_current_time(self):
-        raise self.exc
-
-    def get_end_time(self):
-        raise self.exc
-
-    def get_time_step(self):
-        raise self.exc
-
-    def get_time_units(self):
-        raise self.exc
-
-    def get_var_type(self, var_name):
-        raise self.exc
-
-    def get_var_units(self, var_name):
-        raise self.exc
-
-    def get_var_itemsize(self, var_name):
-        raise self.exc
-
-    def get_var_nbytes(self, var_name):
-        raise self.exc
-
-    def get_var_grid(self, var_name):
-        raise self.exc
-
-    def get_value(self, var_name):
-        raise self.exc
-
-    def get_value_ref(self, var_name):
-        raise self.exc
-
-    def get_value_at_indices(self, var_name, indices):
-        raise self.exc
-
-    def set_value(self, var_name, src):
-        raise self.exc
-
-    def set_value_at_indices(self, var_name, indices, src):
-        raise self.exc
-
-    def get_grid_shape(self, grid_id):
-        raise self.exc
-
-    def get_grid_x(self, grid_id):
-        raise self.exc
-
-    def get_grid_y(self, grid_id):
-        raise self.exc
-
-    def get_grid_z(self, grid_id):
-        raise self.exc
-
-    def get_grid_spacing(self, grid_id):
-        raise self.exc
-
-    def get_grid_origin(self, grid_id):
-        raise self.exc
-
-    def get_grid_connectivity(self, grid_id):
-        raise self.exc
-
-    def get_grid_offset(self, grid_id):
-        raise self.exc
-
-    def get_grid_rank(self, grid_id):
-        raise self.exc
-
-    def get_grid_size(self, grid_id):
-        raise self.exc
-
-    def get_grid_type(self, grid_id):
-        raise self.exc
+    grid_id, request = make_grid_request(local)
+    result = server.getGridOrigin(request, reserve_grid_padding(local, grid_id)).origin
+    expected = local.get_grid_origin(grid_id, reserve_grid_padding(local, grid_id))
+    numpy.testing.assert_allclose(result, expected)
 
 
 @pytest.mark.parametrize("server_method,server_request", [
     ('initialize', bmi_pb2.InitializeRequest(config_file='/data/config.ini')),
     ('update', bmi_pb2.Empty()),
-    ('updateUntil', bmi_pb2.UpdateUntilRequest(until=42)),
-    ('updateFrac', bmi_pb2.UpdateFracRequest(frac=0.5)),
     ('finalize', bmi_pb2.Empty()),
     ('getComponentName', bmi_pb2.Empty()),
     ('getInputVarNames', bmi_pb2.Empty()),
@@ -456,8 +340,13 @@ class FailingModel(Bmi):
     ('getGridX', bmi_pb2.GridRequest(grid_id=42)),
     ('getGridY', bmi_pb2.GridRequest(grid_id=42)),
     ('getGridZ', bmi_pb2.GridRequest(grid_id=42)),
-    ('getGridConnectivity', bmi_pb2.GridRequest(grid_id=42)),
-    ('getGridOffset', bmi_pb2.GridRequest(grid_id=42)),
+
+    ('getGridNodeCount', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridEdgeCount', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridFaceCount', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridEdgeNodes', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridFaceNodes', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridNodesPerFace', bmi_pb2.GridRequest(grid_id=42)),
 ])
 def test_method_exceptions_with_stacktrace(server_method, server_request):
     exc = SomeException('Bmi method always fails')
@@ -476,3 +365,98 @@ def test_method_exceptions_with_stacktrace(server_method, server_request):
     metadata.details[0].Unpack(debuginfo)
     assert debuginfo.detail == "SomeException('Bmi method always fails',)"
     assert len(debuginfo.stack_entries) > 0
+
+
+def test_get_grid_x():
+    model = Rect3DGridModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridX(request, None).coordinates
+
+    expected = numpy.array([0.1, 0.2, 0.3, 0.4])
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_get_grid_y():
+    model = Rect3DGridModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridY(request, None).coordinates
+
+    expected = numpy.array([1.1, 1.2, 1.3])
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_get_grid_z():
+    model = Rect3DGridModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridZ(request, None).coordinates
+
+    expected = numpy.array([2.1, 2.2])
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_grid_node_count():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridNodeCount(request, None).count
+
+    assert result == 4
+
+
+def test_grid_edge_count():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridEdgeCount(request, None).count
+
+    assert result == 5
+
+
+def test_grid_face_count():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridFaceCount(request, None).count
+
+    assert result == 2
+
+
+def test_get_grid_edge_nodes():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridEdgeNodes(request, None).links
+
+    expected = (0, 3, 3, 1, 2, 1, 1, 0, 2, 0)
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_get_grid_face_nodes():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridFaceNodes(request, None).links
+
+    expected = (0, 3, 2, 0, 2, 1)
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_get_grid_nodes_per_face():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridNodesPerFace(request, None).links
+
+    numpy.testing.assert_allclose(result, (3, 3,))

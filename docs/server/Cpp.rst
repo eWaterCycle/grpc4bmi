@@ -13,15 +13,14 @@ For native programming languages it is necessary to install and compile the C++ 
     cd grpc && git submodule update --init --recursive
     sudo make install && cd third_party/protobuf && sudo make install
 
-You will also need to compile the bmi-c and grpc4bmi
+You will also need to compile grpc4bmi
 
 .. code-block:: sh
 
     git clone --depth=1 https://github.com/eWaterCycle/grpc4bmi.git
-    cd grpc4bmi && git submodule update --init --recursive
-    cd cpp/bmi-c && mkdir -p build && cd build
-    cmake .. && sudo make install
-    mkdir -p ../../build && cd ../../build && cmake .. && sudo make install
+    cd grpc4bmi && git submodule update --init
+    cd cpp
+    mkdir -p build && cd build && cmake .. && sudo make install
 
 
 Creating

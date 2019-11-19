@@ -1,11 +1,5 @@
 setuptools
-googleapis-common-protos
-grpcio
-grpcio-tools
-grpcio-reflection
-numpy
 docutils
-protobuf
 PyYAML
 numpydoc
 cfunits
@@ -14,9 +8,8 @@ docker
 pytest
 pytest-cov
 futures
-https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
+https://github.com/csdms/bmi-example-python/archive/master.zip#egg=bmi-heat
 sphinx
 sphinxcontrib-napoleon
 sphinx-argparse
 sphinx_rtd_theme
-

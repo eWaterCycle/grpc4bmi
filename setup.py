@@ -31,7 +31,7 @@ setup(name="grpc4bmi",
           "protobuf",
           "numpy",
           "docker",
-          "basic-modeling-interface",
+          "bmipy",
           "semver",
       ],
       extras_require={
