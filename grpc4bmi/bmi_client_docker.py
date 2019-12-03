@@ -7,6 +7,7 @@ import docker
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.utils import stage_config_file
 
+
 class LogsException(Exception):
     pass
 
@@ -26,6 +27,7 @@ class BmiClientDocker(BmiClient):
         output_dir (str): Directory for input files of model
         user (str): Username or UID of Docker container
         remove (bool): Automatically remove the container when it exits
+        delay (int): Seconds to wait for Docker container to startup, before connecting to it
         extra_volumes (Dict[str,Dict]): Extra volumes to attach to Docker container.
             The key is either the hosts path or a volume name and the value is a dictionary with the keys:
 
@@ -46,7 +48,7 @@ class BmiClientDocker(BmiClient):
     def __init__(self, image, image_port=55555, host=None,
                  input_dir=None, output_dir=None,
                  user=os.getuid(), remove=True,
-                 extra_volumes=None):
+                 delay=5, extra_volumes=None):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
@@ -73,7 +75,7 @@ class BmiClientDocker(BmiClient):
                                                user=user,
                                                remove=remove,
                                                detach=True)
-        time.sleep(5)
+        time.sleep(delay)
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
@@ -92,4 +94,4 @@ class BmiClientDocker(BmiClient):
         try:
             return self.container.logs()
         except docker.errors.APIError as e:
-            raise LogException("Unable to fetch logs, try pass remove=False to BmiClientDocker constructor, so logs are retained after container dies") from e
+            raise LogsException("Unable to fetch logs, try pass remove=False to BmiClientDocker constructor, so logs are retained after container dies") from e
