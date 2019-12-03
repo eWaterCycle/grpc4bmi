@@ -23,6 +23,7 @@ class BmiClientDocker(BmiClient):
         output_dir (str): Directory for input files of model
         user (str): Username or UID of Docker container
         remove (bool): Automatically remove the container when it exits
+        delay (int): Seconds to wait for Docker container to startup, before connecting to it
 
     """
 
@@ -31,7 +32,7 @@ class BmiClientDocker(BmiClient):
 
     def __init__(self, image, image_port=50051, host=None,
                  input_dir=None, output_dir=None,
-                 user=os.getuid(), remove=True):
+                 user=os.getuid(), remove=True, delay=5):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
@@ -56,7 +57,7 @@ class BmiClientDocker(BmiClient):
                                                user=user,
                                                remove=remove,
                                                detach=True)
-        time.sleep(5)
+        time.sleep(delay)
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
