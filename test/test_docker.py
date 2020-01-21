@@ -1,12 +1,17 @@
+from io import BytesIO
+
+import docker
 import pytest
 
-from grpc4bmi.bmi_client_docker import BmiClientDocker, LogsException
+from grpc4bmi.bmi_client_docker import BmiClientDocker, DeadDockerContainerException
 from grpc4bmi.reserve import reserve_grid_padding, reserve_values
+
+walrus_docker_image = 'ewatercycle/walrus-grpc4bmi:v0.3.1'
 
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.3.1", image_port=55555, input_dir=str(tmp_path))
+    model = BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dir=str(tmp_path))
     yield model
     del model
 
@@ -14,12 +19,22 @@ def walrus_model(tmp_path, walrus_input):
 @pytest.fixture()
 def walrus_model_with_extra_volume(tmp_path, walrus_input_on_extra_volume):
     (input_dir, extra_volumes) = walrus_input_on_extra_volume
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.3.1",
+    model = BmiClientDocker(image=walrus_docker_image,
                             image_port=55555,
                             input_dir=str(input_dir),
                             extra_volumes=extra_volumes)
     yield model
     del model
+
+
+@pytest.fixture()
+def exit_container():
+    client = docker.from_env()
+    prog = "import sys;print('my stderr log message', file=sys.stderr);print('my stdout log message');sys.exit(25)"
+    dockerfile = BytesIO(f'FROM {walrus_docker_image}\nCMD ["python3", "-c", "{prog}" ]\n'.encode())
+    image, logs = client.images.build(fileobj=dockerfile)
+    yield image.id
+    client.images.remove(image.id, force=True)
 
 
 class TestBmiClientDocker:
@@ -55,3 +70,12 @@ class TestBmiClientDocker:
     def test_logs(self, walrus_model):
         lg = walrus_model.logs()
         assert b"Loading required package:" in lg
+
+    def test_container_start_failure(self, exit_container):
+        expected = r"Failed to start Docker container with image"
+        with pytest.raises(DeadDockerContainerException, match=expected) as excinfo:
+            BmiClientDocker(image=exit_container)
+
+        assert excinfo.value.exitcode == 25
+        assert b'my stderr' in excinfo.value.logs
+        assert b'my stdout' in excinfo.value.logs
