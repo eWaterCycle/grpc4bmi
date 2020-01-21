@@ -8,6 +8,24 @@ from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.utils import stage_config_file
 
 
+class DeadDockerContainerException(ChildProcessError):
+    """
+    Exception for when a Docker container has died.
+
+    Args:
+        message (str): Human readable error message
+        exitcode (int): The non-zero exit code of the container
+        logs (str): Logs the container produced
+
+    """
+    def __init__(self, message, exitcode, logs, *args):
+        super().__init__(message, *args)
+        #: Exit code of container
+        self.exitcode = exitcode
+        #: Stdout and stderr of container
+        self.logs = logs
+
+
 class BmiClientDocker(BmiClient):
     """
     BMI GRPC client for dockerized server processes: the initialization launches the docker container which should have the
@@ -22,7 +40,7 @@ class BmiClientDocker(BmiClient):
         input_dir (str): Directory for input files of model
         output_dir (str): Directory for input files of model
         user (str): Username or UID of Docker container
-        remove (bool): Automatically remove the container when it exits
+        remove (bool): Automatically remove the container and logs when it exits.
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
 
     """
@@ -32,7 +50,7 @@ class BmiClientDocker(BmiClient):
 
     def __init__(self, image, image_port=50051, host=None,
                  input_dir=None, output_dir=None,
-                 user=os.getuid(), remove=True, delay=5):
+                 user=os.getuid(), remove=False, delay=5):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
@@ -58,6 +76,15 @@ class BmiClientDocker(BmiClient):
                                                remove=remove,
                                                detach=True)
         time.sleep(delay)
+        if not remove:
+            # Only able to reload, read logs when container is not in auto remove mode
+            self.container.reload()
+            if self.container.status == 'exited':
+                exitcode = self.container.attrs["State"]["ExitCode"]
+                logs = self.container.logs()
+                msg = f'Failed to start Docker container with image {image}'
+                raise DeadDockerContainerException(msg, exitcode, logs)
+
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
 
     def __del__(self):
