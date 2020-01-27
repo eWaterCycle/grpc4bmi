@@ -11,7 +11,7 @@ def read(fname):
 
 
 setup(name="grpc4bmi",
-      version="0.2.1",
+      version="0.2.2",
       author="Gijs van den Oord",
       author_email="g.vandenoord@esciencecenter.nl",
       description="Run your BMI implementation in a separate process and expose it as BMI-python with GRPC",
