@@ -71,6 +71,12 @@ class TestBmiClientDocker:
         lg = walrus_model.logs()
         assert b"Loading required package:" in lg
 
+    def test_inputdir_absent(self, tmp_path):
+        dirthatdoesnotexist = 'dirthatdoesnotexist'
+        input_dir = tmp_path / dirthatdoesnotexist
+        with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dir=str(input_dir))
+
     def test_container_start_failure(self, exit_container):
         expected = r"Failed to start Docker container with image"
         with pytest.raises(DeadDockerContainerException, match=expected) as excinfo:

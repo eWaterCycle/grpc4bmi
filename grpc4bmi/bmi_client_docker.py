@@ -74,6 +74,8 @@ class BmiClientDocker(BmiClient):
         self.input_dir = None
         if input_dir is not None:
             self.input_dir = os.path.abspath(input_dir)
+            if not os.path.isdir(self.input_dir):
+                raise NotADirectoryError(input_dir)
             volumes[self.input_dir] = {"bind": BmiClientDocker.input_mount_point, "mode": "rw"}
         self.output_dir = None
         if output_dir is not None:
@@ -99,7 +101,7 @@ class BmiClientDocker(BmiClient):
             if self.container.status == 'exited':
                 exitcode = self.container.attrs["State"]["ExitCode"]
                 logs = self.container.logs()
-                msg = f'Failed to start Docker container with image {image}'
+                msg = f'Failed to start Docker container with image {image}, Container log: {logs}'
                 raise DeadDockerContainerException(msg, exitcode, logs)
 
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
