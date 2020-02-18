@@ -35,7 +35,7 @@ class TestBmiClientDocker:
 
 
 @pytest.fixture
-def notebook(tmp_path):
+def notebook():
     cells = [
         new_code_cell(dedent("""\
             from grpc4bmi.bmi_client_singularity import BmiClientSingularity
