@@ -22,4 +22,3 @@ sphinx_rtd_theme
 nbconvert
 ipykernel
 nbformat
-textwrap
