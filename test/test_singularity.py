@@ -1,11 +1,18 @@
+from textwrap import dedent
+
 import pytest
+import nbformat
+from nbconvert.preprocessors import ExecutePreprocessor
+from nbformat.v4 import new_notebook, new_code_cell
 
 from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+
+IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
 
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientSingularity(image="docker://ewatercycle/walrus-grpc4bmi:v0.2.0", input_dir=str(tmp_path))
+    model = BmiClientSingularity(image=IMAGE_NAME, input_dir=str(tmp_path))
     yield model
     del model
 
@@ -26,3 +33,20 @@ class TestBmiClientDocker:
         walrus_model.initialize(str(walrus_input))
         grid_id = walrus_model.get_var_grid('Q')
         assert len(walrus_model.get_grid_x(grid_id)) == 1
+
+
+@pytest.fixture
+def notebook(tmp_path):
+    cells = [
+        new_code_cell(dedent("""\
+            from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+            model = BmiClientSingularity(image='{0}')
+            assert walrus_model.get_component_name() == 'WALRUS'
+        """.format(IMAGE_NAME)))
+    ]
+    return new_notebook(cells=cells)
+
+
+def test_from_notebook(notebook, tmp_path):
+    ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
+    ep.preprocess(notebook, {'metadata': {'path': tmp_path}})
