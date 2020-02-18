@@ -1,7 +1,6 @@
 from textwrap import dedent
 
 import pytest
-import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
@@ -40,9 +39,9 @@ def notebook(tmp_path):
     cells = [
         new_code_cell(dedent("""\
             from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-            model = BmiClientSingularity(image='{0}')
+            walrus_model = BmiClientSingularity(image='{0}')
             assert walrus_model.get_component_name() == 'WALRUS'
-            del model
+            del walrus_model
         """.format(IMAGE_NAME)))
     ]
     return new_notebook(cells=cells)
