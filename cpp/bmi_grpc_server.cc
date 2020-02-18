@@ -658,6 +658,10 @@ void run_bmi_server(Bmi* model, int argc, char* argv[])
     {
         server_address = "0.0.0.0:" + std::string(argv[1]);
     }
+    std::string bmi_port = std::getenv('BMI_PORT');
+    if(!bmi_port.empty()) {
+        server_address = "0.0.0.0:" + bmi_port;
+    }
     std::cerr<<"BMI grpc server attached to server address "<<server_address<<std::endl;
     BmiGRPCService service(model); 
     grpc::ServerBuilder builder;

@@ -34,6 +34,7 @@ Running
 -------
 
 Since native language lack reflection, it is necessary to make your own ``run_bmi_server`` program. We provide a function ``run_bmi_server(Bmi*, int*, char*)`` in the ``bmi_grpc_server.h`` header that can be called with your model instance (see the example below). To compile your server binary, it is necessary to link against grpc4bmi and protobuf libraries.
+The program will accept a optional single argument which is the port the server runs on. The port can also be specified using the BMI_PORT environment variable. The default port is 50051.
 
 .. _example_cpp:
 
