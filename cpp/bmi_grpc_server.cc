@@ -658,7 +658,7 @@ void run_bmi_server(Bmi* model, int argc, char* argv[])
     {
         server_address = "0.0.0.0:" + std::string(argv[1]);
     }
-    std::string bmi_port = std::getenv('BMI_PORT');
+    std::string bmi_port = std::getenv("BMI_PORT");
     if(!bmi_port.empty()) {
         server_address = "0.0.0.0:" + bmi_port;
     }
