@@ -42,6 +42,7 @@ def notebook(tmp_path):
             from grpc4bmi.bmi_client_singularity import BmiClientSingularity
             model = BmiClientSingularity(image='{0}')
             assert walrus_model.get_component_name() == 'WALRUS'
+            del model
         """.format(IMAGE_NAME)))
     ]
     return new_notebook(cells=cells)
