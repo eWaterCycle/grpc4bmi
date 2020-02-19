@@ -113,9 +113,9 @@ def main(argv=sys.argv[1:]):
     else:
         model = build(args.name, path)
 
-    port = args.port
+    port = int(os.environ.get("BMI_PORT", 0))
     if port == 0:
-        port = int(os.environ.get("BMI_PORT", 0))
+        port = args.port
     if port == 0:
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
             s.bind(("", 0))
