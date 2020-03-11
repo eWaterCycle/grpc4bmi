@@ -36,6 +36,19 @@ grpc::Status BmiGRPCService::update(grpc::ServerContext *context, const bmi::Emp
     return grpc::Status::OK;
 }
 
+grpc::Status BmiGRPCService::updateUntil(grpc::ServerContext *context, const bmi::GetTimeResponse *request, bmi::Empty *response)
+{
+    try
+    {
+        this->bmi->UpdateUntil(request->time());
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
 grpc::Status BmiGRPCService::finalize(grpc::ServerContext *context, const bmi::Empty *request, bmi::Empty *response)
 {
     try
@@ -56,6 +69,32 @@ grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext *context, cons
         char name[BMI_MAX_COMPONENT_NAME];
         this->bmi->GetComponentName(name);
         response->set_name(std::string(name));
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status BmiGRPCService::getInputItemCount(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetCountResponse *response)
+{
+    try
+    {
+        response->set_count(this->bmi->GetInputVarNameCount());
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status BmiGRPCService::getOutputItemCount(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetCountResponse *response)
+{
+    try
+    {
+        response->set_count(this->bmi->GetOutputVarNameCount());
     }
     catch (const std::exception &e)
     {
@@ -588,7 +627,7 @@ grpc::Status BmiGRPCService::getGridZ(grpc::ServerContext *context, const bmi::G
     return grpc::Status::OK;
 }
 
-grpc::Status BmiGRPCService::getGridNodeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridElementCountResponse *response)
+grpc::Status BmiGRPCService::getGridNodeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetCountResponse *response)
 {
     try
     {
@@ -601,7 +640,7 @@ grpc::Status BmiGRPCService::getGridNodeCount(grpc::ServerContext *context, cons
     return grpc::Status::OK;
 }
 
-grpc::Status BmiGRPCService::getGridEdgeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridElementCountResponse *response)
+grpc::Status BmiGRPCService::getGridEdgeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetCountResponse *response)
 {
     try
     {
@@ -614,7 +653,7 @@ grpc::Status BmiGRPCService::getGridEdgeCount(grpc::ServerContext *context, cons
     return grpc::Status::OK;
 }
 
-grpc::Status BmiGRPCService::getGridFaceCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridElementCountResponse *response)
+grpc::Status BmiGRPCService::getGridFaceCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetCountResponse *response)
 {
     try
     {
@@ -635,8 +674,8 @@ grpc::Status BmiGRPCService::getGridEdgeNodes(grpc::ServerContext *context, cons
         int size = 2*(this->bmi->GetGridEdgeCount(request->grid_id()));
         vals = (int *)malloc(size * sizeof(int));
         this->bmi->GetGridEdgeNodes(request->grid_id(), vals);
-        response->mutable_links()->Resize(size, 0);
-        std::copy(vals, vals + size, response->mutable_links()->begin());
+        response->mutable_edge_nodes()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_edge_nodes()->begin());
     }
     catch (const std::exception &e)
     {
@@ -663,8 +702,8 @@ grpc::Status BmiGRPCService::getGridFaceNodes(grpc::ServerContext *context, cons
         }
         vals = (int *)malloc(size * sizeof(int));
         this->bmi->GetGridFaceNodes(request->grid_id(), vals);
-        response->mutable_links()->Resize(size, 0);
-        std::copy(vals, vals + size, response->mutable_links()->begin());
+        response->mutable_face_nodes()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_face_nodes()->begin());
     }
     catch (const std::exception &e)
     {
@@ -677,6 +716,36 @@ grpc::Status BmiGRPCService::getGridFaceNodes(grpc::ServerContext *context, cons
     return grpc::Status::OK;
 }
 
+grpc::Status BmiGRPCService::getGridFaceEdges(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridFaceEdgesResponse *response)
+{
+    int *vals;
+    int *faceedges;
+    try
+    {
+        int face_count = this->bmi->GetGridFaceCount(request->grid_id());
+        faceedges = (int *)malloc(face_count * sizeof(int));
+        this->bmi->GetGridNodesPerFace(request->grid_id(), faceedges);
+        int size = 0;
+        for(int i = 0; i < face_count; ++i)
+        {
+            size += faceedges[i];
+        }
+        vals = (int *)malloc(size * sizeof(int));
+        this->bmi->GetGridFaceEdges(request->grid_id(), vals);
+        response->mutable_face_edges()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_face_edges()->begin());
+    }
+    catch (const std::exception &e)
+    {
+        free(faceedges);
+        free(vals);
+        return BmiGRPCService::handle_exception(e);
+    }
+    free(faceedges);
+    free(vals);
+    return grpc::Status::OK;
+}
+
 grpc::Status BmiGRPCService::getGridNodesPerFace(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridNodesPerFaceResponse *response)
 {
     int *vals;
@@ -685,8 +754,8 @@ grpc::Status BmiGRPCService::getGridNodesPerFace(grpc::ServerContext *context, c
         int size = this->bmi->GetGridFaceCount(request->grid_id());
         vals = (int *)malloc(size * sizeof(int));
         this->bmi->GetGridNodesPerFace(request->grid_id(), vals);
-        response->mutable_links()->Resize(size, 0);
-        std::copy(vals, vals + size, response->mutable_links()->begin());
+        response->mutable_nodes_per_face()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_nodes_per_face()->begin());
     }
     catch (const std::exception &e)
     {
