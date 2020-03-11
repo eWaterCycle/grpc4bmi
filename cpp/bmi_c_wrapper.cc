@@ -38,7 +38,9 @@ void BmiCWrapper::Finalize()
 
 std::string BmiCWrapper::GetComponentName()
 {
+    char* dest;
     checkStatus(this->model->get_component_name(this->model->self, dest));
+    return dest;
 }
 
 int BmiCWrapper::GetInputItemCount()
@@ -57,12 +59,16 @@ int BmiCWrapper::GetOutputItemCount()
 
 std::vector<std::string> BmiCWrapper::GetInputVarNames()
 {
+    char** dest;
     checkStatus(this->model->get_input_var_names(this->model->self, dest));
+    // TODO convert dest to vector of strings
 }
 
 std::vector<std::string> BmiCWrapper::GetOutputVarNames()
 {
+    char** dest;
     checkStatus(this->model->get_output_var_names(this->model->self, dest));
+    // TODO convert dest to vector of strings
 }
 
 int BmiCWrapper::GetVarGrid(std::string name)
@@ -74,7 +80,9 @@ int BmiCWrapper::GetVarGrid(std::string name)
 
 std::string BmiCWrapper::GetVarType(std::string name)
 {
+    char* vtype;
     checkStatus(this->model->get_var_type(this->model->self, const_cast<char*>(name.c_str()), vtype));
+    return vtype;
 }
 
 int BmiCWrapper::GetVarItemsize(std::string name)
@@ -86,7 +94,9 @@ int BmiCWrapper::GetVarItemsize(std::string name)
 
 std::string BmiCWrapper::GetVarUnits(std::string name)
 {
+    char* dest;
     checkStatus(this->model->get_var_units(this->model->self, const_cast<char*>(name.c_str()), dest));
+    return dest;
 }
 
 int BmiCWrapper::GetVarNbytes(std::string name)
@@ -98,7 +108,9 @@ int BmiCWrapper::GetVarNbytes(std::string name)
 
 std::string BmiCWrapper::GetVarLocation(std::string name)
 {
+    char* location;
     checkStatus(this->model->get_var_location(this->model->self, const_cast<char*>(name.c_str()), location));
+    return location;
 }
 
 double BmiCWrapper::GetCurrentTime()
@@ -124,7 +136,9 @@ double BmiCWrapper::GetEndTime()
 
 std::string BmiCWrapper::GetTimeUnits()
 {
+    char* dest;
     checkStatus(this->model->get_time_units(this->model->self, dest));
+    return dest;
 }
 
 double BmiCWrapper::GetTimeStep()
@@ -136,20 +150,19 @@ double BmiCWrapper::GetTimeStep()
 
 void BmiCWrapper::GetValue(std::string name, void* dest)
 {
-    checkStatus(this->model->get_value(this->model->self, const_cast<char*>(name), dest));
+    checkStatus(this->model->get_value(this->model->self, const_cast<char*>(name.c_str()), dest));
 }
 
 void* BmiCWrapper::GetValuePtr(std::string name)
 {
     void* dest;
-    checkStatus(this->model->get_value_ptr(this->model->self, const_cast<char*>(name), &dest));
+    checkStatus(this->model->get_value_ptr(this->model->self, const_cast<char*>(name.c_str()), &dest));
     return dest;
 }
 
 void BmiCWrapper::GetValueAtIndices(std::string name, void* dest, int* pts, int numpts)
 {
-    checkStatus(this->model->get_value_at_indices(this->model->self, const_cast<char*>(name), dest, const_cast<int*>(pts), numpts));
-    return dest; // Is this the idea?
+    checkStatus(this->model->get_value_at_indices(this->model->self, const_cast<char*>(name.c_str()), dest, const_cast<int*>(pts), numpts));
 }
 
 void BmiCWrapper::SetValue(std::string name, void* src)
@@ -159,7 +172,7 @@ void BmiCWrapper::SetValue(std::string name, void* src)
 
 void BmiCWrapper::SetValueAtIndices(std::string name, int* pts, int numpts, void* values)
 {
-    checkStatus(this->model->set_value_at_indices(this->model->self, const_cast<char*>(name.c_str()), values, pts, numpts));
+    checkStatus(this->model->set_value_at_indices(this->model->self, const_cast<char*>(name.c_str()), pts, numpts, values));
 }
 
 int BmiCWrapper::GetGridSize(int id)
@@ -178,7 +191,9 @@ int BmiCWrapper::GetGridRank(int id)
 
 std::string BmiCWrapper::GetGridType(int id)
 {
+    char* dest;
     checkStatus(this->model->get_grid_type(this->model->self, id, dest));
+    return dest;
 }
 
 void BmiCWrapper::GetGridShape(int id, int* dest)
