@@ -46,17 +46,18 @@ matrix:
         before_install:
             - git submodule update --init
             - sudo apt-get update
-            - sudo apt-get install -y build-essential autoconf libtool pkg-config
+            - sudo apt-get install -y build-essential autoconf libtool pkg-config libunwind-dev
             - | 
                 if [[ ! -f /usr/local/bin/protoc || ! -f /usr/local/bin/grpc_cpp_plugin ]]; then
                   git clone -b v1.27.2 https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init --recursive
-                  cd third_party/protobuf
-                  ./autogen.sh
-                  ./configure
-                  sudo make -j4 install
-                  cd ../..
+                  wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Linux-x86_64.sh
+                  sudo sh cmake-linux.sh -- --skip-license --prefix=/usr/local
+                  rm cmake-linux.sh
+                  mkdir cmake/build
+                  cd cmake/build
+                  /usr/local/bin/cmake ../.. -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF
                   sudo make -j4 install
                   cd ${TRAVIS_BUILD_DIR}
                 else
@@ -64,7 +65,7 @@ matrix:
                 fi
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
-            - cmake ..
+            - /usr/local/bin/cmake ..
             - make
             - ctest -V
         cache:
