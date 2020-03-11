@@ -1,9 +1,14 @@
 #ifndef BMI_C_WRAPPER_H_INCLUDED
 #define BMI_C_WRAPPER_H_INCLUDED
 
+#include <string>
+#include <vector>
+
 #ifndef BMI_INCLUDED
 #define BMI_INCLUDED
 #include "bmi-c/bmi.h"
+#undef BMI_SUCCESS
+#undef BMI_FAILURE
 #include "bmi-cxx/bmi.hxx"
 #endif
   
