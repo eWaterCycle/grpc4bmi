@@ -83,9 +83,14 @@ def test_component_name():
     del server
 
 
-def test_varnames():
+def test_input_var_names():
     server, local = make_bmi_classes()
     assert server.getInputVarNames(None, None).names == list(local.get_input_var_names())
+    del server
+
+
+def test_output_var_names():
+    server, local = make_bmi_classes()
     assert server.getOutputVarNames(None, None).names == list(local.get_output_var_names())
     del server
 
@@ -312,8 +317,11 @@ def test_get_grid_origin():
 @pytest.mark.parametrize("server_method,server_request", [
     ('initialize', bmi_pb2.InitializeRequest(config_file='/data/config.ini')),
     ('update', bmi_pb2.Empty()),
+    ('updateUntil', bmi_pb2.GetTimeResponse(time=42)),
     ('finalize', bmi_pb2.Empty()),
     ('getComponentName', bmi_pb2.Empty()),
+    ('getInputItemCount', bmi_pb2.Empty()),
+    ('getOutputItemCount', bmi_pb2.Empty()),
     ('getInputVarNames', bmi_pb2.Empty()),
     ('getOutputVarNames', bmi_pb2.Empty()),
     ('getTimeUnits', bmi_pb2.Empty()),
@@ -346,6 +354,7 @@ def test_get_grid_origin():
     ('getGridFaceCount', bmi_pb2.GridRequest(grid_id=42)),
     ('getGridEdgeNodes', bmi_pb2.GridRequest(grid_id=42)),
     ('getGridFaceNodes', bmi_pb2.GridRequest(grid_id=42)),
+    ('getGridFaceEdges', bmi_pb2.GridRequest(grid_id=42)),
     ('getGridNodesPerFace', bmi_pb2.GridRequest(grid_id=42)),
 ])
 def test_method_exceptions_with_stacktrace(server_method, server_request):
@@ -407,7 +416,7 @@ def test_grid_node_count():
 
     result = server.getGridNodeCount(request, None).count
 
-    assert result == 4
+    assert result == 6
 
 
 def test_grid_edge_count():
@@ -417,7 +426,7 @@ def test_grid_edge_count():
 
     result = server.getGridEdgeCount(request, None).count
 
-    assert result == 5
+    assert result == 8
 
 
 def test_grid_face_count():
@@ -427,7 +436,7 @@ def test_grid_face_count():
 
     result = server.getGridFaceCount(request, None).count
 
-    assert result == 2
+    assert result == 3
 
 
 def test_get_grid_edge_nodes():
@@ -435,9 +444,9 @@ def test_get_grid_edge_nodes():
     server = BmiServer(model, True)
     grid_id, request = make_grid_request(model)
 
-    result = server.getGridEdgeNodes(request, None).links
+    result = server.getGridEdgeNodes(request, None).edge_nodes
 
-    expected = (0, 3, 3, 1, 2, 1, 1, 0, 2, 0)
+    expected = (0, 1, 1, 2, 2, 3, 3, 0, 1, 4, 4, 5, 5, 2, 5, 3)
     numpy.testing.assert_allclose(result, expected)
 
 
@@ -446,9 +455,20 @@ def test_get_grid_face_nodes():
     server = BmiServer(model, True)
     grid_id, request = make_grid_request(model)
 
-    result = server.getGridFaceNodes(request, None).links
+    result = server.getGridFaceNodes(request, None).face_nodes
 
-    expected = (0, 3, 2, 0, 2, 1)
+    expected = (0, 1, 2, 3, 1, 4, 5, 2, 2, 5, 3)
+    numpy.testing.assert_allclose(result, expected)
+
+
+def test_get_grid_face_edges():
+    model = UnstructuredGridBmiModel()
+    server = BmiServer(model, True)
+    grid_id, request = make_grid_request(model)
+
+    result = server.getGridFaceEdges(request, None).face_edges
+
+    expected = (0, 1, 2, 3, 4, 5, 6, 1, 6, 7, 2)
     numpy.testing.assert_allclose(result, expected)
 
 
@@ -457,6 +477,6 @@ def test_get_grid_nodes_per_face():
     server = BmiServer(model, True)
     grid_id, request = make_grid_request(model)
 
-    result = server.getGridNodesPerFace(request, None).links
+    result = server.getGridNodesPerFace(request, None).nodes_per_face
 
-    numpy.testing.assert_allclose(result, (3, 3,))
+    numpy.testing.assert_allclose(result, (4, 4, 3))

@@ -19,10 +19,19 @@ class FailingModel(Bmi):
     def update(self):
         raise self.exc
 
+    def update_until(self, time: float) -> None:
+        raise self.exc
+
     def finalize(self):
         raise self.exc
 
     def get_component_name(self):
+        raise self.exc
+
+    def get_input_item_count(self) -> int:
+        raise self.exc
+
+    def get_output_item_count(self) -> int:
         raise self.exc
 
     def get_input_var_names(self):
@@ -122,6 +131,9 @@ class FailingModel(Bmi):
         raise self.exc
 
     def get_grid_nodes_per_face(self, grid: int, nodes_per_face: np.ndarray) -> np.ndarray:
+        raise self.exc
+
+    def get_grid_face_edges(self, grid: int, face_edges: np.ndarray) -> np.ndarray:
         raise self.exc
 
 
@@ -273,15 +285,16 @@ class Structured2DQuadrilateralsGridModel(GridModel):
 
 
 class UnstructuredGridBmiModel(GridModel):
+    # Uses grid example at https://bmi.readthedocs.io/en/latest/model_grids.html#unstructured-grids
     # Grid shape:
-    #    0
-    #   /|\
-    #  / | \
-    # 3  |  1
-    #  \ |  /
-    #   \| /
-    #    2
-    #
+    #    3-----\
+    #   / \     \
+    # 0    \    \---5
+    # \     2--/   /
+    #  \    /     /
+    #   \  /     /
+    #    1---\  /
+    #         4
     def get_grid_type(self, grid):
         return 'unstructured'
 
@@ -289,38 +302,42 @@ class UnstructuredGridBmiModel(GridModel):
         raise NotImplementedError('Do not know what shape is')
 
     def get_grid_size(self, grid):
-        return 4
+        return 6
 
     def get_grid_rank(self, grid: int) -> int:
         return 2
 
     def get_grid_node_count(self, grid: int) -> int:
-        return 4
+        return 6
 
     def get_grid_edge_count(self, grid: int) -> int:
-        return 5
+        return 8
 
     def get_grid_face_count(self, grid: int) -> int:
-        return 2
+        return 3
 
     def get_grid_edge_nodes(self, grid: int, edge_nodes: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=(0, 3, 3, 1, 2, 1, 1, 0, 2, 0), dst=edge_nodes)
+        numpy.copyto(src=(0, 1, 1, 2, 2, 3, 3, 0, 1, 4, 4, 5, 5, 2, 5, 3), dst=edge_nodes)
         return edge_nodes
 
     def get_grid_face_nodes(self, grid: int, face_nodes: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=(0, 3, 2, 0, 2, 1), dst=face_nodes)
+        numpy.copyto(src=(0, 1, 2, 3, 1, 4, 5, 2, 2, 5, 3), dst=face_nodes)
         return face_nodes
 
+    def get_grid_face_edges(self, grid: int, face_edges: np.ndarray) -> np.ndarray:
+        numpy.copyto(src=(0, 1, 2, 3, 4, 5, 6, 1, 6, 7, 2), dst=face_edges)
+        return face_edges
+
     def get_grid_nodes_per_face(self, grid: int, nodes_per_face: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=(3, 3,), dst=nodes_per_face)
+        numpy.copyto(src=(4, 4, 3), dst=nodes_per_face)
         return nodes_per_face
 
     def get_grid_x(self, grid: int, x: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[0.1, 0.2, 0.3, 0.4], dst=x)
+        numpy.copyto(src=[0., 1., 2., 1., 3., 4.], dst=x)
         return x
 
     def get_grid_y(self, grid: int, y: np.ndarray) -> np.ndarray:
-        numpy.copyto(src=[1.1, 1.2, 1.3, 1.4], dst=y)
+        numpy.copyto(src=[3., 1., 2., 4., 0., 3.], dst=y)
         return y
 
     def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
