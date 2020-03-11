@@ -3,8 +3,8 @@
 
 #ifndef BMI_INCLUDED
 #define BMI_INCLUDED
-#include "bmi.h"
-#include "bmi.hxx"
+#include "bmi-c/bmi.h"
+#include "bmi-cxx/bmi.hxx"
 #endif
   
 typedef Bmi BMIModel;

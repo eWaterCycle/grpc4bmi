@@ -33,9 +33,8 @@ set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc ${CMAKE_CURRENT_BINARY_
 set(GRPC_HDR_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.h)
 link_libraries(${PROTOBUF_LIBRARY} ${GRPCPP_UNSECURE} ${GRPC} ${BMIC})
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/../bmi)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library (grpc4bmi SHARED ${CMAKE_SOURCE_DIR}/../bmi/bmi.h ${CMAKE_SOURCE_DIR}/../bmi/bmi.hxx bmi_cpp_extension.h bmi_cpp_extension.cc
+add_library (grpc4bmi SHARED bmi-c/bmi.h bmi-cxx/bmi.hxx bmi_cpp_extension.h bmi_cpp_extension.cc
     bmi_c_wrapper.h bmi_c_wrapper.cc bmi_grpc_server.cc bmi_grpc_server.h ${GRPC_SRC_FILES} ${GRPC_HDR_FILES})
 set_target_properties(grpc4bmi PROPERTIES PUBLIC_HEADER "bmi_cpp_extension.h;bmi_c_wrapper.h;bmi_grpc_server.h;${GRPC_HDR_FILES}")
 add_subdirectory (test)
