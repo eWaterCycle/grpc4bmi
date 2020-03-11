@@ -47,6 +47,16 @@ std::string BmiTestExtension::GetComponentName() const
     return "test_model";
 }
 
+int BmiTestExtension::GetInputItemCount() const
+{
+    return this->input_vars.size();
+}
+
+int BmiTestExtension::GetOutputItemCount() const
+{
+    return this->output_vars.size();
+}
+
 std::vector<std::string> BmiTestExtension::GetInputVarNames() const
 {
     return this->input_vars;

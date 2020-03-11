@@ -16,6 +16,8 @@ class BmiTestExtension: public BmiCppExtension
         void Finalize() override;
 
         std::string GetComponentName() const override;
+        int GetInputItemCount() const override;
+        int GetOutputItemCount() const override;
         std::vector<std::string> GetInputVarNames() const override;
         std::vector<std::string> GetOutputVarNames() const override;
 

@@ -16,25 +16,25 @@ class BmiCWrapper: public bmi::Bmi
     ~BmiCWrapper();
 
     // Model control functions.
-    virtual void Initialize(const char *config_file) override;
+    virtual void Initialize(std::string config_file) override;
     virtual void Update() override;
     virtual void UpdateUntil(double time) override;
     virtual void Finalize() override;
 
     // Model information functions.
     virtual void GetComponentName(char * const name) override;
-    virtual int GetInputVarNameCount(void) override;
-    virtual int GetOutputVarNameCount(void) override;
+    virtual int GetInputItemCount(void) override;
+    virtual int GetOutputItemCount(void) override;
     virtual void GetInputVarNames(char **names) override;
     virtual void GetOutputVarNames(char **names) override;
 
     // Variable information functions
-    virtual int GetVarGrid(const char *name) override;
-    virtual void GetVarType(const char *name, char *vtype) override;
-    virtual void GetVarUnits (const char *name, char *units) override;
-    virtual int GetVarItemsize(const char *name) override;
-    virtual int GetVarNbytes(const char *name) override;
-    virtual void GetVarLocation(const char *name, char *location) override;
+    virtual int GetVarGrid(std::string name) override;
+    virtual void GetVarType(std::string name, char *vtype) override;
+    virtual void GetVarUnits (std::string name, char *units) override;
+    virtual int GetVarItemsize(std::string name) override;
+    virtual int GetVarNbytes(std::string name) override;
+    virtual void GetVarLocation(std::string name, char *location) override;
 
     virtual double GetCurrentTime(void) override;
     virtual double GetStartTime(void) override;
@@ -43,13 +43,13 @@ class BmiCWrapper: public bmi::Bmi
     virtual double GetTimeStep(void) override;
 
     // Variable getters
-    virtual void GetValue(const char *name, void *dest) override;
-    virtual void *GetValuePtr(const char *name) override;
-    virtual void *GetValueAtIndices(const char *name, void *dest, int *inds, int count) override;
+    virtual void GetValue(std::string name, void *dest) override;
+    virtual void *GetValuePtr(std::string name) override;
+    virtual void *GetValueAtIndices(std::string name, void *dest, int *inds, int count) override;
 
     // Variable setters
-    virtual void SetValue(const char *name, void *values) override;
-    virtual void SetValueAtIndices(const char *name, void *values, int *inds, int count) override;
+    virtual void SetValue(std::string name, void *values) override;
+    virtual void SetValueAtIndices(std::string name, void *values, int *inds, int count) override;
 
     // Grid information functions
     virtual int GetGridRank(const int grid) override;

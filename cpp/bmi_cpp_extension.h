@@ -16,21 +16,7 @@ class BmiCppExtension: public bmi::Bmi
       
     BmiCppExtension();
     virtual ~BmiCppExtension();
-    virtual void Initialize (const std::string& configfile) = 0;
 
-    virtual std::string GetComponentName() const = 0;
-    virtual std::vector<std::string> GetInputVarNames() const = 0;
-    virtual std::vector<std::string> GetOutputVarNames() const = 0;
-
-    virtual int GetVarGrid(const std::string& name) const = 0;
-    virtual std::string GetVarType(const std::string& name) const = 0;
-    virtual int GetVarItemsize(const std::string& name) const = 0;
-    virtual std::string GetVarUnits(const std::string& name) const = 0;
-    virtual int GetVarNbytes(const std::string& name) const = 0;
-    virtual std::string GetVarLocation(const std::string& name) const = 0;
-    virtual std::string GetTimeUnits() const = 0;
-
-    virtual std::string GetGridType(int id) const = 0;
     virtual std::vector<int> GetGridShape(int id) const = 0;
     virtual std::vector<double> GetGridSpacing(int id) const = 0;
     virtual std::vector<double> GetGridOrigin(int id) const = 0;
@@ -44,63 +30,40 @@ class BmiCppExtension: public bmi::Bmi
     virtual std::vector<int> GetGridFaceNodes(int id) const = 0;
     virtual std::vector<int> GetGridNodesPerFace(int id) const = 0;
 
-    template<typename T> std::vector<T> GetValue(const std::string& name)
+    template<typename T> std::vector<T> GetValue(const std::string name)
     {
-        std::vector<T> result(this->GetVarNbytes(name.c_str())/sizeof(T));
-        this->GetValue(name.c_str(), (void*)result.data());
+        std::vector<T> result(this->GetVarNbytes(name)/sizeof(T));
+        this->GetValue(name, (void*)result.data());
         return result;
     }
     template<typename T> T* GetValuePtr(const std::string& name)
     {
-        return static_cast<T*>(this->GetValuePtr(name.c_str()));
+        return static_cast<T*>(this->GetValuePtr(name));
     }
     template<typename T> std::vector<T> GetValueAtIndices(std::string name, std::vector<int>& indices)
     {
         std::vector<T> result(indices.size());
-        this->GetValueAtIndices(name.c_str(), (void*)result.data(), indices.data(), indices.size());
+        this->GetValueAtIndices(name, (void*)result.data(), indices.data(), indices.size());
         return result;
     }
 
     template<typename T> void SetValue(std::string name, const std::vector<T>& src)
     {
-        this->SetValue(name.c_str(), static_cast<void*>(src.data()));
+        this->SetValue(name, static_cast<void*>(src.data()));
     }
     template<typename T> void SetValueAtIndices(std::string name, const std::vector<T>& values, std::vector<int>& indices)
     {
-        this->SetValueAtIndices(name.c_str(), static_cast<void*>(values.data()), indices.data(), indices.size());
+        this->SetValueAtIndices(name, indices.data(), indices.size(), static_cast<void*>(values.data()));
     }
 
-    // Model control functions.
-    virtual void Initialize(const char *config_file) override;
-
-    // Model information functions.
-    virtual void GetComponentName(char * const name) override;
-    virtual int GetInputVarNameCount() override;
-    virtual int GetOutputVarNameCount() override;
-    virtual void GetInputVarNames(char **names) override;
-    virtual void GetOutputVarNames(char **names) override;
-
-    // Variable information functions
-    virtual int GetVarGrid(const char *name) override;
-    virtual void GetVarType(const char *name, char *vtype) override;
-    virtual void GetVarUnits (const char *name, char *units) override;
-    virtual int GetVarItemsize(const char *name) override;
-    virtual int GetVarNbytes(const char *name) override;
-    virtual void GetVarLocation(const char *name, char *location) override;
-
-    virtual void GetTimeUnits(char *units) override;
-
     // Variable getters
-    virtual void GetValue(const char *name, void *dest) override;
-    virtual void *GetValuePtr(const char *name) override;
-    virtual void *GetValueAtIndices(const char *name, void *dest, int *inds, int count) override;
+    virtual void GetValue(std::string name, void *dest) override;
+    virtual void *GetValuePtr(std::string name) override;
+    virtual void GetValueAtIndices(std::string name, void *dest, int *inds, int count) override;
 
     // Variable setters
-    virtual void SetValue(const char *name, void *values) override;
-    virtual void SetValueAtIndices(const char *name, void *values, int *inds, int count) override;
-
-    // Grid information functions
-    virtual void GetGridType(int grid, char *gtype) override;
+    virtual void SetValue(std::string name, void *src) override;
+    virtual void SetValueAtIndices(std::string name, int *inds, int count, void *src) override;
 
     virtual void GetGridShape(int grid, int *shape) override;
     virtual void GetGridSpacing(int grid, double *spacing) override;
@@ -139,7 +102,7 @@ class BmiCppExtension: public bmi::Bmi
 
   private:
 
-    char FindType(const std::string& name) const;
+    char FindType(const std::string name) const;
 };
 
 #endif /*BMI_CPP_EXTENSION_H_INCLUDED*/

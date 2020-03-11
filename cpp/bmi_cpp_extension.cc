@@ -6,206 +6,113 @@ BmiCppExtension::BmiCppExtension(){}
 
 BmiCppExtension::~BmiCppExtension(){}
 
-void BmiCppExtension::Initialize(const char* configfile)
+void BmiCppExtension::GetValue(std::string name, void *dest)
 {
-    this->Initialize(std::string(configfile));
-}
-
-void BmiCppExtension::GetComponentName(char* dest)
-{
-    std::string s = this->GetComponentName();
-    strncpy(dest, s.c_str(), s.size());
-    dest[s.size()] = '\0';
-}
-
-int BmiCppExtension::GetInputVarNameCount()
-{
-    return this->GetInputVarNames().size();
-}
-
-int BmiCppExtension::GetOutputVarNameCount()
-{
-    return this->GetOutputVarNames().size();
-}
-
-void BmiCppExtension::GetInputVarNames(char** dest)
-{
-    std::vector<std::string> src = this->GetInputVarNames();
-    for(std::vector<std::string>::size_type i = 0; i < src.size(); i++)
-    {
-        strncpy(dest[i], src[i].c_str(), src[i].size());
-        dest[i][src[i].size()] = '\0';
-    }
-}
-    
-void BmiCppExtension::GetOutputVarNames(char** dest)
-{
-    std::vector<std::string> src = this->GetOutputVarNames();
-    for(std::vector<std::string>::size_type i = 0; i < src.size(); i++)
-    {
-        strncpy(dest[i], src[i].c_str(), src[i].size());
-        dest[i][src[i].size()] = '\0';
-    }
-}
-
-void BmiCppExtension::GetVarType(const char* name, char* dest)
-{
-    std::string type = this->GetVarType(std::string(name));
-    strncpy(dest, type.c_str(), type.size());
-    dest[type.size()] = '\0';
-}
-
-int BmiCppExtension::GetVarItemsize(const char* name)
-{
-    return this->GetVarItemsize(std::string(name));
-}
-
-int BmiCppExtension::GetVarGrid(const char* name)
-{
-    return this->GetVarGrid(std::string(name));
-}
-
-void BmiCppExtension::GetVarUnits(const char* name, char* dest)
-{
-    std::string units = this->GetVarUnits(std::string(name));
-    strncpy(dest, units.c_str(), units.size());
-    dest[units.size()] = '\0';
-}
-
-int BmiCppExtension::GetVarNbytes(const char* name)
-{
-    return this->GetVarNbytes(std::string(name));
-}
-
-void BmiCppExtension::GetVarLocation(const char *name, char *dest)
-{
-    std::string loc = this->GetVarLocation(std::string(name));
-    strncpy(dest, loc.c_str(), loc.size());
-    dest[loc.size()] = '\0';
-}
-
-void BmiCppExtension::GetTimeUnits(char* dest)
-{
-    std::string units = this->GetTimeUnits();
-    strncpy(dest, units.c_str(), units.size());
-    dest[units.size()] = '\0';
-}
-
-void BmiCppExtension::GetValue(const char* name, void* dest)
-{
-    char type = this->FindType(std::string(name));
+    char type = this->FindType(name);
     if(type == 'i')
     {
-        std::vector<int> vals = this->GetValueInt(std::string(name));
+        std::vector<int> vals = this->GetValueInt(name);
         memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(int));
     }
     if(type == 'f')
     {
-        std::vector<float> vals = this->GetValueFloat(std::string(name));
+        std::vector<float> vals = this->GetValueFloat(name);
         memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(float));
     }
     if(type == 'd')
     {
-        std::vector<double> vals = this->GetValueDouble(std::string(name));
+        std::vector<double> vals = this->GetValueDouble(name);
         memcpy(dest, vals.data(), vals.size()*sizeof(double));
     }
 }
 
-void* BmiCppExtension::GetValuePtr(const char* name)
+void* BmiCppExtension::GetValuePtr(std::string name)
 {
-    char type = this->FindType(std::string(name));
+    char type = this->FindType(name);
     if(type == 'i')
     {
-        return static_cast<void*>(this->GetValueIntPtr(std::string(name)));
+        return static_cast<void*>(this->GetValueIntPtr(name));
     }
     if(type == 'f')
     {
-        return static_cast<void*>(this->GetValueFloatPtr(std::string(name)));
+        return static_cast<void*>(this->GetValueFloatPtr(name));
     }
     if(type == 'd')
     {
-        return static_cast<void*>(this->GetValueDoublePtr(std::string(name)));
+        return static_cast<void*>(this->GetValueDoublePtr(name));
     }
     return NULL;
 }
 
-void* BmiCppExtension::GetValueAtIndices(const char* name, void* dest, int* pts, int numpts)
+void BmiCppExtension::GetValueAtIndices(std::string name, void* dest, int* pts, int numpts)
 {
-    char type = this->FindType(std::string(name));
+    char type = this->FindType(name);
     std::vector<int> indices;
     indices.assign(pts, pts + numpts);
     if(type == 'i')
     {
-        std::vector<int> vals = this->GetValueIntAtIndices(std::string(name), indices);
+        std::vector<int> vals = this->GetValueIntAtIndices(name, indices);
         memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(int));
     }
     if(type == 'f')
     {
-        std::vector<float> vals = this->GetValueFloatAtIndices(std::string(name), indices);
+        std::vector<float> vals = this->GetValueFloatAtIndices(name, indices);
         memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(float));
     }
     if(type == 'd')
     {
-        std::vector<double> vals = this->GetValueDoubleAtIndices(std::string(name), indices);
+        std::vector<double> vals = this->GetValueDoubleAtIndices(name, indices);
         memcpy(dest, static_cast<void*>(vals.data()), vals.size()*sizeof(double));
     }
-    return dest;
 }
 
-void BmiCppExtension::SetValue(const char* name, void* src)
+void BmiCppExtension::SetValue(std::string name, void* src)
 {
-    char type = this->FindType(std::string(name));
+    char type = this->FindType(name);
     int nbytes = this->GetVarNbytes(name);
     if(type == 'i')
     {
         std::vector<int> vals;
         vals.assign(static_cast<const int*>(src), static_cast<const int*>(src) + nbytes / sizeof(int));
-        this->SetValueInt(std::string(name), vals);
+        this->SetValueInt(name, vals);
     }
     if(type == 'f')
     {
         std::vector<float> vals;
         vals.assign(static_cast<const float*>(src), static_cast<const float*>(src) + nbytes / sizeof(float));
-        this->SetValueFloat(std::string(name), vals);
+        this->SetValueFloat(name, vals);
     }
     if(type == 'd')
     {
         std::vector<double> vals;
         vals.assign(static_cast<const double*>(src), static_cast<const double*>(src) + nbytes / sizeof(double));
-        this->SetValueDouble(std::string(name), vals);
+        this->SetValueDouble(name, vals);
     }
 }
 
-void BmiCppExtension::SetValueAtIndices(const char* name, void* src, int* pts, int numpts)
+void BmiCppExtension::SetValueAtIndices(std::string name, int* pts, int numpts, void* src)
 {
-    char type = this->FindType(std::string(name));
+    char type = this->FindType(name);
     std::vector<int> indices(pts, pts + numpts);
     if(type == 'i')
     {
         std::vector<int> vals;
         vals.assign(static_cast<const int*>(src), static_cast<const int*>(src) + numpts);
-        this->SetValueIntAtIndices(std::string(name), indices, vals);
+        this->SetValueIntAtIndices(name, indices, vals);
     }
     if(type == 'f')
     {
         std::vector<float> vals;
         vals.assign(static_cast<const float*>(src), static_cast<const float*>(src) + numpts);
-        this->SetValueFloatAtIndices(std::string(name), indices, vals);
+        this->SetValueFloatAtIndices(name, indices, vals);
     }
     if(type == 'd')
     {
         std::vector<double> vals;
         vals.assign(static_cast<const double*>(src), static_cast<const double*>(src) + numpts);
-        this->SetValueDoubleAtIndices(std::string(name), indices, vals);
+        this->SetValueDoubleAtIndices(name, indices, vals);
     }
 
-}
-
-void BmiCppExtension::GetGridType(int id, char* dest)
-{
-    std::string type = this->GetGridType(id);
-    strncpy(dest, type.c_str(), type.size());
-    dest[type.size()] = '\0';
 }
 
 void BmiCppExtension::GetGridShape(int id, int* dest)
@@ -268,9 +175,11 @@ void BmiCppExtension::GetGridNodesPerFace(int grid, int *dest)
     memcpy(dest, x.data(), x.size()*sizeof(double));
 }
 
-char BmiCppExtension::FindType(const std::string& varname) const
+char BmiCppExtension::FindType(const std::string varname) const
 {
-    std::string vartype = this->GetVarType(varname);
+    // TODO unable to call GetVarType, hardcoding for now
+    // std::string vartype = this->GetVarType(varname);
+    std::string vartype = "float";
     std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
     if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())
