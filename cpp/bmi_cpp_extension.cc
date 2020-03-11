@@ -175,11 +175,9 @@ void BmiCppExtension::GetGridNodesPerFace(int grid, int *dest)
     memcpy(dest, x.data(), x.size()*sizeof(double));
 }
 
-char BmiCppExtension::FindType(const std::string varname) const
+char BmiCppExtension::FindType(const std::string varname)
 {
-    // TODO unable to call GetVarType, hardcoding for now
-    // std::string vartype = this->GetVarType(varname);
-    std::string vartype = "float";
+    std::string vartype = this->GetVarType(varname);
     std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string>inttypes = {"int", "int16", "int32", "int64"};
     if(std::find(inttypes.begin(), inttypes.end(), vartype) != inttypes.end())

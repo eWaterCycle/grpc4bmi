@@ -102,7 +102,7 @@ class BmiCppExtension: public bmi::Bmi
 
   private:
 
-    char FindType(const std::string name) const;
+    char FindType(const std::string name);
 };
 
 #endif /*BMI_CPP_EXTENSION_H_INCLUDED*/
