@@ -27,11 +27,11 @@ class BmiCWrapper: public bmi::Bmi
     virtual void Finalize() override;
 
     // Model information functions.
-    virtual void GetComponentName(char * const name) override;
+    virtual std::string GetComponentName() override;
     virtual int GetInputItemCount(void) override;
     virtual int GetOutputItemCount(void) override;
-    virtual void GetInputVarNames(char **names) override;
-    virtual void GetOutputVarNames(char **names) override;
+    virtual std::vector<std::string> GetInputVarNames() override;
+    virtual std::vector<std::string> GetOutputVarNames() override;
 
     // Variable information functions
     virtual int GetVarGrid(std::string name) override;

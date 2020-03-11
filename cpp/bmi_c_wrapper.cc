@@ -7,15 +7,15 @@ BmiCWrapper::~BmiCWrapper(){}
 
 void checkStatus(int status)
 {
-    if(status == BMI_FAILURE)
+    if(status == bmi::BMI_FAILURE)
     {
         throw std::runtime_error("BMI failure from C intercepted");
     }
 }
 
-void BmiCWrapper::Initialize(const char* configfile)
+void BmiCWrapper::Initialize(std::string configfile)
 {
-    checkStatus(this->model->initialize(this->model->self, const_cast<char*>(configfile)));
+    checkStatus(this->model->initialize(this->model->self, const_cast<char*>(configfile.c_str())));
 }
 
 void BmiCWrapper::Update()
@@ -23,12 +23,12 @@ void BmiCWrapper::Update()
     double curtime, timestep;
     checkStatus(this->model->get_current_time(this->model->self, &curtime));
     checkStatus(this->model->get_time_step(this->model->self, &timestep));
-    checkStatus(this->model->update(this->model->self, curtime + timestep));
+    checkStatus(this->model->update(this->model->self));
 }
 
 void BmiCWrapper::UpdateUntil(double time)
 {
-    checkStatus(this->model->update(this->model->self, time));
+    checkStatus(this->model->update_until(this->model->self, time));
 }
 
 void BmiCWrapper::Finalize()
@@ -36,19 +36,19 @@ void BmiCWrapper::Finalize()
     checkStatus(this->model->finalize(this->model->self));
 }
 
-void BmiCWrapper::GetComponentName(char* const dest)
+void BmiCWrapper::GetComponentName()
 {
     checkStatus(this->model->get_component_name(this->model->self, dest));
 }
 
-int BmiCWrapper::GetInputVarNameCount()
+int BmiCWrapper::GetInputItemCount()
 {
     int dest;
     checkStatus(this->model->get_input_item_count(this->model->self, &dest));
     return dest;
 }
 
-int BmiCWrapper::GetOutputVarNameCount()
+int BmiCWrapper::GetOutputItemCount()
 {
     int dest;
     checkStatus(this->model->get_output_item_count(this->model->self, &dest));
