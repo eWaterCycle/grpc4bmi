@@ -66,9 +66,8 @@ grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext *context, cons
 {
     try
     {
-        char name[BMI_MAX_COMPONENT_NAME];
-        this->bmi->GetComponentName(name);
-        response->set_name(std::string(name));
+        std::string name = this->bmi->GetComponentName();
+        response->set_name(name);
     }
     catch (const std::exception &e)
     {
@@ -81,7 +80,7 @@ grpc::Status BmiGRPCService::getInputItemCount(grpc::ServerContext *context, con
 {
     try
     {
-        response->set_count(this->bmi->GetInputVarNameCount());
+        response->set_count(this->bmi->GetInputItemCount());
     }
     catch (const std::exception &e)
     {
@@ -94,7 +93,7 @@ grpc::Status BmiGRPCService::getOutputItemCount(grpc::ServerContext *context, co
 {
     try
     {
-        response->set_count(this->bmi->GetOutputVarNameCount());
+        response->set_count(this->bmi->GetOutputItemCount());
     }
     catch (const std::exception &e)
     {
@@ -109,15 +108,8 @@ grpc::Status BmiGRPCService::getInputVarNames(grpc::ServerContext *context, cons
     char *data;
     try
     {
-        int count = this->bmi->GetInputVarNameCount();
-        input_var_names = (char **)malloc(sizeof(char *) * count);
-        data = (char *)malloc(sizeof(char) * count * BMI_MAX_VAR_NAME);
-        for (int i = 0; i < count; i++)
-        {
-            input_var_names[i] = data + i * BMI_MAX_VAR_NAME;
-        }
-        this->bmi->GetInputVarNames(input_var_names);
-        for (int i = 0; i < count; i++)
+        std::vector<std::string> output_var_names = this->bmi->GetInputVarNames();
+        for (int i = 0; i < output_var_names.size(); i++)
         {
             response->add_names(std::string(input_var_names[i]));
         }
@@ -139,15 +131,8 @@ grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext *context, con
     char *data;
     try
     {
-        int count = this->bmi->GetOutputVarNameCount();
-        output_var_names = (char **)malloc(sizeof(char *) * count);
-        data = (char *)malloc(sizeof(char) * count * BMI_MAX_VAR_NAME);
-        for (int i = 0; i < count; i++)
-        {
-            output_var_names[i] = data + i * BMI_MAX_VAR_NAME;
-        }
-        this->bmi->GetOutputVarNames(output_var_names);
-        for (int i = 0; i < count; i++)
+        std::vector<std::string> output_var_names = this->bmi->GetOutputVarNames();
+        for (int i = 0; i < output_var_names.size(); i++)
         {
             response->add_names(std::string(output_var_names[i]));
         }
@@ -167,9 +152,8 @@ grpc::Status BmiGRPCService::getTimeUnits(grpc::ServerContext *context, const bm
 {
     try
     {
-        char units[BMI_MAX_UNITS_NAME];
-        this->bmi->GetTimeUnits(units);
-        response->set_units(std::string(units));
+        std::string units = this->bmi->GetTimeUnits();
+        response->set_units(units);
     }
     catch (const std::exception &e)
     {
@@ -247,9 +231,8 @@ grpc::Status BmiGRPCService::getVarType(grpc::ServerContext *context, const bmi:
 {
     try
     {
-        char type[BMI_MAX_VAR_NAME];
-        this->bmi->GetVarType(request->name().c_str(), type);
-        response->set_type(std::string(type));
+        std::string type = this->bmi->GetVarType(request->name());
+        response->set_type(type);
     }
     catch (const std::exception &e)
     {
@@ -275,10 +258,9 @@ grpc::Status BmiGRPCService::getVarLocation(grpc::ServerContext *context, const 
 {
     try
     {
-        char loc[4];
-        this->bmi->GetVarLocation(request->name().c_str(), loc);
+        std::string loc = this->bmi->GetVarLocation(request->name());
         bmi::GetVarLocationResponse::Location loce;
-        bmi::GetVarLocationResponse::Location_Parse(std::string(loc), &loce);
+        bmi::GetVarLocationResponse::Location_Parse(loc, &loce);
         response->set_location(loce);
     }
     catch (const std::exception &e)
@@ -293,9 +275,8 @@ grpc::Status BmiGRPCService::getVarUnits(grpc::ServerContext *context, const bmi
 {
     try
     {
-        char units[BMI_MAX_UNITS_NAME];
-        this->bmi->GetVarUnits(request->name().c_str(), units);
-        response->set_units(std::string(units));
+        std::string units = this->bmi->GetVarUnits(request->name());
+        response->set_units(units);
     }
     catch (const std::exception &e)
     {
@@ -361,7 +342,6 @@ grpc::Status BmiGRPCService::getValuePtr(grpc::ServerContext *context, const bmi
 
 grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext *context, const bmi::GetValueAtIndicesRequest *request, bmi::GetValueAtIndicesResponse *response)
 {
-    int status = BMI_FAILURE;
     std::vector<int> indices(request->indices().begin(), request->indices().end());
     try
     {
@@ -397,7 +377,6 @@ grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext *context, con
 
 grpc::Status BmiGRPCService::setValue(grpc::ServerContext *context, const bmi::SetValueRequest *request, bmi::Empty *response)
 {
-    int status = BMI_FAILURE;
     try
     {
         char typechar = this->find_type(request->name());
@@ -445,7 +424,7 @@ grpc::Status BmiGRPCService::setValueAtIndices(grpc::ServerContext *context, con
         {
             values = (void*)request->values_double().values().data();
         }
-        this->bmi->SetValueAtIndices(request->name().c_str(), values, indices.data(), indices.size());
+        this->bmi->SetValueAtIndices(request->name().c_str(), indices.data(), indices.size(), values);
     }
     catch (const std::exception &e)
     {
@@ -471,9 +450,8 @@ grpc::Status BmiGRPCService::getGridType(grpc::ServerContext *context, const bmi
 {
     try
     {
-        char type[BMI_MAX_VAR_NAME];
-        this->bmi->GetGridType(request->grid_id(), type);
-        response->set_type(std::string(type));
+        std::string type = this->bmi->GetGridType(request->grid_id());
+        response->set_type(type);
     }
     catch (const std::exception &e)
     {
@@ -769,8 +747,7 @@ grpc::Status BmiGRPCService::getGridNodesPerFace(grpc::ServerContext *context, c
 char BmiGRPCService::find_type(const std::string &varname) const
 {
     std::locale loc;
-    char type[BMI_MAX_VAR_NAME];
-    this->bmi->GetVarType(varname.c_str(), type);
+    std::string type = this->bmi->GetVarType(varname);
     std::string vartype(type);
     std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string> inttypes = {"int", "int16", "int32", "int64"};
@@ -799,8 +776,7 @@ void BmiGRPCService::get_grid_dimensions(int grid_id, int *vec3d) const
         int rank = this->bmi->GetGridRank(grid_id);
         int *shape = (int *)malloc(rank * sizeof(int));
         this->bmi->GetGridShape(grid_id, shape);
-        char type[BMI_MAX_VAR_NAME];
-        this->bmi->GetGridType(grid_id, type);
+        std::string type = this->bmi->GetGridType(grid_id);
         std::string typestr(type);
         if (typestr == "uniform_rectilinear" or typestr == "rectilinear")
         {
