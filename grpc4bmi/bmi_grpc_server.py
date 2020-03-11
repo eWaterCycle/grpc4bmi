@@ -66,6 +66,13 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
         except Exception as e:
             self.exception_handler(e, context)
 
+    def updateUntil(self, request, context):
+        try:
+            self.bmi_model_.update_until(request.time)
+            return bmi_pb2.Empty()
+        except Exception as e:
+            self.exception_handler(e, context)
+
     def finalize(self, request, context):
         try:
             self.bmi_model_.finalize()
@@ -76,6 +83,18 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
     def getComponentName(self, request, context):
         try:
             return bmi_pb2.GetComponentNameResponse(name=self.bmi_model_.get_component_name())
+        except Exception as e:
+            self.exception_handler(e, context)
+
+    def getInputItemCount(self, request, context):
+        try:
+            return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_input_item_count())
+        except Exception as e:
+            self.exception_handler(e, context)
+
+    def getOutputItemCount(self, request, context):
+        try:
+            return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_output_item_count())
         except Exception as e:
             self.exception_handler(e, context)
 
@@ -281,19 +300,19 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
 
     def getGridNodeCount(self, request, context):
         try:
-            return bmi_pb2.GetGridElementCountResponse(count=self.bmi_model_.get_grid_node_count(request.grid_id))
+            return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_node_count(request.grid_id))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridEdgeCount(self, request, context):
         try:
-            return bmi_pb2.GetGridElementCountResponse(count=self.bmi_model_.get_grid_edge_count(request.grid_id))
+            return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_edge_count(request.grid_id))
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridFaceCount(self, request, context):
         try:
-            return bmi_pb2.GetGridElementCountResponse(count=self.bmi_model_.get_grid_face_count(request.grid_id))
+            return bmi_pb2.GetCountResponse(count=self.bmi_model_.get_grid_face_count(request.grid_id))
         except Exception as e:
             self.exception_handler(e, context)
 
@@ -302,7 +321,7 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             size = 2 * self.bmi_model_.get_grid_edge_count(request.grid_id)
             links = numpy.empty(size, dtype=numpy.int64)
             links = self.bmi_model_.get_grid_edge_nodes(request.grid_id, links)
-            return bmi_pb2.GetGridEdgeNodesResponse(links=links)
+            return bmi_pb2.GetGridEdgeNodesResponse(edge_nodes=links)
         except Exception as e:
             self.exception_handler(e, context)
 
@@ -317,14 +336,24 @@ class BmiServer(bmi_pb2_grpc.BmiServiceServicer):
             size = numpy.sum(nodes_per_face)
             links = numpy.empty(size, dtype=numpy.int64)
             links = self.bmi_model_.get_grid_face_nodes(request.grid_id, links)
-            return bmi_pb2.GetGridFaceNodesResponse(links=links)
+            return bmi_pb2.GetGridFaceNodesResponse(face_nodes=links)
+        except Exception as e:
+            self.exception_handler(e, context)
+
+    def getGridFaceEdges(self, request, context):
+        try:
+            nodes_per_face = self._get_grid_nodes_per_face(request.grid_id)
+            size = numpy.sum(nodes_per_face)
+            face_edges = numpy.empty(size, dtype=numpy.int64)
+            face_edges = self.bmi_model_.get_grid_face_edges(request.grid_id, face_edges)
+            return bmi_pb2.GetGridFaceEdgesResponse(face_edges=face_edges)
         except Exception as e:
             self.exception_handler(e, context)
 
     def getGridNodesPerFace(self, request, context):
         try:
-            links = self._get_grid_nodes_per_face(request.grid_id)
-            return bmi_pb2.GetGridNodesPerFaceResponse(links=links)
+            nodes_per_face = self._get_grid_nodes_per_face(request.grid_id)
+            return bmi_pb2.GetGridNodesPerFaceResponse(nodes_per_face=nodes_per_face)
         except Exception as e:
             self.exception_handler(e, context)
 
