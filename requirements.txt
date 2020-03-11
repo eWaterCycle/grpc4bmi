@@ -16,3 +16,4 @@ sphinx_rtd_theme
 nbconvert
 ipykernel
 nbformat
+grpcio-tools==1.27.2
