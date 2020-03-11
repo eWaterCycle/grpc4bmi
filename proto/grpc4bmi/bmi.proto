@@ -180,33 +180,41 @@ message GetGridPointsResponse
     repeated double coordinates = 1 [packed = true];
 }
 
-message GetGridElementCountResponse
+message GetCountResponse
 {
     int64 count = 1;
 }
 
 message GetGridEdgeNodesResponse
 {
-    repeated int64 links = 1 [packed = true];
+    repeated int64 edge_nodes = 1 [packed = true];
+}
+
+message GetGridFaceEdgesResponse
+{
+    repeated int64 face_edges = 1 [packed = true];
 }
 
 message GetGridFaceNodesResponse
 {
-    repeated int64 links = 1 [packed = true];
+    repeated int64 face_nodes = 1 [packed = true];
 }
 
 message GetGridNodesPerFaceResponse
 {
-    repeated int64 links = 1 [packed = true];
+    repeated int64 nodes_per_face = 1 [packed = true];
 }
 
 service BmiService {
 
     rpc initialize(InitializeRequest) returns(Empty) {}
     rpc update(Empty) returns(Empty) {}
+    rpc updateUntil(GetTimeResponse) returns(Empty) {}
     rpc finalize(Empty) returns(Empty) {}
 
     rpc getComponentName(Empty) returns(GetComponentNameResponse) {}
+    rpc getInputItemCount(Empty) returns(GetCountResponse) {}
+    rpc getOutputItemCount(Empty) returns(GetCountResponse) {}
     rpc getInputVarNames(Empty) returns(GetVarNamesResponse) {}
     rpc getOutputVarNames(Empty) returns(GetVarNamesResponse) {}
 
@@ -238,10 +246,11 @@ service BmiService {
     rpc getGridX(GridRequest) returns(GetGridPointsResponse) {}
     rpc getGridY(GridRequest) returns(GetGridPointsResponse) {}
     rpc getGridZ(GridRequest) returns(GetGridPointsResponse) {}
-    rpc getGridNodeCount(GridRequest) returns(GetGridElementCountResponse) {}
-    rpc getGridEdgeCount(GridRequest) returns(GetGridElementCountResponse) {}
-    rpc getGridFaceCount(GridRequest) returns(GetGridElementCountResponse) {}
+    rpc getGridNodeCount(GridRequest) returns(GetCountResponse) {}
+    rpc getGridEdgeCount(GridRequest) returns(GetCountResponse) {}
+    rpc getGridFaceCount(GridRequest) returns(GetCountResponse) {}
     rpc getGridEdgeNodes(GridRequest) returns(GetGridEdgeNodesResponse) {}
     rpc getGridFaceNodes(GridRequest) returns(GetGridFaceNodesResponse) {}
+    rpc getGridFaceEdges(GridRequest) returns(GetGridFaceEdgesResponse) {}
     rpc getGridNodesPerFace(GridRequest) returns(GetGridNodesPerFaceResponse) {}
 }
