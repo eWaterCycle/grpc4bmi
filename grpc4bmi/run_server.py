@@ -134,7 +134,9 @@ def build_parser():
                         help="Full name of the BMI implementation class. The module should be in your search "
                              "path and the class should have a constructor with no arguments")
     parser.add_argument("--port", "-p", metavar="N", default=0, type=int,
-                        help="Network port for the GRPC server and client. If 0, let the OS choose an available port")
+                        help="Network port for the GRPC server and client. If 0, let the OS choose an available port. "
+                             "If the BMI_PORT environment variable is specified, it will take precedence over this "
+                             "argument")
     parser.add_argument("--path", "-d", metavar="DIR", default=None, type=str,
                         help="Extra path name to append to the server instance process")
     lang_choices = ['python']
