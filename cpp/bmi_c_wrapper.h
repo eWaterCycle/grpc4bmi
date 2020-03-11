@@ -35,31 +35,31 @@ class BmiCWrapper: public bmi::Bmi
 
     // Variable information functions
     virtual int GetVarGrid(std::string name) override;
-    virtual void GetVarType(std::string name, char *vtype) override;
-    virtual void GetVarUnits (std::string name, char *units) override;
+    virtual std::string GetVarType(std::string name) override;
+    virtual std::string GetVarUnits (std::string name) override;
     virtual int GetVarItemsize(std::string name) override;
     virtual int GetVarNbytes(std::string name) override;
-    virtual void GetVarLocation(std::string name, char *location) override;
+    virtual std::string GetVarLocation(std::string name) override;
 
     virtual double GetCurrentTime(void) override;
     virtual double GetStartTime(void) override;
     virtual double GetEndTime(void) override;
-    virtual void GetTimeUnits(char *units) override;
+    virtual std::string GetTimeUnits() override;
     virtual double GetTimeStep(void) override;
 
     // Variable getters
     virtual void GetValue(std::string name, void *dest) override;
     virtual void *GetValuePtr(std::string name) override;
-    virtual void *GetValueAtIndices(std::string name, void *dest, int *inds, int count) override;
+    virtual void GetValueAtIndices(std::string name, void *dest, int *inds, int count) override;
 
     // Variable setters
     virtual void SetValue(std::string name, void *values) override;
-    virtual void SetValueAtIndices(std::string name, void *values, int *inds, int count) override;
+    virtual void SetValueAtIndices(std::string name, int *inds, int count, void *values) override;
 
     // Grid information functions
     virtual int GetGridRank(const int grid) override;
     virtual int GetGridSize(const int grid) override;
-    virtual void GetGridType(const int grid, char *gtype) override;
+    virtual std::string GetGridType(const int grid) override;
 
     virtual void GetGridShape(const int grid, int *shape) override;
     virtual void GetGridSpacing(const int grid, double *spacing) override;
