@@ -10,8 +10,15 @@ For native programming languages it is necessary to install and compile the C++ 
 .. code-block:: sh
 
     git clone -b $(curl -L https://grpc.io/release) --depth=1 https://github.com/grpc/grpc
-    cd grpc && git submodule update --init --recursive
-    sudo make install && cd third_party/protobuf && sudo make install
+    cd grpc
+    git submodule update --init --recursive
+    wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Linux-x86_64.sh
+    sudo sh cmake-linux.sh -- --skip-license --prefix=/usr/local
+    rm cmake-linux.sh
+    mkdir cmake/build && cd cmake/build
+    /usr/local/bin/cmake ../.. -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=ON
+    sudo make -j4 install
+    sudo ldconfig
 
 You will also need to compile grpc4bmi
 

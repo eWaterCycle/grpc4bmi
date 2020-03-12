@@ -1,5 +1,6 @@
 from textwrap import dedent
 
+from os import environ
 import pytest
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
@@ -48,6 +49,7 @@ def notebook():
     return new_notebook(cells=cells)
 
 
+@pytest.mark.skipif(environ.get('TRAVIS', 'false') == 'true', reason="Does not work on Travis-CI")
 def test_from_notebook(notebook, tmp_path):
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
     ep.preprocess(notebook, {'metadata': {'path': tmp_path}})

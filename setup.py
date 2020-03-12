@@ -25,9 +25,9 @@ setup(name="grpc4bmi",
           "run-bmi-server =  grpc4bmi.run_server:main"
       ]},
       install_requires=[
-          "grpcio>=1.18.0",
-          "grpcio-reflection>=1.18.0",
-          "grpcio-status>=1.18.0",
+          "grpcio==1.27.2",
+          "grpcio-reflection==1.27.2",
+          "grpcio-status==1.27.2",
           "googleapis-common-protos>=1.5.5",
           "protobuf",
           "numpy",

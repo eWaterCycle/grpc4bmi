@@ -6,6 +6,7 @@ matrix:
         dist: xenial
         python: '3.6'
         install:
+            - pip install -U pip
             - pip install -r requirements.txt
             - python setup.py install
             - docker pull ewatercycle/walrus-grpc4bmi:v0.3.1
@@ -46,26 +47,28 @@ matrix:
         before_install:
             - git submodule update --init
             - sudo apt-get update
-            - sudo apt-get install -y build-essential autoconf libtool pkg-config
+            - sudo apt-get install -y build-essential autoconf libtool pkg-config libunwind-dev
             - | 
                 if [[ ! -f /usr/local/bin/protoc || ! -f /usr/local/bin/grpc_cpp_plugin ]]; then
-                  git clone -b v1.25.0 https://github.com/grpc/grpc
+                  git clone -b v1.27.2 https://github.com/grpc/grpc
                   cd grpc
                   git submodule update --init --recursive
-                  cd third_party/protobuf
-                  ./autogen.sh
-                  ./configure
+                  wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Linux-x86_64.sh
+                  sudo sh cmake-linux.sh -- --skip-license --prefix=/usr/local
+                  rm cmake-linux.sh
+                  mkdir cmake/build
+                  cd cmake/build
+                  /usr/local/bin/cmake ../.. -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=ON
                   sudo make -j4 install
-                  cd ../..
-                  sudo make -j4 install
+                  sudo ldconfig
                   cd ${TRAVIS_BUILD_DIR}
                 else
                   echo "using cached builds of protobuf and grpc"
                 fi
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
-            - cmake ..
-            - make
+            - /usr/local/bin/cmake ..
+            - make VERBOSE=1
             - ctest -V
         cache:
             directories:

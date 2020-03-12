@@ -24,6 +24,11 @@ class BmiServiceStub(object):
         request_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
         response_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
         )
+    self.updateUntil = channel.unary_unary(
+        '/bmi.BmiService/updateUntil',
+        request_serializer=grpc4bmi_dot_bmi__pb2.GetTimeResponse.SerializeToString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
+        )
     self.finalize = channel.unary_unary(
         '/bmi.BmiService/finalize',
         request_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
@@ -33,6 +38,16 @@ class BmiServiceStub(object):
         '/bmi.BmiService/getComponentName',
         request_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
         response_deserializer=grpc4bmi_dot_bmi__pb2.GetComponentNameResponse.FromString,
+        )
+    self.getInputItemCount = channel.unary_unary(
+        '/bmi.BmiService/getInputItemCount',
+        request_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.FromString,
+        )
+    self.getOutputItemCount = channel.unary_unary(
+        '/bmi.BmiService/getOutputItemCount',
+        request_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.FromString,
         )
     self.getInputVarNames = channel.unary_unary(
         '/bmi.BmiService/getInputVarNames',
@@ -167,17 +182,17 @@ class BmiServiceStub(object):
     self.getGridNodeCount = channel.unary_unary(
         '/bmi.BmiService/getGridNodeCount',
         request_serializer=grpc4bmi_dot_bmi__pb2.GridRequest.SerializeToString,
-        response_deserializer=grpc4bmi_dot_bmi__pb2.GetGridElementCountResponse.FromString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.FromString,
         )
     self.getGridEdgeCount = channel.unary_unary(
         '/bmi.BmiService/getGridEdgeCount',
         request_serializer=grpc4bmi_dot_bmi__pb2.GridRequest.SerializeToString,
-        response_deserializer=grpc4bmi_dot_bmi__pb2.GetGridElementCountResponse.FromString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.FromString,
         )
     self.getGridFaceCount = channel.unary_unary(
         '/bmi.BmiService/getGridFaceCount',
         request_serializer=grpc4bmi_dot_bmi__pb2.GridRequest.SerializeToString,
-        response_deserializer=grpc4bmi_dot_bmi__pb2.GetGridElementCountResponse.FromString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.FromString,
         )
     self.getGridEdgeNodes = channel.unary_unary(
         '/bmi.BmiService/getGridEdgeNodes',
@@ -188,6 +203,11 @@ class BmiServiceStub(object):
         '/bmi.BmiService/getGridFaceNodes',
         request_serializer=grpc4bmi_dot_bmi__pb2.GridRequest.SerializeToString,
         response_deserializer=grpc4bmi_dot_bmi__pb2.GetGridFaceNodesResponse.FromString,
+        )
+    self.getGridFaceEdges = channel.unary_unary(
+        '/bmi.BmiService/getGridFaceEdges',
+        request_serializer=grpc4bmi_dot_bmi__pb2.GridRequest.SerializeToString,
+        response_deserializer=grpc4bmi_dot_bmi__pb2.GetGridFaceEdgesResponse.FromString,
         )
     self.getGridNodesPerFace = channel.unary_unary(
         '/bmi.BmiService/getGridNodesPerFace',
@@ -214,6 +234,13 @@ class BmiServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def updateUntil(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def finalize(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -222,6 +249,20 @@ class BmiServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def getComponentName(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def getInputItemCount(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def getOutputItemCount(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -445,6 +486,13 @@ class BmiServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def getGridFaceEdges(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def getGridNodesPerFace(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -465,6 +513,11 @@ def add_BmiServiceServicer_to_server(servicer, server):
           request_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
           response_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
       ),
+      'updateUntil': grpc.unary_unary_rpc_method_handler(
+          servicer.updateUntil,
+          request_deserializer=grpc4bmi_dot_bmi__pb2.GetTimeResponse.FromString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.Empty.SerializeToString,
+      ),
       'finalize': grpc.unary_unary_rpc_method_handler(
           servicer.finalize,
           request_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
@@ -474,6 +527,16 @@ def add_BmiServiceServicer_to_server(servicer, server):
           servicer.getComponentName,
           request_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
           response_serializer=grpc4bmi_dot_bmi__pb2.GetComponentNameResponse.SerializeToString,
+      ),
+      'getInputItemCount': grpc.unary_unary_rpc_method_handler(
+          servicer.getInputItemCount,
+          request_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.SerializeToString,
+      ),
+      'getOutputItemCount': grpc.unary_unary_rpc_method_handler(
+          servicer.getOutputItemCount,
+          request_deserializer=grpc4bmi_dot_bmi__pb2.Empty.FromString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.SerializeToString,
       ),
       'getInputVarNames': grpc.unary_unary_rpc_method_handler(
           servicer.getInputVarNames,
@@ -608,17 +671,17 @@ def add_BmiServiceServicer_to_server(servicer, server):
       'getGridNodeCount': grpc.unary_unary_rpc_method_handler(
           servicer.getGridNodeCount,
           request_deserializer=grpc4bmi_dot_bmi__pb2.GridRequest.FromString,
-          response_serializer=grpc4bmi_dot_bmi__pb2.GetGridElementCountResponse.SerializeToString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.SerializeToString,
       ),
       'getGridEdgeCount': grpc.unary_unary_rpc_method_handler(
           servicer.getGridEdgeCount,
           request_deserializer=grpc4bmi_dot_bmi__pb2.GridRequest.FromString,
-          response_serializer=grpc4bmi_dot_bmi__pb2.GetGridElementCountResponse.SerializeToString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.SerializeToString,
       ),
       'getGridFaceCount': grpc.unary_unary_rpc_method_handler(
           servicer.getGridFaceCount,
           request_deserializer=grpc4bmi_dot_bmi__pb2.GridRequest.FromString,
-          response_serializer=grpc4bmi_dot_bmi__pb2.GetGridElementCountResponse.SerializeToString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.GetCountResponse.SerializeToString,
       ),
       'getGridEdgeNodes': grpc.unary_unary_rpc_method_handler(
           servicer.getGridEdgeNodes,
@@ -629,6 +692,11 @@ def add_BmiServiceServicer_to_server(servicer, server):
           servicer.getGridFaceNodes,
           request_deserializer=grpc4bmi_dot_bmi__pb2.GridRequest.FromString,
           response_serializer=grpc4bmi_dot_bmi__pb2.GetGridFaceNodesResponse.SerializeToString,
+      ),
+      'getGridFaceEdges': grpc.unary_unary_rpc_method_handler(
+          servicer.getGridFaceEdges,
+          request_deserializer=grpc4bmi_dot_bmi__pb2.GridRequest.FromString,
+          response_serializer=grpc4bmi_dot_bmi__pb2.GetGridFaceEdgesResponse.SerializeToString,
       ),
       'getGridNodesPerFace': grpc.unary_unary_rpc_method_handler(
           servicer.getGridNodesPerFace,

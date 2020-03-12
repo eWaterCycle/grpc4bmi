@@ -36,6 +36,19 @@ grpc::Status BmiGRPCService::update(grpc::ServerContext *context, const bmi::Emp
     return grpc::Status::OK;
 }
 
+grpc::Status BmiGRPCService::updateUntil(grpc::ServerContext *context, const bmi::GetTimeResponse *request, bmi::Empty *response)
+{
+    try
+    {
+        this->bmi->UpdateUntil(request->time());
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
 grpc::Status BmiGRPCService::finalize(grpc::ServerContext *context, const bmi::Empty *request, bmi::Empty *response)
 {
     try
@@ -53,9 +66,34 @@ grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext *context, cons
 {
     try
     {
-        char name[BMI_MAX_COMPONENT_NAME];
-        this->bmi->GetComponentName(name);
-        response->set_name(std::string(name));
+        std::string name = this->bmi->GetComponentName();
+        response->set_name(name);
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status BmiGRPCService::getInputItemCount(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetCountResponse *response)
+{
+    try
+    {
+        response->set_count(this->bmi->GetInputItemCount());
+    }
+    catch (const std::exception &e)
+    {
+        return BmiGRPCService::handle_exception(e);
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status BmiGRPCService::getOutputItemCount(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetCountResponse *response)
+{
+    try
+    {
+        response->set_count(this->bmi->GetOutputItemCount());
     }
     catch (const std::exception &e)
     {
@@ -66,61 +104,35 @@ grpc::Status BmiGRPCService::getComponentName(grpc::ServerContext *context, cons
 
 grpc::Status BmiGRPCService::getInputVarNames(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetVarNamesResponse *response)
 {
-    char **input_var_names;
-    char *data;
     try
     {
-        int count = this->bmi->GetInputVarNameCount();
-        input_var_names = (char **)malloc(sizeof(char *) * count);
-        data = (char *)malloc(sizeof(char) * count * BMI_MAX_VAR_NAME);
-        for (int i = 0; i < count; i++)
+        std::vector<std::string> input_var_names = this->bmi->GetInputVarNames();
+        for (int i = 0; i < input_var_names.size(); i++)
         {
-            input_var_names[i] = data + i * BMI_MAX_VAR_NAME;
-        }
-        this->bmi->GetInputVarNames(input_var_names);
-        for (int i = 0; i < count; i++)
-        {
-            response->add_names(std::string(input_var_names[i]));
+            response->add_names(input_var_names[i]);
         }
     }
     catch (const std::exception &e)
     {
-        free(data);
-        free(input_var_names);
         return BmiGRPCService::handle_exception(e);
     }
-    free(data);
-    free(input_var_names);
     return grpc::Status::OK;
 }
 
 grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetVarNamesResponse *response)
 {
-    char **output_var_names;
-    char *data;
     try
     {
-        int count = this->bmi->GetOutputVarNameCount();
-        output_var_names = (char **)malloc(sizeof(char *) * count);
-        data = (char *)malloc(sizeof(char) * count * BMI_MAX_VAR_NAME);
-        for (int i = 0; i < count; i++)
-        {
-            output_var_names[i] = data + i * BMI_MAX_VAR_NAME;
-        }
-        this->bmi->GetOutputVarNames(output_var_names);
-        for (int i = 0; i < count; i++)
+        std::vector<std::string> output_var_names = this->bmi->GetOutputVarNames();
+        for (int i = 0; i < output_var_names.size(); i++)
         {
             response->add_names(std::string(output_var_names[i]));
         }
     }
     catch (const std::exception &e)
     {
-        free(data);
-        free(output_var_names);
         return BmiGRPCService::handle_exception(e);
     }
-    free(data);
-    free(output_var_names);
     return grpc::Status::OK;
 }
 
@@ -128,9 +140,8 @@ grpc::Status BmiGRPCService::getTimeUnits(grpc::ServerContext *context, const bm
 {
     try
     {
-        char units[BMI_MAX_UNITS_NAME];
-        this->bmi->GetTimeUnits(units);
-        response->set_units(std::string(units));
+        std::string units = this->bmi->GetTimeUnits();
+        response->set_units(units);
     }
     catch (const std::exception &e)
     {
@@ -208,9 +219,8 @@ grpc::Status BmiGRPCService::getVarType(grpc::ServerContext *context, const bmi:
 {
     try
     {
-        char type[BMI_MAX_VAR_NAME];
-        this->bmi->GetVarType(request->name().c_str(), type);
-        response->set_type(std::string(type));
+        std::string type = this->bmi->GetVarType(request->name());
+        response->set_type(type);
     }
     catch (const std::exception &e)
     {
@@ -236,10 +246,9 @@ grpc::Status BmiGRPCService::getVarLocation(grpc::ServerContext *context, const 
 {
     try
     {
-        char loc[4];
-        this->bmi->GetVarLocation(request->name().c_str(), loc);
+        std::string loc = this->bmi->GetVarLocation(request->name());
         bmi::GetVarLocationResponse::Location loce;
-        bmi::GetVarLocationResponse::Location_Parse(std::string(loc), &loce);
+        bmi::GetVarLocationResponse::Location_Parse(loc, &loce);
         response->set_location(loce);
     }
     catch (const std::exception &e)
@@ -254,9 +263,8 @@ grpc::Status BmiGRPCService::getVarUnits(grpc::ServerContext *context, const bmi
 {
     try
     {
-        char units[BMI_MAX_UNITS_NAME];
-        this->bmi->GetVarUnits(request->name().c_str(), units);
-        response->set_units(std::string(units));
+        std::string units = this->bmi->GetVarUnits(request->name());
+        response->set_units(units);
     }
     catch (const std::exception &e)
     {
@@ -322,7 +330,6 @@ grpc::Status BmiGRPCService::getValuePtr(grpc::ServerContext *context, const bmi
 
 grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext *context, const bmi::GetValueAtIndicesRequest *request, bmi::GetValueAtIndicesResponse *response)
 {
-    int status = BMI_FAILURE;
     std::vector<int> indices(request->indices().begin(), request->indices().end());
     try
     {
@@ -358,7 +365,6 @@ grpc::Status BmiGRPCService::getValueAtIndices(grpc::ServerContext *context, con
 
 grpc::Status BmiGRPCService::setValue(grpc::ServerContext *context, const bmi::SetValueRequest *request, bmi::Empty *response)
 {
-    int status = BMI_FAILURE;
     try
     {
         char typechar = this->find_type(request->name());
@@ -406,7 +412,7 @@ grpc::Status BmiGRPCService::setValueAtIndices(grpc::ServerContext *context, con
         {
             values = (void*)request->values_double().values().data();
         }
-        this->bmi->SetValueAtIndices(request->name().c_str(), values, indices.data(), indices.size());
+        this->bmi->SetValueAtIndices(request->name().c_str(), indices.data(), indices.size(), values);
     }
     catch (const std::exception &e)
     {
@@ -432,9 +438,8 @@ grpc::Status BmiGRPCService::getGridType(grpc::ServerContext *context, const bmi
 {
     try
     {
-        char type[BMI_MAX_VAR_NAME];
-        this->bmi->GetGridType(request->grid_id(), type);
-        response->set_type(std::string(type));
+        std::string type = this->bmi->GetGridType(request->grid_id());
+        response->set_type(type);
     }
     catch (const std::exception &e)
     {
@@ -588,7 +593,7 @@ grpc::Status BmiGRPCService::getGridZ(grpc::ServerContext *context, const bmi::G
     return grpc::Status::OK;
 }
 
-grpc::Status BmiGRPCService::getGridNodeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridElementCountResponse *response)
+grpc::Status BmiGRPCService::getGridNodeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetCountResponse *response)
 {
     try
     {
@@ -601,7 +606,7 @@ grpc::Status BmiGRPCService::getGridNodeCount(grpc::ServerContext *context, cons
     return grpc::Status::OK;
 }
 
-grpc::Status BmiGRPCService::getGridEdgeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridElementCountResponse *response)
+grpc::Status BmiGRPCService::getGridEdgeCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetCountResponse *response)
 {
     try
     {
@@ -614,7 +619,7 @@ grpc::Status BmiGRPCService::getGridEdgeCount(grpc::ServerContext *context, cons
     return grpc::Status::OK;
 }
 
-grpc::Status BmiGRPCService::getGridFaceCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridElementCountResponse *response)
+grpc::Status BmiGRPCService::getGridFaceCount(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetCountResponse *response)
 {
     try
     {
@@ -635,8 +640,8 @@ grpc::Status BmiGRPCService::getGridEdgeNodes(grpc::ServerContext *context, cons
         int size = 2*(this->bmi->GetGridEdgeCount(request->grid_id()));
         vals = (int *)malloc(size * sizeof(int));
         this->bmi->GetGridEdgeNodes(request->grid_id(), vals);
-        response->mutable_links()->Resize(size, 0);
-        std::copy(vals, vals + size, response->mutable_links()->begin());
+        response->mutable_edge_nodes()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_edge_nodes()->begin());
     }
     catch (const std::exception &e)
     {
@@ -663,8 +668,8 @@ grpc::Status BmiGRPCService::getGridFaceNodes(grpc::ServerContext *context, cons
         }
         vals = (int *)malloc(size * sizeof(int));
         this->bmi->GetGridFaceNodes(request->grid_id(), vals);
-        response->mutable_links()->Resize(size, 0);
-        std::copy(vals, vals + size, response->mutable_links()->begin());
+        response->mutable_face_nodes()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_face_nodes()->begin());
     }
     catch (const std::exception &e)
     {
@@ -677,6 +682,36 @@ grpc::Status BmiGRPCService::getGridFaceNodes(grpc::ServerContext *context, cons
     return grpc::Status::OK;
 }
 
+grpc::Status BmiGRPCService::getGridFaceEdges(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridFaceEdgesResponse *response)
+{
+    int *vals;
+    int *faceedges;
+    try
+    {
+        int face_count = this->bmi->GetGridFaceCount(request->grid_id());
+        faceedges = (int *)malloc(face_count * sizeof(int));
+        this->bmi->GetGridNodesPerFace(request->grid_id(), faceedges);
+        int size = 0;
+        for(int i = 0; i < face_count; ++i)
+        {
+            size += faceedges[i];
+        }
+        vals = (int *)malloc(size * sizeof(int));
+        this->bmi->GetGridFaceEdges(request->grid_id(), vals);
+        response->mutable_face_edges()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_face_edges()->begin());
+    }
+    catch (const std::exception &e)
+    {
+        free(faceedges);
+        free(vals);
+        return BmiGRPCService::handle_exception(e);
+    }
+    free(faceedges);
+    free(vals);
+    return grpc::Status::OK;
+}
+
 grpc::Status BmiGRPCService::getGridNodesPerFace(grpc::ServerContext *context, const bmi::GridRequest *request, bmi::GetGridNodesPerFaceResponse *response)
 {
     int *vals;
@@ -685,8 +720,8 @@ grpc::Status BmiGRPCService::getGridNodesPerFace(grpc::ServerContext *context, c
         int size = this->bmi->GetGridFaceCount(request->grid_id());
         vals = (int *)malloc(size * sizeof(int));
         this->bmi->GetGridNodesPerFace(request->grid_id(), vals);
-        response->mutable_links()->Resize(size, 0);
-        std::copy(vals, vals + size, response->mutable_links()->begin());
+        response->mutable_nodes_per_face()->Resize(size, 0);
+        std::copy(vals, vals + size, response->mutable_nodes_per_face()->begin());
     }
     catch (const std::exception &e)
     {
@@ -700,8 +735,7 @@ grpc::Status BmiGRPCService::getGridNodesPerFace(grpc::ServerContext *context, c
 char BmiGRPCService::find_type(const std::string &varname) const
 {
     std::locale loc;
-    char type[BMI_MAX_VAR_NAME];
-    this->bmi->GetVarType(varname.c_str(), type);
+    std::string type = this->bmi->GetVarType(varname);
     std::string vartype(type);
     std::transform(vartype.begin(), vartype.end(), vartype.begin(), ::tolower);
     std::vector<std::string> inttypes = {"int", "int16", "int32", "int64"};
@@ -730,8 +764,7 @@ void BmiGRPCService::get_grid_dimensions(int grid_id, int *vec3d) const
         int rank = this->bmi->GetGridRank(grid_id);
         int *shape = (int *)malloc(rank * sizeof(int));
         this->bmi->GetGridShape(grid_id, shape);
-        char type[BMI_MAX_VAR_NAME];
-        this->bmi->GetGridType(grid_id, type);
+        std::string type = this->bmi->GetGridType(grid_id);
         std::string typestr(type);
         if (typestr == "uniform_rectilinear" or typestr == "rectilinear")
         {

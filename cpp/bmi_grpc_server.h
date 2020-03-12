@@ -2,14 +2,13 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
-#ifndef BMI_INCLUDED
-#define BMI_INCLUDED
-#include "bmi.h"
-#include "bmi.hxx"
-#endif
+#include "bmi-c/bmi.h"
+#undef BMI_SUCCESS
+#undef BMI_FAILURE
+#include "bmi-cxx/bmi.hxx"
 
-typedef Bmi BMIModel;
 typedef bmi::Bmi BmiClass;
+typedef Bmi BmiModel;
 
 using bmi::BmiService;
 
@@ -20,8 +19,11 @@ class BmiGRPCService final: public BmiService::Service
         ~BmiGRPCService();
         grpc::Status initialize(grpc::ServerContext* context, const bmi::InitializeRequest* request, bmi::Empty* response) override;
         grpc::Status update(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response) override;
+        grpc::Status updateUntil(grpc::ServerContext* context, const bmi::GetTimeResponse* request, bmi::Empty* response) override;
         grpc::Status finalize(grpc::ServerContext* context, const bmi::Empty* request, bmi::Empty* response) override;
         grpc::Status getComponentName(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetComponentNameResponse* response) override;
+        grpc::Status getInputItemCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetCountResponse* response) override;
+        grpc::Status getOutputItemCount(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetCountResponse* response) override;
         grpc::Status getInputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) override;
         grpc::Status getOutputVarNames(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetVarNamesResponse* response) override;
         grpc::Status getTimeUnits(grpc::ServerContext* context, const bmi::Empty* request, bmi::GetTimeUnitsResponse* response) override;
@@ -50,11 +52,12 @@ class BmiGRPCService final: public BmiService::Service
         grpc::Status getGridX(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
         grpc::Status getGridY(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
         grpc::Status getGridZ(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridPointsResponse* response) override;
-        grpc::Status getGridNodeCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridElementCountResponse* response) override;
-        grpc::Status getGridEdgeCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridElementCountResponse* response) override;
-        grpc::Status getGridFaceCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridElementCountResponse* response) override;
+        grpc::Status getGridNodeCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) override;
+        grpc::Status getGridEdgeCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) override;
+        grpc::Status getGridFaceCount(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetCountResponse* response) override;
         grpc::Status getGridEdgeNodes(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridEdgeNodesResponse* response) override;
         grpc::Status getGridFaceNodes(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridFaceNodesResponse* response) override;
+        grpc::Status getGridFaceEdges(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridFaceEdgesResponse* response) override;
         grpc::Status getGridNodesPerFace(grpc::ServerContext* context, const bmi::GridRequest* request, bmi::GetGridNodesPerFaceResponse* response) override;
     private:
         BmiClass* const bmi;
@@ -64,7 +67,7 @@ class BmiGRPCService final: public BmiService::Service
         static grpc::Status handle_exception(const std::exception&);
 };
 
-void run_bmi_server(BMIModel* model, int argc, char* argv[]);
+void run_bmi_server(Bmi* model, int argc, char* argv[]);
 void run_bmi_server(BmiClass* model, int argc, char* argv[]);
 
 #endif

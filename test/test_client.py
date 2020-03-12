@@ -74,9 +74,26 @@ def test_component_name():
     del client
 
 
-def test_varnames():
+def test_input_item_count():
+    client, local = make_bmi_classes()
+    assert client.get_input_item_count() == local.get_input_item_count()
+    del client
+
+
+def test_output_item_count():
+    client, local = make_bmi_classes()
+    assert client.get_output_item_count() == local.get_output_item_count()
+    del client
+
+
+def test_input_var_names():
     client, local = make_bmi_classes()
     assert client.get_input_var_names() == local.get_input_var_names()
+    del client
+
+
+def test_output_var_names():
+    client, local = make_bmi_classes()
     assert client.get_output_var_names() == local.get_output_var_names()
     del client
 
@@ -92,6 +109,15 @@ def test_update():
     client, local = make_bmi_classes(True)
     client.update()
     assert client is not None
+    client.finalize()
+    del client
+
+
+def test_update_until():
+    client, local = make_bmi_classes(True)
+    until = local.get_start_time() + local.get_time_step() + local.get_time_step()
+    client.update_until(until)
+    assert client.get_current_time() == until
     client.finalize()
     del client
 
@@ -277,8 +303,11 @@ def test_get_grid_origin():
 @pytest.mark.parametrize("client_method,client_request", [
     ('initialize', ('config.ini',)),
     ('update', ()),
+    ('update_until', (42,)),
     ('finalize', ()),
     ('get_component_name', ()),
+    ('get_input_item_count', ()),
+    ('get_output_item_count', ()),
     ('get_input_var_names', ()),
     ('get_output_var_names', ()),
     ('get_time_units', ()),
@@ -310,6 +339,7 @@ def test_get_grid_origin():
     ('get_grid_face_count', (42,)),
     ('get_grid_edge_nodes', (42, numpy.empty(0))),
     ('get_grid_face_nodes', (42, numpy.empty(0))),
+    ('get_grid_face_edges', (42, numpy.empty(0))),
     ('get_grid_nodes_per_face', (42, numpy.empty(0))),
 ])
 def test_method_exception(client_method, client_request):
@@ -503,7 +533,7 @@ class TestUnstructuredGridBmiModel:
         assert 'Do not know what shape is' in str(excinfo.value)
 
     def test_grid_size(self, bmiclient):
-        assert bmiclient.get_grid_size(0) == 4
+        assert bmiclient.get_grid_size(0) == 6
 
     def test_grid_rank(self, bmiclient):
         assert bmiclient.get_grid_rank(0) == 2
@@ -511,50 +541,58 @@ class TestUnstructuredGridBmiModel:
     def test_get_grid_node_count(self, bmiclient):
         result = bmiclient.get_grid_node_count(0)
 
-        assert result == 4
+        assert result == 6
 
     def test_get_grid_edge_count(self, bmiclient):
         result = bmiclient.get_grid_edge_count(0)
 
-        assert result == 5
+        assert result == 8
 
     def test_get_grid_face_count(self, bmiclient):
         result = bmiclient.get_grid_face_count(0)
 
-        assert result == 2
+        assert result == 3
 
     def test_get_grid_edge_nodes(self, bmiclient):
-        placeholder = numpy.empty(10, dtype=numpy.int)
+        placeholder = numpy.empty(16, dtype=numpy.int)
 
         result = bmiclient.get_grid_edge_nodes(0, placeholder)
 
-        expected = (0, 3, 3, 1, 2, 1, 1, 0, 2, 0)
+        expected = (0, 1, 1, 2, 2, 3, 3, 0, 1, 4, 4, 5, 5, 2, 5, 3)
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_nodes(self, bmiclient):
-        placeholder = numpy.empty(6, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=numpy.int)
 
         result = bmiclient.get_grid_face_nodes(0, placeholder)
 
-        expected = (0, 3, 2, 0, 2, 1)
+        expected = (0, 1, 2, 3, 1, 4, 5, 2, 2, 5, 3)
+        numpy.testing.assert_allclose(result, expected)
+
+    def test_grid_face_edges(self, bmiclient):
+        placeholder = numpy.empty(11, dtype=numpy.int)
+
+        result = bmiclient.get_grid_face_edges(0, placeholder)
+
+        expected = (0, 1, 2, 3, 4, 5, 6, 1, 6, 7, 2)
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_nodes_per_face(self, bmiclient):
-        placeholder = numpy.empty(2, dtype=numpy.int)
+        placeholder = numpy.empty(3, dtype=numpy.int)
 
         result = bmiclient.get_grid_nodes_per_face(0, placeholder)
 
-        expected = (3, 3,)
+        expected = (4, 4, 3)
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_x(self, bmiclient):
-        result = bmiclient.get_grid_x(0, numpy.empty(4))
-        expected = [0.1, 0.2, 0.3, 0.4]
+        result = bmiclient.get_grid_x(0, numpy.empty(6))
+        expected = [0., 1., 2., 1., 3., 4.]
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_y(self, bmiclient):
-        result = bmiclient.get_grid_y(0, numpy.empty(4))
-        expected = [1.1, 1.2, 1.3, 1.4]
+        result = bmiclient.get_grid_y(0, numpy.empty(6))
+        expected = [3., 1., 2., 4., 0., 3.]
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_z(self, bmiclient):
