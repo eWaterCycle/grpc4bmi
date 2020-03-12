@@ -104,31 +104,23 @@ grpc::Status BmiGRPCService::getOutputItemCount(grpc::ServerContext *context, co
 
 grpc::Status BmiGRPCService::getInputVarNames(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetVarNamesResponse *response)
 {
-    char **input_var_names;
-    char *data;
     try
     {
-        std::vector<std::string> output_var_names = this->bmi->GetInputVarNames();
-        for (int i = 0; i < output_var_names.size(); i++)
+        std::vector<std::string> input_var_names = this->bmi->GetInputVarNames();
+        for (int i = 0; i < input_var_names.size(); i++)
         {
-            response->add_names(std::string(input_var_names[i]));
+            response->add_names(input_var_names[i]);
         }
     }
     catch (const std::exception &e)
     {
-        free(data);
-        free(input_var_names);
         return BmiGRPCService::handle_exception(e);
     }
-    free(data);
-    free(input_var_names);
     return grpc::Status::OK;
 }
 
 grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext *context, const bmi::Empty *request, bmi::GetVarNamesResponse *response)
 {
-    char **output_var_names;
-    char *data;
     try
     {
         std::vector<std::string> output_var_names = this->bmi->GetOutputVarNames();
@@ -139,12 +131,8 @@ grpc::Status BmiGRPCService::getOutputVarNames(grpc::ServerContext *context, con
     }
     catch (const std::exception &e)
     {
-        free(data);
-        free(output_var_names);
         return BmiGRPCService::handle_exception(e);
     }
-    free(data);
-    free(output_var_names);
     return grpc::Status::OK;
 }
 
