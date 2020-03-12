@@ -10,32 +10,32 @@ class BmiTestExtension: public BmiCppExtension
         BmiTestExtension(const std::vector<double>&, const std::vector<double>&);
         virtual ~BmiTestExtension();
         
-        void Initialize(const std::string& configfile) override;
+        void Initialize(std::string configfile) override;
         void Update() override;
         void UpdateUntil(double time) override;
         void Finalize() override;
 
-        std::string GetComponentName() const override;
-        int GetInputItemCount() const override;
-        int GetOutputItemCount() const override;
-        std::vector<std::string> GetInputVarNames() const override;
-        std::vector<std::string> GetOutputVarNames() const override;
+        std::string GetComponentName() override;
+        int GetInputItemCount() override;
+        int GetOutputItemCount() override;
+        std::vector<std::string> GetInputVarNames() override;
+        std::vector<std::string> GetOutputVarNames() override;
 
-        int GetVarGrid(const std::string& name) const override;
-        std::string GetVarType(const std::string& name) const override;
-        int GetVarItemsize(const std::string& name) const override;
-        std::string GetVarUnits(const std::string& name) const override;
-        int GetVarNbytes(const std::string& name) const override;
-        std::string GetVarLocation(const std::string& name) const override;
+        int GetVarGrid(std::string name) override;
+        std::string GetVarType(std::string name) override;
+        int GetVarItemsize(std::string name) override;
+        std::string GetVarUnits(std::string name) override;
+        int GetVarNbytes(std::string name) override;
+        std::string GetVarLocation(std::string name) override;
         double GetCurrentTime() override;
         double GetStartTime() override;
         double GetEndTime() override;
-        std::string GetTimeUnits() const override;
+        std::string GetTimeUnits() override;
         double GetTimeStep() override;
         
         int GetGridRank(int id) override;
         int GetGridSize(int id) override;
-        std::string GetGridType(int id) const override;
+        std::string GetGridType(int id) override;
         std::vector<int> GetGridShape(int id) const override;
         std::vector<double> GetGridSpacing(int id) const override;
         std::vector<double> GetGridOrigin(int id) const override;

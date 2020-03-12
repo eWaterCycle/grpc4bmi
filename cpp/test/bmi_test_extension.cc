@@ -37,32 +37,32 @@ void BmiTestExtension::Finalize(){}
 
 BmiTestExtension::~BmiTestExtension(){}
 
-void BmiTestExtension::Initialize(const std::string& configfile)
+void BmiTestExtension::Initialize(std::string configfile)
 {
     std::cout<<"initializing with "<<configfile;
 }
 
-std::string BmiTestExtension::GetComponentName() const
+std::string BmiTestExtension::GetComponentName()
 {
     return "test_model";
 }
 
-int BmiTestExtension::GetInputItemCount() const
+int BmiTestExtension::GetInputItemCount()
 {
     return this->input_vars.size();
 }
 
-int BmiTestExtension::GetOutputItemCount() const
+int BmiTestExtension::GetOutputItemCount()
 {
     return this->output_vars.size();
 }
 
-std::vector<std::string> BmiTestExtension::GetInputVarNames() const
+std::vector<std::string> BmiTestExtension::GetInputVarNames()
 {
     return this->input_vars;
 }
 
-std::vector<std::string> BmiTestExtension::GetOutputVarNames() const
+std::vector<std::string> BmiTestExtension::GetOutputVarNames()
 {
     return this->output_vars;
 }
@@ -72,7 +72,7 @@ bool BmiTestExtension::has_var(std::string name) const
     return std::find(this->input_vars.begin(), this->input_vars.end(), name) != this->input_vars.end() or std::find(this->output_vars.begin(), this->output_vars.end(), name) != this->output_vars.end();
 }
 
-int BmiTestExtension::GetVarGrid(const std::string& name) const
+int BmiTestExtension::GetVarGrid(std::string name)
 {
     if(this->has_var(name))
     {
@@ -81,7 +81,7 @@ int BmiTestExtension::GetVarGrid(const std::string& name) const
     throw std::invalid_argument("unknown variable: " + name);
 }
 
-std::string BmiTestExtension::GetVarType(const std::string& name) const
+std::string BmiTestExtension::GetVarType(std::string name)
 {
     if(this->has_var(name))
     {
@@ -90,7 +90,7 @@ std::string BmiTestExtension::GetVarType(const std::string& name) const
     throw std::invalid_argument("unknown variable: " + name);
 }
 
-int BmiTestExtension::GetVarItemsize(const std::string& name) const
+int BmiTestExtension::GetVarItemsize(std::string name)
 {
     if(this->has_var(name))
     {
@@ -99,7 +99,7 @@ int BmiTestExtension::GetVarItemsize(const std::string& name) const
     throw std::invalid_argument("unknown variable: " + name);
 }
 
-std::string BmiTestExtension::GetVarUnits(const std::string& name) const
+std::string BmiTestExtension::GetVarUnits(std::string name)
 {
     if(name == "water level")
     {
@@ -112,7 +112,7 @@ std::string BmiTestExtension::GetVarUnits(const std::string& name) const
     throw std::invalid_argument("unknown variable: " + name);
 }
 
-int BmiTestExtension::GetVarNbytes(const std::string& name) const
+int BmiTestExtension::GetVarNbytes(std::string name)
 {
     if(this->has_var(name))
     {
@@ -121,7 +121,7 @@ int BmiTestExtension::GetVarNbytes(const std::string& name) const
     throw std::invalid_argument("unknown variable: " + name);
 }
 
-std::string BmiTestExtension::GetVarLocation(const std::string& name) const
+std::string BmiTestExtension::GetVarLocation(std::string name)
 {
     if(name == "water level")
     {
@@ -149,7 +149,7 @@ double BmiTestExtension::GetEndTime()
     return 100;
 }
 
-std::string BmiTestExtension::GetTimeUnits() const
+std::string BmiTestExtension::GetTimeUnits()
 {
     return "days since 1981-08-29 06:00:00";
 }
@@ -177,7 +177,7 @@ int BmiTestExtension::GetGridSize(int id)
     throw std::invalid_argument("unknown grid id argument");
 }
 
-std::string BmiTestExtension::GetGridType(int id) const
+std::string BmiTestExtension::GetGridType(int id)
 {
     if(id == this->grid_id)
     {
