@@ -2,16 +2,13 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
-#ifndef BMI_INCLUDED
-#define BMI_INCLUDED
 #include "bmi-c/bmi.h"
 #undef BMI_SUCCESS
 #undef BMI_FAILURE
 #include "bmi-cxx/bmi.hxx"
-#endif
 
-typedef Bmi BMIModel;
 typedef bmi::Bmi BmiClass;
+typedef Bmi BmiModel;
 
 using bmi::BmiService;
 
@@ -70,7 +67,7 @@ class BmiGRPCService final: public BmiService::Service
         static grpc::Status handle_exception(const std::exception&);
 };
 
-void run_bmi_server(BMIModel* model, int argc, char* argv[]);
+void run_bmi_server(Bmi* model, int argc, char* argv[]);
 void run_bmi_server(BmiClass* model, int argc, char* argv[]);
 
 #endif
