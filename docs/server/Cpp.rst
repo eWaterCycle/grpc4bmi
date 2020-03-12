@@ -18,6 +18,7 @@ For native programming languages it is necessary to install and compile the C++ 
     mkdir cmake/build && cd cmake/build
     /usr/local/bin/cmake ../.. -DgRPC_INSTALL=ON -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=ON
     sudo make -j4 install
+    sudo ldconfig
 
 You will also need to compile grpc4bmi
 
