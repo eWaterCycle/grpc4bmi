@@ -68,7 +68,7 @@ matrix:
         script:
             - mkdir -p ${TRAVIS_BUILD_DIR}/cpp/build && cd ${TRAVIS_BUILD_DIR}/cpp/build
             - /usr/local/bin/cmake ..
-            - make
+            - make VERBOSE=1
             - ctest -V
         cache:
             directories:
