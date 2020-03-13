@@ -804,16 +804,6 @@ def test_handle_error_without_status():
             handle_error(call)
 
         assert excinfo.value == call
-def test_get_grid_points():
-    client, local = make_bmi_classes(True)
-    varname = local.get_output_var_names()[0]
-    grid_id = local.get_var_grid(varname)
-    local_x = [] if local.get_grid_x(grid_id) is None else numpy.array(local.get_grid_x(grid_id))
-    local_y = [] if local.get_grid_y(grid_id) is None else numpy.array(local.get_grid_y(grid_id))
-    local_z = [] if local.get_grid_z(grid_id) is None else numpy.array(local.get_grid_z(grid_id))
-    assert numpy.array_equal(client.get_grid_x(grid_id), local_x)
-    assert numpy.array_equal(client.get_grid_y(grid_id), local_y)
-    assert numpy.array_equal(client.get_grid_z(grid_id), local_z)
 
 
 class TestCreateGrpcChannel:
