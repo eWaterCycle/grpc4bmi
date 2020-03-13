@@ -28,7 +28,7 @@ class DeadDockerContainerException(ChildProcessError):
 
 class BmiClientDocker(BmiClient):
     """
-    BMI GRPC client for dockerized server processes: the initialization launches the docker container which should have the
+    BMI gRPC client for dockerized server processes: the initialization launches the docker container which should have the
     run-bmi-server as its command. Also, it should expose the tcp port 50001 for communication with this client. Upon
     destruction, this class terminates the corresponding docker server.
 
@@ -42,6 +42,7 @@ class BmiClientDocker(BmiClient):
         user (str): Username or UID of Docker container
         remove (bool): Automatically remove the container and logs when it exits.
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
+        timeout (int): Seconds to wait for gRPC client to connect to server
 
     """
 
@@ -50,7 +51,8 @@ class BmiClientDocker(BmiClient):
 
     def __init__(self, image, image_port=50051, host=None,
                  input_dir=None, output_dir=None,
-                 user=os.getuid(), remove=False, delay=5):
+                 user=os.getuid(), remove=False, delay=5,
+                 timeout=None):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
@@ -87,7 +89,7 @@ class BmiClientDocker(BmiClient):
                 msg = f'Failed to start Docker container with image {image}, Container log: {logs}'
                 raise DeadDockerContainerException(msg, exitcode, logs)
 
-        super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
+        super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
         if hasattr(self, "container"):
