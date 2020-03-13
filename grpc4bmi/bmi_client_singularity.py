@@ -40,12 +40,13 @@ class BmiClientSingularity(BmiClient):
         image: Singularity image. For Docker Hub image use `docker://*`.
         input_dir (str): Directory for input files of model
         output_dir (str): Directory for input files of model
+        timeout (int): Seconds to wait for gRPC client to connect to server
 
     """
     INPUT_MOUNT_POINT = "/data/input"
     OUTPUT_MOUNT_POINT = "/data/output"
 
-    def __init__(self, image, input_dir=None, output_dir=None):
+    def __init__(self, image, input_dir=None, output_dir=None, timeout=None):
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
@@ -70,7 +71,7 @@ class BmiClientSingularity(BmiClient):
         env['BMI_PORT'] = str(port)
         logging.info(f'Running {image} singularity container on port {port}')
         self.container = subprocess.Popen(args, env=env, preexec_fn=os.setsid)
-        super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host))
+        super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
         if hasattr(self, "container"):
