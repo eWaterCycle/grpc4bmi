@@ -25,8 +25,6 @@ class BmiClient(bmi.Bmi):
     Hello world
     """
 
-    occupied_ports = set()
-
     def __init__(self, channel=None, timeout=None, stub=None):
         if stub is None:
             c = BmiClient.create_grpc_channel() if channel is None else channel
@@ -46,10 +44,6 @@ class BmiClient(bmi.Bmi):
             h = "localhost"
         if p == 0:
             p = os.environ.get("BMI_PORT", 50051)
-        elif p in BmiClient.occupied_ports:
-            log.error("Attempt to create grpc channel on occupied port %d" % p)
-            return None
-        BmiClient.occupied_ports.add(p)
         return grpc.insecure_channel(':'.join([h, str(p)]))
 
     @staticmethod
