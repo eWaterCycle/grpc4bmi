@@ -41,12 +41,22 @@ class BmiClientSingularity(BmiClient):
         input_dir (str): Directory for input files of model
         output_dir (str): Directory for input files of model
         timeout (int): Seconds to wait for gRPC client to connect to server
+        extra_volumes (Dict[str,str]): Extra volumes to attach to Singularity container.
+
+            The key is either the hosts path or a volume name and the value the mounted volume inside the container.
+            Contrary to docker client, extra volumes are always read/write
+
+            For example:
+
+            .. code-block:: python
+
+                    {'/data/shared/forcings/': /data/forcings'}
 
     """
     INPUT_MOUNT_POINT = "/data/input"
     OUTPUT_MOUNT_POINT = "/data/output"
 
-    def __init__(self, image, input_dir=None, output_dir=None, timeout=None):
+    def __init__(self, image, input_dir=None, output_dir=None, timeout=None, extra_volumes=None):
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
@@ -54,9 +64,12 @@ class BmiClientSingularity(BmiClient):
             "singularity",
             "run",
         ]
+        mount_points = {} if extra_volumes is None else extra_volumes
         if input_dir is not None:
+            mount_points[input_dir] = BmiClientSingularity.INPUT_MOUNT_POINT
             self.input_dir = abspath(input_dir)
-            args += ["--bind", input_dir + ':' + BmiClientSingularity.INPUT_MOUNT_POINT]
+        if any(mount_points):
+            args += ["--bind", ','.join([hp + ':' + ip for hp, ip in mount_points.items()])]
         if output_dir is not None:
             self.output_dir = abspath(output_dir)
             try:
