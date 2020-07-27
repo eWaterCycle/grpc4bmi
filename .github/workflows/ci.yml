@@ -50,7 +50,14 @@ jobs:
         cd ${GITHUB_WORKSPACE}
     - name: Pull Docker image
       run: docker pull ewatercycle/walrus-grpc4bmi:v0.3.1
-    - name: Pull Singularity image
+    - name: Cache Singularity image
+      id: cache-singularity-image
+      uses: actions/cache@v2
+      with:
+        path: ~/.singularity
+        key: singularity-image
+   - name: Pull Singularity image
+      if: steps.cache-singularity-image.outputs.cache-hit != 'true'
       run: singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.3.1
     - name: Test with pytest
       run: pytest --cov=grpc4bmi --cov-report xml
@@ -66,10 +73,13 @@ jobs:
         with:
           submodules: true
       - name: Build dir
-        run: mkdir -p cpp/build && cd cpp/build
+        run: mkdir -p cpp/build
       - name: configure
         run: cmake ..
+        working-directory: cpp/build
       - name: make
         run: make VERBOSE=1
+        working-directory: cpp/build
       - name: ctest
         run: ctest -V
+        working-directory: cpp/build
