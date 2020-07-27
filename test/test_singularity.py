@@ -49,7 +49,7 @@ def notebook():
     return new_notebook(cells=cells)
 
 
-@pytest.mark.skipif(environ.get('TRAVIS', 'false') == 'true', reason="Does not work on Travis-CI")
+@pytest.mark.skipif(environ.get('CI', 'false') == 'true', reason="Does not work on CI service")
 def test_from_notebook(notebook, tmp_path):
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
     ep.preprocess(notebook, {'metadata': {'path': tmp_path}})
