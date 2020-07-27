@@ -35,9 +35,9 @@ class TestBmiClientDocker:
         walrus_model.initialize(str(walrus_input))
         assert walrus_model.get_current_time() == walrus_model.get_start_time()
 
-    def test_get_value_ref(self, walrus_model):
+    def test_get_value_ptr(self, walrus_model):
         with pytest.raises(NotImplementedError):
-            walrus_model.get_value_ref('Q')
+            walrus_model.get_value_ptr('Q')
 
     def test_get_grid_origin(self, walrus_input, walrus_model):
         walrus_model.initialize(str(walrus_input))

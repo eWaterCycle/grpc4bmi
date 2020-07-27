@@ -95,5 +95,5 @@ class BmiClientSingularity(BmiClient):
         fn = stage_config_file(filename, self.input_dir, self.INPUT_MOUNT_POINT, home_mounted=True)
         super(BmiClientSingularity, self).initialize(fn)
 
-    def get_value_ref(self, var_name):
+    def get_value_ptr(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")

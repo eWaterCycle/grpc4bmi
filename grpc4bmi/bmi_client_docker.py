@@ -11,6 +11,7 @@ from grpc4bmi.utils import stage_config_file
 class LogsException(Exception):
     pass
 
+
 class DeadDockerContainerException(ChildProcessError):
     """
     Exception for when a Docker container has died.
@@ -115,7 +116,7 @@ class BmiClientDocker(BmiClient):
         fn = stage_config_file(filename, self.input_dir, self.input_mount_point)
         super(BmiClientDocker, self).initialize(fn)
 
-    def get_value_ref(self, var_name):
+    def get_value_ptr(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
 
     def logs(self):
