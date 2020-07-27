@@ -43,6 +43,17 @@ class BmiClientDocker(BmiClient):
         remove (bool): Automatically remove the container and logs when it exits.
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
         timeout (int): Seconds to wait for gRPC client to connect to server
+        extra_volumes (Dict[str,Dict]): Extra volumes to attach to Docker container.
+￼            The key is either the hosts path or a volume name and the value is a dictionary with the keys:
+￼
+￼            - ``bind`` The path to mount the volume inside the container
+￼            - ``mode`` Either ``rw`` to mount the volume read/write, or ``ro`` to mount it read-only.
+￼
+￼            For example:
+￼
+￼            .. code-block:: python
+￼
+￼                    {'/data/shared/forcings/': {'bind': '/forcings', 'mode': 'ro'}}
 
     """
 
@@ -52,10 +63,12 @@ class BmiClientDocker(BmiClient):
     def __init__(self, image, image_port=50051, host=None,
                  input_dir=None, output_dir=None,
                  user=os.getuid(), remove=False, delay=5,
-                 timeout=None):
+                 timeout=None, extra_volumes=None):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
+        if extra_volumes is not None:
+            volumes.update(extra_volumes)
         self.input_dir = None
         if input_dir is not None:
             self.input_dir = os.path.abspath(input_dir)
