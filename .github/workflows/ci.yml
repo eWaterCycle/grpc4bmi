@@ -56,7 +56,7 @@ jobs:
       with:
         path: ~/.singularity
         key: singularity-image
-   - name: Pull Singularity image
+    - name: Pull Singularity image
       if: steps.cache-singularity-image.outputs.cache-hit != 'true'
       run: singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.3.1
     - name: Test with pytest
