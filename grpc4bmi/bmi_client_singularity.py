@@ -43,8 +43,8 @@ class BmiClientSingularity(BmiClient):
         timeout (int): Seconds to wait for gRPC client to connect to server
         extra_volumes (Dict[str,str]): Extra volumes to attach to Singularity container.
 
-            The key is either the hosts path or a volume name and the value the mounted volume inside the container.
-            Contrary to docker client, extra volumes are always read/write
+            The key is the hosts path and the value the mounted volume inside the container.
+            Contrary to Docker client, extra volumes are always read/write
 
             For example:
 
