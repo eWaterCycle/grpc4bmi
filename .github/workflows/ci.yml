@@ -63,7 +63,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        submodules: true
+        with:
+          submodules: true
       - name: Build dir
         run: mkdir -p cpp/build && cd cpp/build
       - name: configure
