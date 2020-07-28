@@ -27,7 +27,7 @@ jobs:
       with:
         go-version: '^1.14.6'
     - name: Setup Singularity
-      uses: eWaterCycle/setup-singularity@master
+      uses: eWaterCycle/setup-singularity@v2
       with:
         singularity-version: 3.6.1
     - name: Pull Docker image
