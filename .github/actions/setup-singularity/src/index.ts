@@ -1,15 +1,16 @@
 import path from 'path';
+import { homedir} from 'os';
 
 import {info, getInput, addPath, setFailed } from '@actions/core';
 import exec from '@actions/exec';
 import io from '@actions/io';
 import tc from '@actions/tool-cache';
 
-async function installSingularityVersion(versionSpec) {
+async function installSingularityVersion(versionSpec: string) {
     let downloadUrl = `https://github.com/hpcng/singularity/releases/download/v${versionSpec}/singularity-${versionSpec}.tar.gz`;
     const archivePath = await tc.downloadTool(downloadUrl, undefined);
 
-    const extractDir = path.join(process.env.GOPATH, 'src', 'github.com', 'hpcng')
+    const extractDir = path.join(homedir(), 'go', 'src', 'github.com', 'hpcng')
     await tc.extractTar(archivePath, extractDir)
     const extPath = path.join(extractDir, 'singularity');
     info('Extracting singularity...');

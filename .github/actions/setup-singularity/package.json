@@ -2,11 +2,15 @@
   "name": "setup-singularity",
   "version": "1.0.0",
   "description": "To use Singularity containers in a workflow you need to install it first. This GitHub Action compiles and installs for you.",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "parcel build --no-source-maps --no-minify src/index.ts"
+    "build": "tsc && ncc build"
   },
-  "keywords": [],
+  "keywords": [
+    "actions",
+    "singularity",
+    "setup"
+  ],
   "author": "Stefan Verhoeven",
   "license": "Apache-2.0",
   "dependencies": {
@@ -16,7 +20,7 @@
     "@actions/tool-cache": "^1.6.0"
   },
   "devDependencies": {
-    "parcel": "^1.12.4",
+    "@zeit/ncc": "^0.22.3",
     "typescript": "^3.9.7"
   }
 }
