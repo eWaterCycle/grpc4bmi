@@ -27,7 +27,7 @@ jobs:
       with:
         go-version: '^1.14.6'
     - name: OS dependencies
-      run: apt install uuid-dev
+      run: sudo apt install uuid-dev
     - name: Setup Singularity
       uses: eWaterCycle/setup-singularity@v2
       with:
