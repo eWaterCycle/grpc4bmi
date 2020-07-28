@@ -22,3 +22,19 @@ steps:
 - name: Version of installed singularity
   run: singularity --version
 ```
+
+## Build
+
+For developers of setup-singularity action.
+
+Install deps with
+
+```bash
+npm install
+```
+
+Build dist with
+
+```bash
+npm run build
+```

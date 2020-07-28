@@ -1,18 +1,22 @@
 {
   "name": "setup-singularity",
   "version": "1.0.0",
-  "description": "To use [Singularity](https://sylabs.io/singularity/) containers in a workflow you need to install it first. This GitHub Action compiles and installs for you.",
-  "main": "index.js",
+  "description": "To use Singularity containers in a workflow you need to install it first. This GitHub Action compiles and installs for you.",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "parcel build --no-source-maps --no-minify src/index.ts"
   },
   "keywords": [],
   "author": "Stefan Verhoeven",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@actions/core": "^1.2.4",
     "@actions/github": "^4.0.0",
     "@actions/io": "^1.0.2",
     "@actions/tool-cache": "^1.6.0"
+  },
+  "devDependencies": {
+    "parcel": "^1.12.4",
+    "typescript": "^3.9.7"
   }
 }
