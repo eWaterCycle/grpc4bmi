@@ -60,6 +60,10 @@ jobs:
         uses: ewatercycle/setup-grpc@master
         with:
           grpc-version: 1.27.2
+      - name: Copy grpc to system default
+        run: |
+          sudo rsync -a $GRPC_ROOT/ /usr/local
+          sudo ldconfig
       - name: Build dir
         run: mkdir -p cpp/build
       - name: configure
