@@ -60,6 +60,11 @@ jobs:
         uses: ewatercycle/setup-grpc@master
         with:
           grpc-version: 1.27.2
+      - name: Build dir
+        run: mkdir -p cpp/build
+      - name: configure
+        run: cmake ..
+        working-directory: cpp/build
       - name: Debug
         run: |
           which protoc
@@ -70,12 +75,6 @@ jobs:
           echo $CMAKE_PREFIX_PATH
           echo $PATH
           grep GRPC CMakeCache.txt
-          export
-      - name: Build dir
-        run: mkdir -p cpp/build
-      - name: configure
-        run: cmake ..
-        working-directory: cpp/build
       - name: make
         run: make VERBOSE=1
         working-directory: cpp/build
