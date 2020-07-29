@@ -75,6 +75,7 @@ jobs:
           echo $CMAKE_PREFIX_PATH
           echo $PATH
           grep GRPC CMakeCache.txt
+        working-directory: cpp/build
       - name: make
         run: make VERBOSE=1
         working-directory: cpp/build
