@@ -60,6 +60,15 @@ jobs:
         uses: ewatercycle/setup-grpc@master
         with:
           grpc-version: 1.27.2
+      - name: Debug
+        run: |
+          which protoc
+          protoc --version
+          ls -lR $AGENT_TOOLSDIRECTORY/grpc
+          echo $LD_LIBRARY_PATH
+          echo $CMAKE_PREFIX_PATH
+          echo $PATH
+          grep GRPC CMakeCache.txt
       - name: Build dir
         run: mkdir -p cpp/build
       - name: configure
