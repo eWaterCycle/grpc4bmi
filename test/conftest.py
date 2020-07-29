@@ -1,7 +1,7 @@
 import pytest
 
-def write_config(p):
-    p.write_text("""data: /data/input/PEQ_Hupsel.dat
+def write_config(p, data_fn='/data/input/PEQ_Hupsel.dat'):
+    p.write_text(f"""data: {data_fn}
 parameters:
   cW: 200
   cV: 4
@@ -59,3 +59,17 @@ def walrus_input(tmp_path):
     write_config(cfg)
     write_datafile(tmp_path / 'PEQ_Hupsel.dat')
     return cfg
+
+
+@pytest.fixture()
+def walrus_input_on_extra_volume(tmp_path):
+    # Have config in input dir and forcings data file on extra volume
+    input_dir = tmp_path / 'input'
+    input_dir.mkdir()
+    cfg = input_dir / 'config.yml'
+    write_config(cfg, '/forcings/PEQ_Hupsel.dat')
+    extra_dir = tmp_path / 'forcings'
+    extra_dir.mkdir()
+    write_datafile(extra_dir / 'PEQ_Hupsel.dat')
+    extra_volumes = {extra_dir: {'bind': '/forcings', 'mode': 'ro'}}
+    return input_dir, extra_volumes
