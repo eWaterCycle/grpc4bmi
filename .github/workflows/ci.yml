@@ -69,17 +69,6 @@ jobs:
       - name: configure
         run: cmake ..
         working-directory: cpp/build
-      - name: Debug
-        run: |
-          which protoc
-          protoc --version
-          echo $GRPC_ROOT
-          ls -lR $GRPC_ROOT
-          echo $LD_LIBRARY_PATH
-          echo $CMAKE_PREFIX_PATH
-          echo $PATH
-          grep GRPC CMakeCache.txt
-        working-directory: cpp/build
       - name: make
         run: make VERBOSE=1
         working-directory: cpp/build
