@@ -52,9 +52,9 @@ class TestBmiClientDocker:
         walrus_model.initialize(str(walrus_input))
         assert walrus_model.get_current_time() == walrus_model.get_start_time()
 
-    def test_get_value_ref(self, walrus_model):
+    def test_get_value_ptr(self, walrus_model):
         with pytest.raises(NotImplementedError):
-            walrus_model.get_value_ref('Q')
+            walrus_model.get_value_ptr('Q')
 
     def test_extra_volume(self, walrus_model_with_extra_volume):
         walrus_model_with_extra_volume.initialize('/data/input/config.yml')
