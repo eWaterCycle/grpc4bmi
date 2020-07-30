@@ -44,16 +44,17 @@ class BmiClientDocker(BmiClient):
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
         timeout (int): Seconds to wait for gRPC client to connect to server
         extra_volumes (Dict[str,Dict]): Extra volumes to attach to Docker container.
-￼            The key is either the hosts path or a volume name and the value is a dictionary with the keys:
-￼
-￼            - ``bind`` The path to mount the volume inside the container
-￼            - ``mode`` Either ``rw`` to mount the volume read/write, or ``ro`` to mount it read-only.
-￼
-￼            For example:
-￼
-￼            .. code-block:: python
-￼
-￼                    {'/data/shared/forcings/': {'bind': '/forcings', 'mode': 'ro'}}
+
+            The key is either the hosts path or a volume name and the value is a dictionary with the keys:
+
+            - ``bind`` The path to mount the volume inside the container
+            - ``mode`` Either ``rw`` to mount the volume read/write, or ``ro`` to mount it read-only.
+
+            For example:
+
+            .. code-block:: python
+
+                    {'/data/shared/forcings/': {'bind': '/forcings', 'mode': 'ro'}}
 
     """
 
