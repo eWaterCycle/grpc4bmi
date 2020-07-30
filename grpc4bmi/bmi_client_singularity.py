@@ -5,7 +5,7 @@ import subprocess
 import sys
 import logging
 
-import semver
+from semver import VersionInfo
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.utils import stage_config_file
@@ -18,7 +18,7 @@ def check_singularity_version():
     (stdout, _stderr) = p.communicate()
     if p.returncode != 0:
         raise Exception('Unable to determine singularity version')
-    if not semver.match(stdout.decode('utf-8'), REQUIRED_SINGULARITY_VERSION):
+    if not VersionInfo.parse(stdout.decode('utf-8')).match(REQUIRED_SINGULARITY_VERSION):
         raise Exception(f'Wrong version of singularity found, require version {REQUIRED_SINGULARITY_VERSION}')
     return True
 
