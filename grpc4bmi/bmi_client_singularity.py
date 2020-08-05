@@ -50,7 +50,7 @@ class BmiClientSingularity(BmiClient):
 
             .. code-block:: python
 
-                    {'/data/shared/forcings/': /data/forcings'}
+                    {'/data/shared/forcings/': '/data/forcings'}
 
     """
     INPUT_MOUNT_POINT = "/data/input"
