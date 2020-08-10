@@ -357,7 +357,7 @@ class DTypeModel(GridModel):
         return self.dtype.itemsize
 
     def get_var_nbytes(self, name):
-        return self.dtype.itemsize * 3
+        return self.dtype.itemsize * self.value.shape[0]
 
     def get_value(self, name, dest):
         numpy.copyto(src=self.value, dst=dest)
@@ -390,3 +390,22 @@ class BooleanModel(DTypeModel):
         super().__init__()
         self.dtype = numpy.dtype('bool')
         self.value = numpy.array((True, False, True), dtype=self.dtype)
+
+
+class HugeModel(DTypeModel):
+    """Model which has value which does not fit in message body
+
+    Can be run from command line with
+
+    ..code-block:: bash
+
+        run-bmi-server --path $PWD/test --name fake_models.HugeModel --port 55555 --debug
+    """
+    def __init__(self):
+        super().__init__()
+        self.dtype = numpy.dtype('float64')
+        # grpc max message size is 4Mb
+        maxsize = 4 * 1024 * 1024
+        # Create value which is bigger than 4Mb
+        dimension = maxsize // self.dtype.itemsize + 1000
+        self.value = numpy.ones((dimension,), dtype=self.dtype)
