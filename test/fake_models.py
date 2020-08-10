@@ -407,5 +407,5 @@ class HugeModel(DTypeModel):
         # grpc max message size is 4Mb
         maxsize = 4 * 1024 * 1024
         # Create value which is bigger than 4Mb
-        dimension = maxsize // self.dtype.itemsize + 1000
+        dimension = (3 * maxsize) // self.dtype.itemsize + 1000
         self.value = numpy.ones((dimension,), dtype=self.dtype)

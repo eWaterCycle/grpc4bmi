@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import socket
 from contextlib import closing
@@ -42,6 +43,13 @@ def handle_error(exc):
             remote_detail = info.detail
             raise RemoteException(remote_detail, remote_traceback) from exc
     raise
+
+
+def _fits_in_message(array):
+    """Tests whether array can be passed through a gRPC message with a max message size of 4Mb"""
+    array_size = array.size * array.itemsize
+    max_message_size = 4 * 1024 * 1024
+    return array_size <= max_message_size
 
 
 class BmiClient(Bmi):
@@ -209,10 +217,39 @@ class BmiClient(Bmi):
             handle_error(e)
 
     def get_value(self, name, dest):
+        fits = _fits_in_message(dest)
+        if not fits:
+            return self._chunked_get_value(name, dest)
         try:
             response = self.stub.getValue(bmi_pb2.GetVarRequest(name=name))
             numpy.copyto(src=BmiClient.make_array(response), dst=dest)
             return dest
+        except grpc.RpcError as e:
+            handle_error(e)
+
+    def _chunked_get_value(self, name: str, dest: np.array) -> np.array:
+        # Make chunk one item smaller than maximum (4Mb)
+        chunk_size = math.floor(4 * 1024 * 1024 / dest.dtype.itemsize) - dest.dtype.itemsize
+        chunks = []
+        log.info(f'Too many items ({dest.size}) for single call, '
+                 f'using multiple get_value_at_indices() with into chunks of {chunk_size} items')
+        for i in range(0, dest.size, chunk_size):
+            start = i
+            stop = i + chunk_size
+            # Last chunk can be smaller
+            if stop > dest.size:
+                stop = dest.size
+            chunks.append(self._get_value_at_range(name, start, stop))
+
+        numpy.concatenate(chunks, out=dest)
+        return dest
+
+    def _get_value_at_range(self, name, start, stop):
+        log.info(f'Fetching value range {start} - {stop}')
+        try:
+            response = self.stub.getValueAtIndices(bmi_pb2.GetValueAtIndicesRequest(name=name,
+                                                                                    indices=range(start, stop)))
+            return BmiClient.make_array(response)
         except grpc.RpcError as e:
             handle_error(e)
 
