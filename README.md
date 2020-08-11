@@ -1,10 +1,8 @@
-# grpc4bmi
-
 [![DOI](https://zenodo.org/badge/130237165.svg)](https://zenodo.org/badge/latestdoi/130237165)
-[![CI](https://github.com/eWaterCycle/grpc4bmi/workflows/CI/badge.svg)](https://github.com/eWaterCycle/grpc4bmi/actions?query=workflow%3ACI)
+[![Build Status](https://travis-ci.org/eWaterCycle/grpc4bmi.svg?branch=master)](https://travis-ci.org/eWaterCycle/grpc4bmi)
 [![Documentation Status](https://readthedocs.org/projects/grpc4bmi/badge/?version=latest)](https://grpc4bmi.readthedocs.io/en/latest/?badge=latest)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=grpc4bmi&metric=alert_status)](https://sonarcloud.io/dashboard?id=grpc4bmi)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=grpc4bmi&metric=coverage)](https://sonarcloud.io/dashboard?id=grpc4bmi)
+
+# grpc4bmi
 
 ## Purpose
 
@@ -37,10 +35,10 @@ For inspiration look at the example in the test directory. To start a server pro
 ```bash
 run-bmi-server --name <PACKAGE>.<MODULE>.<CLASS> --port <PORT> --path <PATH>
 ```
-where ```<PACKAGE>, <MODULE>``` are the python package and module containing your implementation, ```<CLASS>``` is your
-bmi model class name, ```<PORT>``` is any available port on the host system, and optionally ```<PATH>``` denotes an
-additional path that should be added to the system path to make your implementation work. The name option above is
-optional, and if not provided the script will look at the environment variables ```BMI_PACKAGE```, ```BMI_MODULE``` and
+where ```<PACKAGE>, <MODULE>``` are the python package and module containing your implementation, ```<CLASS>``` is your 
+bmi model class name, ```<PORT>``` is any available port on the host system, and optionally ```<PATH>``` denotes an 
+additional path that should be added to the system path to make your implementation work. The name option above is 
+optional, and if not provided the script will look at the environment variables ```BMI_PACKAGE```, ```BMI_MODULE``` and 
 ```BMI_CLASS```. Similarly, the port can be defined by the environment variable ```BMI_PORT```.
 This software assumes that your implementation constructor has no parameters.
 
@@ -79,7 +77,7 @@ mymodel.initialize(<FILEPATH>)
 ...further BMI calls...
 ```
 
-The package contains also client implementation that own the server process, either as a python subprocess or a docker
+The package contains also client implementation that own the server process, either as a python subprocess or a docker 
 image or a singularity image running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
@@ -111,7 +109,7 @@ pip install -e .[R]
 
 ```
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
-After this, simply executing the `proto_gen.sh` script should do the job.
+After this, simply executing the `proto_gen.sh` script should do the job. 
 
 ## Future work
 
