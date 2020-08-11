@@ -59,8 +59,11 @@ jobs:
         run: |
           sudo rsync -a $GRPC_ROOT/ /usr/local
           sudo ldconfig
+      - name: Build & install bmi-c
+        run: mkdir -p build && cd build && cmake .. && sudo make install
+        working-directory: cpp/bmi-c
       - name: Build dir
-        run: mkdir -p cpp/build
+        run: mkdir -p cpp//build
       - name: configure
         run: cmake ..
         working-directory: cpp/build
