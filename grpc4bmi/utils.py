@@ -36,3 +36,7 @@ def stage_config_file(filename, input_dir, input_mount_point, home_mounted=False
         # Assume filename exists inside container or model does not need a file to initialize
         pass
     return fn
+
+
+# grpc max message size is 4Mb
+GRPC_MAX_MESSAGE_LENGTH = 4 * 1024 * 1024

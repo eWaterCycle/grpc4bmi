@@ -4,6 +4,8 @@ import numpy
 import numpy.random
 import pytest
 import os
+
+from test.fake_models import HugeModel
 from test.flatbmiheat import FlatBmiHeat
 
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
@@ -136,6 +138,18 @@ def test_get_var_values():
     client.update()
     local.update()
     assert numpy.array_equal(client.get_value(varname), local.get_value(varname))
+    del client
+
+
+def test_get_value_huge():
+    os.environ["PYTHONPATH"] = os.path.dirname(os.path.abspath(__file__))
+    client = BmiClientSubProcess("fake_models.HugeModel")
+    local = HugeModel()
+    varname = local.get_output_var_names()[0]
+
+    result = client.get_value(varname)
+    expected = local.get_value(varname)
+    assert numpy.array_equal(result, expected)
     del client
 
 
