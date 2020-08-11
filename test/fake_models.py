@@ -4,6 +4,8 @@ import numpy
 import numpy as np
 from bmipy import Bmi
 
+from grpc4bmi.utils import GRPC_MAX_MESSAGE_LENGTH
+
 
 class SomeException(Exception):
     pass
@@ -357,7 +359,7 @@ class DTypeModel(GridModel):
         return self.dtype.itemsize
 
     def get_var_nbytes(self, name):
-        return self.dtype.itemsize * self.value.shape[0]
+        return self.dtype.itemsize * self.value.size
 
     def get_value(self, name, dest):
         numpy.copyto(src=self.value, dst=dest)
@@ -404,8 +406,6 @@ class HugeModel(DTypeModel):
     def __init__(self):
         super().__init__()
         self.dtype = numpy.dtype('float64')
-        # grpc max message size is 4Mb
-        maxsize = 4 * 1024 * 1024
         # Create value which is bigger than 4Mb
-        dimension = (3 * maxsize) // self.dtype.itemsize + 1000
+        dimension = (3 * GRPC_MAX_MESSAGE_LENGTH) // self.dtype.itemsize + 1000
         self.value = numpy.ones((dimension,), dtype=self.dtype)

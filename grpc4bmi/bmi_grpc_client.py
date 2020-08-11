@@ -13,6 +13,7 @@ from grpc_status import rpc_status
 from google.rpc import error_details_pb2
 
 from . import bmi_pb2, bmi_pb2_grpc
+from .utils import GRPC_MAX_MESSAGE_LENGTH
 
 log = logging.getLogger(__name__)
 
@@ -48,8 +49,7 @@ def handle_error(exc):
 def _fits_in_message(array):
     """Tests whether array can be passed through a gRPC message with a max message size of 4Mb"""
     array_size = array.size * array.itemsize
-    max_message_size = 4 * 1024 * 1024
-    return array_size <= max_message_size
+    return array_size <= GRPC_MAX_MESSAGE_LENGTH
 
 
 class BmiClient(Bmi):
@@ -229,7 +229,7 @@ class BmiClient(Bmi):
 
     def _chunked_get_value(self, name: str, dest: np.array) -> np.array:
         # Make chunk one item smaller than maximum (4Mb)
-        chunk_size = math.floor(4 * 1024 * 1024 / dest.dtype.itemsize) - dest.dtype.itemsize
+        chunk_size = math.floor(GRPC_MAX_MESSAGE_LENGTH / dest.dtype.itemsize) - dest.dtype.itemsize
         chunks = []
         log.info(f'Too many items ({dest.size}) for single call, '
                  f'using multiple get_value_at_indices() with into chunks of {chunk_size} items')
