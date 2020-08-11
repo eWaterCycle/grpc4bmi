@@ -1,6 +1,6 @@
 # grpc4bmi
 
-[![DOI](https://zenodo.org/badge/130237165.svg)](https://zenodo.org/badge/latestdoi/130237165)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1462641.svg)](https://doi.org/10.5281/zenodo.1462641)
 [![CI](https://github.com/eWaterCycle/grpc4bmi/workflows/CI/badge.svg)](https://github.com/eWaterCycle/grpc4bmi/actions?query=workflow%3ACI)
 [![Documentation Status](https://readthedocs.org/projects/grpc4bmi/badge/?version=latest)](https://grpc4bmi.readthedocs.io/en/latest/?badge=latest)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=grpc4bmi&metric=alert_status)](https://sonarcloud.io/dashboard?id=grpc4bmi)
