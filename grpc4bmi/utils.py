@@ -39,4 +39,5 @@ def stage_config_file(filename, input_dir, input_mount_point, home_mounted=False
 
 
 # grpc max message size is 4Mb
+# Orginaly set in https://github.com/grpc/grpc/blob/v1.31.x/include/grpc/impl/codegen/grpc_types.h#L464 as GRPC_DEFAULT_MAX_RECV_MESSAGE_LENGTH define
 GRPC_MAX_MESSAGE_LENGTH = 4 * 1024 * 1024
