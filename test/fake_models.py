@@ -182,7 +182,7 @@ class HugeModel(DTypeModel):
     """Model which has value which does not fit in message body
     Can be run from command line with
     ..code-block:: bash
-        run-bmi-server --path $PWD/test --name fake_models.HugeModel --port 55555
+        run-bmi-server --path $PWD/test --name fake_models.HugeModel --port 55555 --debug
     """
     def __init__(self):
         super().__init__()
