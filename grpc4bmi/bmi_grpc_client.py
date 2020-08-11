@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import socket
 from contextlib import closing
@@ -8,6 +9,7 @@ import grpc
 import numpy
 
 from . import bmi_pb2, bmi_pb2_grpc
+from .utils import GRPC_MAX_MESSAGE_LENGTH
 
 log = logging.getLogger(__name__)
 
@@ -110,7 +112,37 @@ class BmiClient(bmi.Bmi):
         return self.stub.getVarNBytes(bmi_pb2.GetVarRequest(name=var_name)).nbytes
 
     def get_value(self, var_name):
-        response = self.stub.getValue(bmi_pb2.GetVarRequest(name=var_name))
+        try:
+            response = self.stub.getValue(bmi_pb2.GetVarRequest(name=var_name))
+            return BmiClient.make_array(response)
+        except grpc.RpcError as exc:
+            if 'details' in dir(exc) and 'Received message larger than max' in exc.details():
+                return self._chunked_get_value(var_name)
+            raise
+
+    def _chunked_get_value(self, var_name):
+        value_itemsize = self.get_var_itemsize(var_name)
+        value_nbytes = self.get_var_nbytes(var_name)
+        value_size = value_nbytes // value_itemsize
+        # Make chunk one item smaller than maximum (4Mb)
+        chunk_size = math.floor(GRPC_MAX_MESSAGE_LENGTH / value_itemsize) - value_itemsize
+        chunks = []
+        log.info(f'Too many items ({value_size}) for single call, '
+                 f'using multiple get_value_at_indices() with into chunks of {chunk_size} items')
+        for i in range(0, value_size, chunk_size):
+            start = i
+            stop = i + chunk_size
+            # Last chunk can be smaller
+            if stop > value_size:
+                stop = value_size
+            chunks.append(self._get_value_at_range(var_name, start, stop))
+
+        return numpy.concatenate(chunks)
+
+    def _get_value_at_range(self, name, start, stop):
+        log.info(f'Fetching value range {start} - {stop}')
+        response = self.stub.getValueAtIndices(bmi_pb2.GetValueAtIndicesRequest(name=name,
+                                                                                indices=range(start, stop)))
         return BmiClient.make_array(response)
 
     def get_value_ref(self, var_name):
