@@ -22,9 +22,9 @@ jobs:
         pip install -r requirements.txt
         python setup.py install
     - name: Setup Singularity
-      uses: eWaterCycle/setup-singularity@v3
+      uses: eWaterCycle/setup-singularity@v4
       with:
-        singularity-version: 3.5.3
+        singularity-version: 3.6.4
     - name: Pull Docker image
       run: docker pull ewatercycle/walrus-grpc4bmi:v0.3.1
     - name: Cache Singularity image
