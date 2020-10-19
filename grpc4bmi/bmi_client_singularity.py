@@ -10,7 +10,7 @@ import semver
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.utils import stage_config_file
 
-REQUIRED_SINGULARITY_VERSION = '>=3.1.0'
+REQUIRED_SINGULARITY_VERSION = '>=3.6.0'
 
 
 def check_singularity_version():
