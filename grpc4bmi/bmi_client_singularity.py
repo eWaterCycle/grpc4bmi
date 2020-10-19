@@ -1,8 +1,8 @@
 import errno
 import os
+import time
 from os.path import abspath
 import subprocess
-import sys
 import logging
 
 from semver import VersionInfo
@@ -41,6 +41,7 @@ class BmiClientSingularity(BmiClient):
         input_dir (str): Directory for input files of model
         output_dir (str): Directory for input files of model
         timeout (int): Seconds to wait for gRPC client to connect to server
+        delay (int): Seconds to wait for Singularity container to startup, before connecting to it
         extra_volumes (Dict[str,str]): Extra volumes to attach to Singularity container.
 
             The key is the hosts path and the value the mounted volume inside the container.
@@ -56,7 +57,8 @@ class BmiClientSingularity(BmiClient):
     INPUT_MOUNT_POINT = "/data/input"
     OUTPUT_MOUNT_POINT = "/data/output"
 
-    def __init__(self, image, input_dir=None, output_dir=None, timeout=None, extra_volumes=None):
+    def __init__(self, image, input_dir=None, output_dir=None, timeout=None,
+                 delay=5, extra_volumes=None):
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
@@ -84,6 +86,7 @@ class BmiClientSingularity(BmiClient):
         env['BMI_PORT'] = str(port)
         logging.info(f'Running {image} singularity container on port {port}')
         self.container = subprocess.Popen(args, env=env, preexec_fn=os.setsid)
+        time.sleep(delay)
         super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
