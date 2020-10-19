@@ -10,7 +10,7 @@ import semver
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.utils import stage_config_file
 
-REQUIRED_SINGULARITY_VERSION = '>=3.1.0'
+REQUIRED_SINGULARITY_VERSION = '>=3.6.0'
 
 
 def check_singularity_version():
@@ -57,13 +57,14 @@ class BmiClientSingularity(BmiClient):
     OUTPUT_MOUNT_POINT = "/data/output"
 
     def __init__(self, image, input_dir=None, output_dir=None, timeout=None,
-                 delay=5, extra_volumes=None):
+                 delay=0, extra_volumes=None):
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
         args = [
             "singularity",
             "run",
+            "--env", f"BMI_PORT={port}"
         ]
         mount_points = {} if extra_volumes is None else extra_volumes
         if input_dir is not None:
@@ -81,10 +82,8 @@ class BmiClientSingularity(BmiClient):
                     raise e
             args += ["--bind", output_dir + ':' + BmiClientSingularity.OUTPUT_MOUNT_POINT]
         args.append(image)
-        env = os.environ.copy()
-        env['BMI_PORT'] = str(port)
         logging.info(f'Running {image} singularity container on port {port}')
-        self.container = subprocess.Popen(args, env=env, preexec_fn=os.setsid)
+        self.container = subprocess.Popen(args, preexec_fn=os.setsid)
         time.sleep(delay)
         super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
