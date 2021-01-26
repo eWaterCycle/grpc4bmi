@@ -52,7 +52,7 @@ jobs:
         with:
           submodules: true
       - name: Install grpc
-        uses: ewatercycle/setup-grpc@master
+        uses: ewatercycle/setup-grpc@v3
         with:
           grpc-version: 1.27.2
       - name: Copy grpc to system default
