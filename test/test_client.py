@@ -554,7 +554,7 @@ class TestUnstructuredGridBmiModel:
         assert result == 3
 
     def test_get_grid_edge_nodes(self, bmiclient):
-        placeholder = numpy.empty(16, dtype=numpy.int)
+        placeholder = numpy.empty(16, dtype=int)
 
         result = bmiclient.get_grid_edge_nodes(0, placeholder)
 
@@ -562,7 +562,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_nodes(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=int)
 
         result = bmiclient.get_grid_face_nodes(0, placeholder)
 
@@ -570,7 +570,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_edges(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=int)
 
         result = bmiclient.get_grid_face_edges(0, placeholder)
 
@@ -578,7 +578,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_nodes_per_face(self, bmiclient):
-        placeholder = numpy.empty(3, dtype=numpy.int)
+        placeholder = numpy.empty(3, dtype=int)
 
         result = bmiclient.get_grid_nodes_per_face(0, placeholder)
 
@@ -701,16 +701,16 @@ class TestBooleanModel:
 
     def test_get_value_at_indices(self, bmiclient):
         with pytest.raises(MyRpcError):
-            bmiclient.get_value_at_indices(self.name, numpy.empty(1, dtype=numpy.bool), numpy.array([1]))
+            bmiclient.get_value_at_indices(self.name, numpy.empty(1, dtype=bool), numpy.array([1]))
 
     def test_set_value(self, bmiclient):
-        value = numpy.array((False, False, False), dtype=numpy.bool)
+        value = numpy.array((False, False, False), dtype=bool)
 
         with pytest.raises(NotImplementedError):
             bmiclient.set_value(self.name, value)
 
     def test_set_value_at_indices(self, bmiclient):
-        value = numpy.array([False], dtype=numpy.bool)
+        value = numpy.array([False], dtype=bool)
 
         with pytest.raises(NotImplementedError):
             bmiclient.set_value_at_indices(self.name, numpy.array([1]), value)

@@ -7,34 +7,35 @@ class FlatBmiHeat(BmiHeat):
 
     """
     def get_value_at_indices(self, var_name, dest, indices):
-        val = super(FlatBmiHeat, self).get_value_at_indices(var_name, indices).flatten()
+        val = super(FlatBmiHeat, self).get_value_at_indices(var_name, dest, indices).flatten()
         numpy.copyto(src=val, dst=dest)
         return dest
 
     def set_value(self, var_name, src):
-        shape = super(FlatBmiHeat, self).get_grid_shape(super(FlatBmiHeat, self).get_var_grid(var_name))
+        grid_id = super(FlatBmiHeat, self).get_var_grid(var_name)
+        shape = super(FlatBmiHeat, self).get_grid_shape(grid_id, numpy.array([0,0]))
         reshaped = numpy.reshape(src, shape)
         super(FlatBmiHeat, self).set_value(var_name, reshaped)
 
     def get_value(self, var_name, dest):
-        val = super(FlatBmiHeat, self).get_value(var_name)
+        val = super(FlatBmiHeat, self).get_value(var_name, dest)
         numpy.copyto(src=val.flatten(), dst=dest)
         return dest
 
     def get_grid_shape(self, grid_id, dest=None):
-        val = super(FlatBmiHeat, self).get_grid_shape(grid_id)
+        val = super(FlatBmiHeat, self).get_grid_shape(grid_id, dest)
         if dest is None:
             return numpy.array(val)
         numpy.copyto(src=val, dst=dest)
         return dest
 
     def get_grid_spacing(self, grid_id, dest):
-        val = super(FlatBmiHeat, self).get_grid_spacing(grid_id)
+        val = super(FlatBmiHeat, self).get_grid_spacing(grid_id, dest)
         numpy.copyto(src=val, dst=dest)
         return dest
 
     def get_grid_origin(self, grid_id, dest):
-        val = super(FlatBmiHeat, self).get_grid_origin(grid_id)
+        val = super(FlatBmiHeat, self).get_grid_origin(grid_id, dest)
         numpy.copyto(src=val, dst=dest)
         return dest
 
