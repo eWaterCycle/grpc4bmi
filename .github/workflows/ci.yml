@@ -22,7 +22,7 @@ jobs:
         pip install -r requirements.txt
         python setup.py install
     - name: Setup Singularity
-      uses: eWaterCycle/setup-singularity@v4
+      uses: eWaterCycle/setup-singularity@v5
       with:
         singularity-version: 3.6.4
     - name: Pull Docker image
@@ -52,7 +52,7 @@ jobs:
         with:
           submodules: true
       - name: Install grpc
-        uses: ewatercycle/setup-grpc@master
+        uses: ewatercycle/setup-grpc@v3
         with:
           grpc-version: 1.27.2
       - name: Copy grpc to system default
