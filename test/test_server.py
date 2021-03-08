@@ -226,19 +226,6 @@ def test_get_value_at_indices():
     numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
-def test_get_vals_indices_2d():
-    server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
-    setattr(request, "name", varname)
-    setattr(request, "indices", indices.flatten())
-    setattr(request, "index_size", 2)
-    dest = numpy.empty(6)
-    values = local.get_value_at_indices(varname, dest, indices)
-    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
-
-
 def test_set_var_values():
     server, local = make_bmi_classes(True)
     request = RequestStub()
