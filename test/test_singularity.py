@@ -5,6 +5,7 @@ from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
 from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+from test.conftest import write_config, write_datafile
 
 IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
 
@@ -22,6 +23,17 @@ def walrus_model_with_extra_volume(walrus_input_on_extra_volume):
     extra_volumes = {str(k): str(v['bind']) for k, v in docker_extra_volumes.items()}
     model = BmiClientSingularity(image=IMAGE_NAME, input_dir=str(input_dir), extra_volumes=extra_volumes)
     yield model
+    del model
+
+
+@pytest.fixture()
+def walrus_model_with_work_dir(tmp_path):
+    work_dir = tmp_path
+    write_config(work_dir / 'config.yml', 'PEQ_Hupsel.dat')
+    write_datafile(work_dir / 'PEQ_Hupsel.dat')
+
+    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(work_dir))
+    yield model, work_dir
     del model
 
 
@@ -48,6 +60,15 @@ class TestBmiClientDocker:
 
         # After initialization and update the forcings have been read from the extra volume
         assert len(walrus_model_with_extra_volume.get_value('Q')) == 1
+
+    def test_workdir(self, walrus_model_with_work_dir):
+        model, work_dir = walrus_model_with_work_dir
+        model.initialize(str(work_dir / 'config.yml')) # TODO also test with just filename instead of absolute path
+        model.update()
+
+        # After initialization and update the forcings have been read from the work dir
+        assert len(model.get_value('Q')) == 1
+
 
 @pytest.fixture
 def notebook():
