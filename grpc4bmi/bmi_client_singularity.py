@@ -111,16 +111,24 @@ class BmiClientSingularity(BmiClient):
         client.update_until(client.get_end_time())
         del client
 
-    **Example 6: Run model twice with own work directory
+    **Example 6: Run model twice with their own work directory**
+
+    While running 2 or models at the same time you do not want the any config or output to be mixed.
 
     .. code-block:: python
 
         from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest')
-        client.initialize('/opt/MARRMoT/BMI/Config/BMI_testcase_m01_BuffaloRiver_TN_USA.mat')
-        client.update_until(client.get_end_time())
-        del client
-
+        client_muese = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                            work_dir='/scratch/wflow-muese')
+        client_muese.initialize('wflow_sbm.muese.ini')
+        client_rhine = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                            work_dir='/scratch/wflow-rhine')
+        client_rhine.initialize('wflow_sbm.rhine.ini')
+        ...
+        # Run models and set/get values
+        ...
+        del client_muese
+        del client_rhine
 
     """
     def __init__(self, image, input_dirs=tuple(), work_dir=None, timeout=None, delay=0):
