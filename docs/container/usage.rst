@@ -17,8 +17,7 @@ For example the PCR-GLOBWB model can be started in a Docker container with
 .. code-block:: python
 
     model = BmiClientDocker(image='ewatercycle/pcrg-grpc4bmi:latest', image_port=55555,
-                            input_dir="./input",
-                            output_dir="./output")
+                            work_dir="./input")
     # Interact with model
     model.initialize('config.cfg')
 
@@ -57,6 +56,6 @@ For example for the wflow Docker image the commands would be the following
 
     from grpc4bmi.bmi_client_singularity import BmiClientSingularity
     image = 'docker://ewatercycle/wflow-grpc4bmi:latest'
-    client = BmiClientSingularity(image, input_dir='wflow_rhine_sbm', output_dir='wflow_output')
+    client = BmiClientSingularity(image, work_dir='wflow_rhine_sbm')
 
 .. _Singularity: https://www.sylabs.io/guides/latest/user-guide/
