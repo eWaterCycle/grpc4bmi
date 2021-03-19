@@ -29,17 +29,23 @@ class BmiClientSingularity(BmiClient):
 
     Args:
         image: Singularity image. For Docker Hub image use `docker://*`.
-        input_dirs (Iterable[str]): Input directories on host computer.
+        input_dirs (Iterable[str]): Directories for input files of model.
 
-            All of them will be mounted read-only inside Singularity container on same path as outside container.
+            All of directories will be mounted read-only inside Singularity container on same path as outside container.
 
         work_dir (Optional[str]): Working directory for model.
 
             Directory is mounted inside container and changed into.
             If absent then Singularity defaults to using current working directory outside container also inside.
 
-        timeout (int): Seconds to wait for gRPC client to connect to server
         delay (int): Seconds to wait for Singularity container to startup, before connecting to it
+
+            Increase when container takes a long time to startup.
+
+        timeout (int): Seconds to wait for gRPC client to connect to server.
+
+            By default will try forever to connect to gRPC server inside container.
+            Set to low number to escape endless wait.
 
     **Example 1: Config file already inside image**
 
@@ -134,7 +140,7 @@ class BmiClientSingularity(BmiClient):
         del client_rhine
 
     """
-    def __init__(self, image, input_dirs=tuple(), work_dir=None, timeout=None, delay=0):
+    def __init__(self, image, input_dirs=tuple(), work_dir=None, delay=0, timeout=None):
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
