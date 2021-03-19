@@ -9,7 +9,7 @@ import grpc
 import numpy
 
 from . import bmi_pb2, bmi_pb2_grpc
-from .utils import GRPC_MAX_MESSAGE_LENGTH
+from .constants import GRPC_MAX_MESSAGE_LENGTH
 
 log = logging.getLogger(__name__)
 

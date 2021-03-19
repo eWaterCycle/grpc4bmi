@@ -4,7 +4,7 @@ import numpy
 import numpy as np
 from basic_modeling_interface.bmi import Bmi
 
-from grpc4bmi.utils import GRPC_MAX_MESSAGE_LENGTH
+from grpc4bmi.constants import GRPC_MAX_MESSAGE_LENGTH
 
 
 class SomeException(Exception):
