@@ -1,7 +1,7 @@
 import errno
 import os
 import time
-from os.path import abspath
+from os.path import abspath, exists
 import subprocess
 import logging
 
@@ -29,35 +29,95 @@ class BmiClientSingularity(BmiClient):
     The client picks a random port and expects the container to run the server on that port.
     The port is passed to the container using the BMI_PORT environment variable.
 
-    >>> from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-    >>> image = 'docker://ewatercycle/wflow-grpc4bmi:latest'
-    >>> client = BmiClientSingularity(image, input_dir='wflow_rhine_sbm', output_dir='wflow_output')
-    >>> client.initialize('wflow_rhine_sbm/wflow_sbm.ini')
-    >>> client.update_until(client.get_end_time())
-    >>> del client
-
     Args:
         image: Singularity image. For Docker Hub image use `docker://*`.
-        input_dir (str): Directory for input files of model
-        output_dir (str): Directory for input files of model
+        input_dirs (Iterable[str]): Input directories on host computer.
+
+            All of them will be mounted read-only inside Singularity container on same path as outside container.
+
+        work_dir (Optional[str]): Working directory for model.
+
+            Directory is mounted inside container and changed into.
+            If absent then Singularity defaults to using current working directory outside container also inside.
+
         timeout (int): Seconds to wait for gRPC client to connect to server
         delay (int): Seconds to wait for Singularity container to startup, before connecting to it
-        extra_volumes (Dict[str,str]): Extra volumes to attach to Singularity container.
 
-            The key is the hosts path and the value the mounted volume inside the container.
-            Contrary to Docker client, extra volumes are always read/write
+    **Example 1: Config file already inside image**
 
-            For example:
-            
-            .. code-block:: python
-            
-                    {'/data/shared/forcings/': /data/forcings'}
+    MARRMoT has an example config file inside its Docker image.
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest')
+        client.initialize('/opt/MARRMoT/BMI/Config/BMI_testcase_m01_BuffaloRiver_TN_USA.mat')
+        client.update_until(client.get_end_time())
+        del client
+
+    **Example 2: Config file in input directory**
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        image =
+        # Generate config file called 'config.mat' in `/tmp/input` directory
+        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest',
+                                      input_dirs=['/tmp/input'])
+        client.initialize('/tmp/input/config.mat')
+        client.update_until(client.get_end_time())
+        del client
+
+    Model is unable to write in `/tmp/input` directory as it is mounted read-only.
+
+    **Example 3: Read only input directory with config file in work directory**
+
+    The forcing data is in a shared read-only location like `/shared/forcings/walrus`.
+    In the config file (`/tmp/work/walrus.yml`) point to a forcing data file (``/shared/forcings/walrus/PEQ_Hupsel.dat``).
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        client = BmiClientSingularity(image='docker://ewatercycle/walrus-grpc4bmi:v0.2.0',
+                                      input_dirs=['/shared/forcings/walrus'],
+                                      work_dir='/tmp/work')
+        client.initialize('walrus.yml')
+        client.update_until(client.get_end_time())
+        del client
+
+    **Example 4: Model writes in sub directory of input directory**
+
+    The input directories are mounted read-only so use writable work directory instead.
+    When input directory is read-only to the user then
+    the input dir should be copied to a work directory (`/scratch/wflow`) so model can write.
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        client = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                      work_dir='/scratch/wflow')
+        client.initialize('wflow_sbm.ini')
+        client.update_until(client.get_end_time())
+        del client
+
+    **Example 5: Inputs are in multiple directories**
+
+    A model has its forcings (`/shared/forcings/muese`), parameters (`/shared/model/wflow/staticmaps`)
+    and config file (`/tmp/work/wflow_sbm.ini`) in different locations.
+    The config file should be set to point to the forcing and parameters.
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        client = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                      input_dirs=['/shared/forcings/muese', '/shared/model/wflow/staticmaps'],
+                                      work_dir='/tmp/work')
+        client.initialize('wflow_sbm.ini')
+        client.update_until(client.get_end_time())
+        del client
+
     """
-    INPUT_MOUNT_POINT = "/data/input"
-    OUTPUT_MOUNT_POINT = "/data/output"
-
-    def __init__(self, image, input_dir=None, output_dir=None, timeout=None,
-                 delay=0, extra_volumes=None):
+    def __init__(self, image, input_dirs=tuple(), work_dir=None, timeout=None, delay=0):
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
@@ -66,21 +126,19 @@ class BmiClientSingularity(BmiClient):
             "run",
             "--env", f"BMI_PORT={port}"
         ]
-        mount_points = {} if extra_volumes is None else extra_volumes
-        if input_dir is not None:
-            mount_points[input_dir] = BmiClientSingularity.INPUT_MOUNT_POINT
-            self.input_dir = abspath(input_dir)
-        if any(mount_points):
-            args += ["--bind", ','.join([hp + ':' + ip for hp, ip in mount_points.items()])]            
-        if output_dir is not None:
-            self.output_dir = abspath(output_dir)
+        for input_dir in input_dirs:
+            args += ["--bind", f'{input_dir}:{input_dir}:ro']
+        if work_dir is not None:
+            self.work_dir = abspath(work_dir)
             try:
-                # Create output dir ourselves or singularity will complain
-                os.mkdir(self.output_dir)
+                # Create work dir ourselves or singularity will complain
+                os.mkdir(self.work_dir)
             except OSError as e:
                 if e.errno != errno.EEXIST:
                     raise e
-            args += ["--bind", output_dir + ':' + BmiClientSingularity.OUTPUT_MOUNT_POINT]
+            args += ["--bind", f'{self.work_dir}:{self.work_dir}:rw']
+            # Change into working directory
+            args += ["--pwd", self.work_dir]
         args.append(image)
         logging.info(f'Running {image} singularity container on port {port}')
         self.container = subprocess.Popen(args, preexec_fn=os.setsid)
@@ -91,10 +149,6 @@ class BmiClientSingularity(BmiClient):
         if hasattr(self, "container"):
             self.container.terminate()
             self.container.wait()
-
-    def initialize(self, filename):
-        fn = stage_config_file(filename, self.input_dir, self.INPUT_MOUNT_POINT, home_mounted=True)
-        super(BmiClientSingularity, self).initialize(fn)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
