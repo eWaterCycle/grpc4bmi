@@ -18,8 +18,8 @@ def walrus_model(tmp_path, walrus_input):
 
 
 @pytest.fixture()
-def walrus_model_with_extra_volume(walrus_input_on_extra_volume):
-    input_dirs = walrus_input_on_extra_volume
+def walrus_model_with_2input_dirs(walrus_2input_dirs):
+    input_dirs = walrus_2input_dirs['input_dirs']
     model = BmiClientSingularity(image=IMAGE_NAME, input_dirs=input_dirs)
     yield model
     del model
@@ -36,7 +36,7 @@ def walrus_model_with_work_dir(tmp_path):
     del model
 
 
-class TestBmiClientDocker:
+class TestBmiClientSingularity:
     def test_component_name(self, walrus_model):
         assert walrus_model.get_component_name() == 'WALRUS'
 
@@ -53,16 +53,17 @@ class TestBmiClientDocker:
         grid_id = walrus_model.get_var_grid('Q')
         assert len(walrus_model.get_grid_x(grid_id)) == 1
 
-    def test_extra_volumes(self, walrus_model_with_extra_volume):
-        walrus_model_with_extra_volume.initialize('/data/input/config.yml')
-        walrus_model_with_extra_volume.update()
+    def test_2input_dirs(self, walrus_2input_dirs, walrus_model_with_2input_dirs):
+        config_file = walrus_2input_dirs['cfg']
+        walrus_model_with_2input_dirs.initialize(config_file)
+        walrus_model_with_2input_dirs.update()
 
         # After initialization and update the forcings have been read from the extra volume
-        assert len(walrus_model_with_extra_volume.get_value('Q')) == 1
+        assert len(walrus_model_with_2input_dirs.get_value('Q')) == 1
 
     def test_workdir(self, walrus_model_with_work_dir):
         model, work_dir = walrus_model_with_work_dir
-        model.initialize(str(work_dir / 'config.yml')) # TODO also test with just filename instead of absolute path
+        model.initialize(str(work_dir / 'config.yml'))  # TODO also test with just filename instead of absolute path
         model.update()
 
         # After initialization and update the forcings have been read from the work dir

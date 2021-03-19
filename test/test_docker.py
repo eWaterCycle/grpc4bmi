@@ -26,8 +26,8 @@ def exit_container():
 
 
 @pytest.fixture()
-def walrus_model_with_extra_volume(tmp_path, walrus_input_on_extra_volume):
-    input_dirs = walrus_input_on_extra_volume
+def walrus_model_with_2input_dirs(tmp_path, walrus_2input_dirs):
+    input_dirs = walrus_2input_dirs['input_dirs']
     model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.2.0",
                             image_port=55555,
                             work_dir=input_dirs[0],
@@ -53,11 +53,12 @@ class TestBmiClientDocker:
         with pytest.raises(NotImplementedError):
             walrus_model.get_value_ref('Q')
 
-    def test_extra_volume(self, walrus_model_with_extra_volume):
-        walrus_model_with_extra_volume.initialize('/data/input/config.yml')
-        walrus_model_with_extra_volume.update()
+    def test_2input_dirs(self, walrus_2input_dirs, walrus_model_with_2input_dirs):
+        config_file = walrus_2input_dirs['cfg']
+        walrus_model_with_2input_dirs.initialize(config_file)
+        walrus_model_with_2input_dirs.update()
         # After initialization and update the forcings have been read from the extra volume
-        assert len(walrus_model_with_extra_volume.get_value('Q')) == 1
+        assert len(walrus_model_with_2input_dirs.get_value('Q')) == 1
 
     def test_inputdir_absent(self, tmp_path):
         dirthatdoesnotexist = 'dirthatdoesnotexist'
