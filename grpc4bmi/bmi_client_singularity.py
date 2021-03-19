@@ -1,7 +1,7 @@
 import errno
 import os
 import time
-from os.path import abspath, exists
+from os.path import abspath
 import subprocess
 import logging
 
@@ -60,15 +60,12 @@ class BmiClientSingularity(BmiClient):
     .. code-block:: python
 
         from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        image =
         # Generate config file called 'config.mat' in `/tmp/input` directory
         client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest',
                                       input_dirs=['/tmp/input'])
         client.initialize('/tmp/input/config.mat')
         client.update_until(client.get_end_time())
         del client
-
-    Model is unable to write in `/tmp/input` directory as it is mounted read-only.
 
     **Example 3: Read only input directory with config file in work directory**
 
@@ -102,9 +99,9 @@ class BmiClientSingularity(BmiClient):
 
     **Example 5: Inputs are in multiple directories**
 
-    A model has its forcings (`/shared/forcings/muese`), parameters (`/shared/model/wflow/staticmaps`)
+    A model has its forcings (`/shared/forcings/muese/`), parameters (`/shared/model/wflow/staticmaps`)
     and config file (`/tmp/work/wflow_sbm.ini`) in different locations.
-    The config file should be set to point to the forcing and parameters.
+    The config file should be set to point to the forcing and parameters files.
 
     .. code-block:: python
 
