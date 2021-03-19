@@ -61,13 +61,39 @@ class TestBmiClientSingularity:
         # After initialization and update the forcings have been read from the extra volume
         assert len(walrus_model_with_2input_dirs.get_value('Q')) == 1
 
-    def test_workdir(self, walrus_model_with_work_dir):
+    def test_workdir_absolute(self, walrus_model_with_work_dir):
         model, work_dir = walrus_model_with_work_dir
-        model.initialize(str(work_dir / 'config.yml'))  # TODO also test with just filename instead of absolute path
+        model.initialize(str(work_dir / 'config.yml'))
         model.update()
 
         # After initialization and update the forcings have been read from the work dir
         assert len(model.get_value('Q')) == 1
+
+    def test_workdir_relative(self, walrus_model_with_work_dir):
+        model, _work_dir = walrus_model_with_work_dir
+        model.initialize('config.yml')
+        model.update()
+
+        # After initialization and update the forcings have been read from the work dir
+        assert len(model.get_value('Q')) == 1
+
+    def test_inputdir_absent(self, tmp_path):
+        dirthatdoesnotexist = 'dirthatdoesnotexist'
+        input_dir = tmp_path / dirthatdoesnotexist
+        with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
+            BmiClientSingularity(image=IMAGE_NAME, input_dirs=[str(input_dir)])
+
+    def test_workdir_absent(self, tmp_path):
+        dirthatdoesnotexist = 'dirthatdoesnotexist'
+        work_dir = tmp_path / dirthatdoesnotexist
+        with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
+            BmiClientSingularity(image=IMAGE_NAME, work_dir=str(work_dir))
+
+    def test_same_inputdir_and_workdir(self, tmp_path):
+        some_dir = str(tmp_path)
+        match = 'Found work_dir equal to one of the input directories. Please drop that input dir.'
+        with pytest.raises(ValueError, match=match):
+            BmiClientSingularity(image=IMAGE_NAME, input_dirs=(some_dir,), work_dir=some_dir)
 
 
 @pytest.fixture

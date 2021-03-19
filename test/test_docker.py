@@ -30,7 +30,6 @@ def walrus_model_with_2input_dirs(tmp_path, walrus_2input_dirs):
     input_dirs = walrus_2input_dirs['input_dirs']
     model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.2.0",
                             image_port=55555,
-                            work_dir=input_dirs[0],
                             input_dirs=input_dirs)
     yield model
     del model
@@ -64,7 +63,13 @@ class TestBmiClientDocker:
         dirthatdoesnotexist = 'dirthatdoesnotexist'
         input_dir = tmp_path / dirthatdoesnotexist
         with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
-            BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(input_dir))
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dirs=[str(input_dir)])
+
+    def test_workdir_absent(self, tmp_path):
+        dirthatdoesnotexist = 'dirthatdoesnotexist'
+        work_dir = tmp_path / dirthatdoesnotexist
+        with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(work_dir))
 
     def test_container_start_failure(self, exit_container):
         expected = r"Failed to start Docker container with image"
@@ -74,3 +79,9 @@ class TestBmiClientDocker:
         assert excinfo.value.exitcode == 25
         assert b'my stderr' in excinfo.value.logs
         assert b'my stdout' in excinfo.value.logs
+
+    def test_same_inputdir_and_workdir(self, tmp_path):
+        some_dir = str(tmp_path)
+        match = 'Found work_dir equal to one of the input directories. Please drop that input dir.'
+        with pytest.raises(ValueError, match=match):
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dirs=(some_dir,), work_dir=some_dir)

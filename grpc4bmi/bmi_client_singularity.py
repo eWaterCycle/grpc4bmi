@@ -140,10 +140,15 @@ class BmiClientSingularity(BmiClient):
             "run",
             "--env", f"BMI_PORT={port}"
         ]
-        for input_dir in input_dirs:
+        for raw_input_dir in input_dirs:
+            input_dir = abspath(raw_input_dir)
+            if not os.path.isdir(input_dir):
+                raise NotADirectoryError(input_dir)
             args += ["--bind", f'{input_dir}:{input_dir}:ro']
         if work_dir is not None:
             self.work_dir = abspath(work_dir)
+            if self.work_dir in set([abspath(d) for d in input_dirs]):
+                raise ValueError('Found work_dir equal to one of the input directories. Please drop that input dir.')
             if not os.path.isdir(self.work_dir):
                 raise NotADirectoryError(self.work_dir)
             args += ["--bind", f'{self.work_dir}:{self.work_dir}:rw']
