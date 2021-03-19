@@ -79,26 +79,26 @@ mymodel.initialize(<FILEPATH>)
 ...further BMI calls...
 ```
 
-The package contains also client implementation that own the server process, either as a python subprocess or a docker
-image or a singularity image running the ```run-bmi-server``` script. For instance
+The package contains also client implementation that own the server process, either as a Python subprocess or a Docker
+container or a Singularity container running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
 ```
 will automatically launch the server in a sub-process and
 ```python
-from grpc4bmi.bmi_client_subproc import BmiClientDocker
-mymodel = BmiClientDocker(<IMAGE>,<PORT>)
-
+from grpc4bmi.bmi_client_docker import BmiClientDocker
+mymodel = BmiClientDocker(<IMAGE>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
-will launch a docker container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
+will launch a Docker container based supplied Docker image
+and will mount supplied directories to share files between the container ahd host.
 
 ```python
 from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-mymodel = BmiClientSingularity(<IMAGE>,<PORT>)
+mymodel = BmiClientSingularity(<IMAGE>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
-will launch a singularity container, assuming that a GRPC BMI server will start and exposes the port ```<PORT>```.
-
+will launch a singularity container based supplied Singularity image
+and will mount supplied directories to share files between the container ahd host.
 
 ## Development: generating the grpc code
 

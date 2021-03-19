@@ -50,7 +50,7 @@ class BmiClientDocker(BmiClient):
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
         timeout (int): Seconds to wait for gRPC client to connect to server
 
-    See :py:func`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
+    See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
     """
     def __init__(self, image, image_port=50051, host=None,
                  input_dirs=tuple(), work_dir=None,
