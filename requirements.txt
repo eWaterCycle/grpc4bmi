@@ -16,6 +16,7 @@ pytest-cov
 futures
 https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
 sphinx
+sphinxcontrib-apidoc
 sphinxcontrib-napoleon
 sphinx-argparse
 sphinx_rtd_theme
