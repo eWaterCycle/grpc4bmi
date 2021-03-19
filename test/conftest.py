@@ -71,5 +71,4 @@ def walrus_input_on_extra_volume(tmp_path):
     extra_dir = tmp_path / 'forcings'
     extra_dir.mkdir()
     write_datafile(extra_dir / 'PEQ_Hupsel.dat')
-    extra_volumes = {extra_dir: {'bind': '/forcings', 'mode': 'ro'}}
-    return input_dir, extra_volumes
+    return input_dir, extra_dir

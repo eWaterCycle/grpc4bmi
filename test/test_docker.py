@@ -10,7 +10,7 @@ walrus_docker_image = 'ewatercycle/walrus-grpc4bmi:v0.2.0'
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dir=str(tmp_path))
+    model = BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(tmp_path))
     yield model
     del model
 
@@ -27,11 +27,11 @@ def exit_container():
 
 @pytest.fixture()
 def walrus_model_with_extra_volume(tmp_path, walrus_input_on_extra_volume):
-    (input_dir, extra_volumes) = walrus_input_on_extra_volume
+    input_dirs = walrus_input_on_extra_volume
     model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.2.0",
                             image_port=55555,
-                            input_dir=str(input_dir),
-                            extra_volumes=extra_volumes)
+                            work_dir=input_dirs[0],
+                            input_dirs=input_dirs)
     yield model
     del model
 
@@ -63,7 +63,7 @@ class TestBmiClientDocker:
         dirthatdoesnotexist = 'dirthatdoesnotexist'
         input_dir = tmp_path / dirthatdoesnotexist
         with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
-            BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dir=str(input_dir))
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(input_dir))
 
     def test_container_start_failure(self, exit_container):
         expected = r"Failed to start Docker container with image"

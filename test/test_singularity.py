@@ -12,16 +12,15 @@ IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientSingularity(image=IMAGE_NAME, input_dir=str(tmp_path))
+    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(tmp_path))
     yield model
     del model
 
 
 @pytest.fixture()
 def walrus_model_with_extra_volume(walrus_input_on_extra_volume):
-    (input_dir, docker_extra_volumes) = walrus_input_on_extra_volume
-    extra_volumes = {str(k): str(v['bind']) for k, v in docker_extra_volumes.items()}
-    model = BmiClientSingularity(image=IMAGE_NAME, input_dir=str(input_dir), extra_volumes=extra_volumes)
+    input_dirs = walrus_input_on_extra_volume
+    model = BmiClientSingularity(image=IMAGE_NAME, input_dirs=input_dirs)
     yield model
     del model
 

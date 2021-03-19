@@ -1,11 +1,10 @@
 import os
-import errno
 import time
+from os.path import abspath
 
 import docker
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-from grpc4bmi.utils import stage_config_file
 
 
 class DeadDockerContainerException(ChildProcessError):
@@ -37,59 +36,46 @@ class BmiClientDocker(BmiClient):
         image (str): Docker image name of grpc4bmi wrapped model
         image_port (int): Port of server inside the image
         host (str): Host on which the image port is published on a random port
-        input_dir (str): Directory for input files of model
-        output_dir (str): Directory for input files of model
+        input_dirs (Iterable[str]): Input directories on host computer.
+
+            All of them will be mounted read-only inside Singularity container on same path as outside container.
+
+        work_dir (Optional[str]): Working directory for model.
+
+            Directory is mounted inside container and changed into.
+            If absent then Docker defaults to whatever image has as work directory.
+
         user (str): Username or UID of Docker container
         remove (bool): Automatically remove the container and logs when it exits.
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
         timeout (int): Seconds to wait for gRPC client to connect to server
-        extra_volumes (Dict[str,Dict]): Extra volumes to attach to Docker container.
 
-            The key is either the hosts path or a volume name and the value is a dictionary with the keys:
-
-            - ``bind`` The path to mount the volume inside the container
-            - ``mode`` Either ``rw`` to mount the volume read/write, or ``ro`` to mount it read-only.
-
-            For example:
-
-            .. code-block:: python
-
-                    {'/data/shared/forcings/': {'bind': '/forcings', 'mode': 'ro'}}
-
+    See :py:func`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
     """
-
-    input_mount_point = "/data/input"
-    output_mount_point = "/data/output"
-
     def __init__(self, image, image_port=50051, host=None,
-                 input_dir=None, output_dir=None,
+                 input_dirs=tuple(), work_dir=None,
                  user=os.getuid(), remove=False, delay=5,
-                 timeout=None, extra_volumes=None):
+                 timeout=None):
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
-        if extra_volumes is not None:
-            volumes.update(extra_volumes)
-        self.input_dir = None
-        if input_dir is not None:
-            self.input_dir = os.path.abspath(input_dir)
-            if not os.path.isdir(self.input_dir):
+        for raw_input_dir in input_dirs:
+            input_dir = abspath(raw_input_dir)
+            if not os.path.isdir(input_dir):
                 raise NotADirectoryError(input_dir)
-            volumes[self.input_dir] = {"bind": BmiClientDocker.input_mount_point, "mode": "rw"}
-        self.output_dir = None
-        if output_dir is not None:
-            self.output_dir = os.path.abspath(output_dir)
-            try:
-                # Create output dir ourselves, otherwise Docker will create it as root user, resulting in permission
-                # errors
-                os.mkdir(self.output_dir)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
-            volumes[self.output_dir] = {"bind": BmiClientDocker.output_mount_point, "mode": "rw"}
+            volumes[input_dir] = {"bind": input_dir, "mode": "ro"}
+
+        if work_dir is not None:
+            self.work_dir = abspath(work_dir)
+            if not os.path.isdir(self.work_dir):
+                raise NotADirectoryError(self.work_dir)
+            volumes[self.work_dir] = {"bind": self.work_dir, "mode": "rw"}
+        else:
+            self.work_dir = None
         self.container = client.containers.run(image,
                                                ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,
+                                               working_dir=self.work_dir,
                                                user=user,
                                                remove=remove,
                                                detach=True)
@@ -108,10 +94,6 @@ class BmiClientDocker(BmiClient):
     def __del__(self):
         if hasattr(self, "container"):
             self.container.stop()
-
-    def initialize(self, filename):
-        fn = stage_config_file(filename, self.input_dir, self.input_mount_point)
-        super(BmiClientDocker, self).initialize(fn)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")

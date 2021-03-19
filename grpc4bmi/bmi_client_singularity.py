@@ -1,4 +1,3 @@
-import errno
 import os
 import time
 from os.path import abspath
@@ -8,7 +7,6 @@ import logging
 import semver
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-from grpc4bmi.utils import stage_config_file
 
 REQUIRED_SINGULARITY_VERSION = '>=3.6.0'
 
@@ -113,6 +111,17 @@ class BmiClientSingularity(BmiClient):
         client.update_until(client.get_end_time())
         del client
 
+    **Example 6: Run model twice with own work directory
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest')
+        client.initialize('/opt/MARRMoT/BMI/Config/BMI_testcase_m01_BuffaloRiver_TN_USA.mat')
+        client.update_until(client.get_end_time())
+        del client
+
+
     """
     def __init__(self, image, input_dirs=tuple(), work_dir=None, timeout=None, delay=0):
         check_singularity_version()
@@ -127,12 +136,8 @@ class BmiClientSingularity(BmiClient):
             args += ["--bind", f'{input_dir}:{input_dir}:ro']
         if work_dir is not None:
             self.work_dir = abspath(work_dir)
-            try:
-                # Create work dir ourselves or singularity will complain
-                os.mkdir(self.work_dir)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise e
+            if not os.path.isdir(self.work_dir):
+                raise NotADirectoryError(self.work_dir)
             args += ["--bind", f'{self.work_dir}:{self.work_dir}:rw']
             # Change into working directory
             args += ["--pwd", self.work_dir]
