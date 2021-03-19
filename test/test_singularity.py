@@ -1,6 +1,8 @@
+import subprocess
 from textwrap import dedent
 
 import pytest
+from grpc import RpcError
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
@@ -13,6 +15,13 @@ IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
     model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(tmp_path))
+    yield model
+    del model
+
+
+@pytest.fixture()
+def walrus_model_with_input_dir(tmp_path, walrus_input):
+    model = BmiClientSingularity(image=IMAGE_NAME, input_dirs=[str(tmp_path)])
     yield model
     del model
 
@@ -36,6 +45,30 @@ def walrus_model_with_work_dir(tmp_path):
     del model
 
 
+@pytest.fixture()
+def walrus_model_with_config_inside_image(tmp_path):
+    data_file = tmp_path / 'PEQ_Hupsel.dat'
+    write_datafile(data_file)
+    cfg_file = tmp_path / 'config.yml'
+    write_config(cfg_file, data_file)
+    def_file = tmp_path / 'walrus.def'
+    def_file.write_text(f'''Bootstrap: docker
+From: {IMAGE_NAME.replace('docker://', '')}
+
+%files
+  {data_file} /scratch/PEQ_Hupsel.dat'
+  {cfg_file} /scratch/config.yml'
+''')
+    image = tmp_path / 'walrus-image'
+    subprocess.run(['singularity', 'build', '--sandbox', '--fakeroot', image, def_file])
+
+    model = BmiClientSingularity(image)
+
+    yield model
+
+    del model
+
+
 class TestBmiClientSingularity:
     def test_component_name(self, walrus_model):
         assert walrus_model.get_component_name() == 'WALRUS'
@@ -43,6 +76,10 @@ class TestBmiClientSingularity:
     def test_initialize(self, walrus_input, walrus_model):
         walrus_model.initialize(str(walrus_input))
         assert walrus_model.get_current_time() == walrus_model.get_start_time()
+
+    def test_initialize_absent_configfile(self, walrus_model):
+        with pytest.raises(RpcError, match='Exception calling application'):
+            walrus_model.initialize('configfilethatdoesnotexist')
 
     def test_get_value_ref(self, walrus_model):
         with pytest.raises(NotImplementedError):
@@ -53,12 +90,19 @@ class TestBmiClientSingularity:
         grid_id = walrus_model.get_var_grid('Q')
         assert len(walrus_model.get_grid_x(grid_id)) == 1
 
+    def test_input_dir(self, walrus_input, walrus_model_with_input_dir):
+        walrus_model_with_input_dir.initialize(str(walrus_input))
+        walrus_model_with_input_dir.update()
+
+        # After initialization and update the forcings have been read from the forcing dir
+        assert len(walrus_model_with_input_dir.get_value('Q')) == 1
+
     def test_2input_dirs(self, walrus_2input_dirs, walrus_model_with_2input_dirs):
         config_file = walrus_2input_dirs['cfg']
         walrus_model_with_2input_dirs.initialize(config_file)
         walrus_model_with_2input_dirs.update()
 
-        # After initialization and update the forcings have been read from the extra volume
+        # After initialization and update the forcings have been read from the forcing dir
         assert len(walrus_model_with_2input_dirs.get_value('Q')) == 1
 
     def test_workdir_absolute(self, walrus_model_with_work_dir):
@@ -94,6 +138,14 @@ class TestBmiClientSingularity:
         match = 'Found work_dir equal to one of the input directories. Please drop that input dir.'
         with pytest.raises(ValueError, match=match):
             BmiClientSingularity(image=IMAGE_NAME, input_dirs=(some_dir,), work_dir=some_dir)
+
+    def test_with_config_inside_image(self, walrus_model_with_config_inside_image):
+        model = walrus_model_with_config_inside_image
+        model.initialize('/scratch/config.yml')
+        model.update()
+
+        # After initialization and update the forcings have been read from the scratch dir
+        assert len(model.get_value('Q')) == 1
 
 
 @pytest.fixture
