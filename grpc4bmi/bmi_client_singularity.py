@@ -43,7 +43,7 @@ class BmiClientSingularity(BmiClient):
 
     **Example 1: Config file already inside image**
 
-    MARRMoT has an example config file inside its Docker image.
+    MARRMoT has an `example config file <https://github.com/wknoben/MARRMoT/blob/master/BMI/Config/BMI_testcase_m01_BuffaloRiver_TN_USA.mat>`_ inside its Docker image.
 
     .. code-block:: python
 
@@ -54,6 +54,8 @@ class BmiClientSingularity(BmiClient):
         del client
 
     **Example 2: Config file in input directory**
+
+    The config file and all other files the model needs are in a directory (`/tmp/input`).
 
     .. code-block:: python
 
@@ -68,7 +70,7 @@ class BmiClientSingularity(BmiClient):
     **Example 3: Read only input directory with config file in work directory**
 
     The forcing data is in a shared read-only location like `/shared/forcings/walrus`.
-    In the config file (`/tmp/work/walrus.yml`) point to a forcing data file (``/shared/forcings/walrus/PEQ_Hupsel.dat``).
+    In the config file (`/tmp/work/walrus.yml`) point to a forcing data file (`/shared/forcings/walrus/PEQ_Hupsel.dat`).
 
     .. code-block:: python
 
@@ -97,7 +99,7 @@ class BmiClientSingularity(BmiClient):
 
     **Example 5: Inputs are in multiple directories**
 
-    A model has its forcings (`/shared/forcings/muese/`), parameters (`/shared/model/wflow/staticmaps`)
+    A model has its forcings (`/shared/forcings/muese`), parameters (`/shared/model/wflow/staticmaps`)
     and config file (`/tmp/work/wflow_sbm.ini`) in different locations.
     The config file should be set to point to the forcing and parameters files.
 
@@ -105,7 +107,8 @@ class BmiClientSingularity(BmiClient):
 
         from grpc4bmi.bmi_client_singularity import BmiClientSingularity
         client = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                      input_dirs=['/shared/forcings/muese', '/shared/model/wflow/staticmaps'],
+                                      input_dirs=['/shared/forcings/muese',
+                                                  '/shared/model/wflow/staticmaps'],
                                       work_dir='/tmp/work')
         client.initialize('wflow_sbm.ini')
         client.update_until(client.get_end_time())
