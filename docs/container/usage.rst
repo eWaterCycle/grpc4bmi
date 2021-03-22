@@ -50,7 +50,8 @@ Use the :class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` class to s
 
     image = '<docker image name of grpc4bmi server of a bmi model>'
     input_dir = '<directory with models input data files>'
-    client = BmiClientSingularity(image, input_dirs=[input_dir])
+    work_dir = '<directory where model can write output files'
+    client = BmiClientSingularity(image, work_dir, input_dirs=[input_dir])
 
      # Interact with model
     client.initialize('<absolute path to config file in the input directory>')
@@ -65,7 +66,8 @@ For example for the wflow Docker image the commands would be the following
     from grpc4bmi.bmi_client_singularity import BmiClientSingularity
 
     image = 'docker://ewatercycle/wflow-grpc4bmi:latest'
-    client = BmiClientSingularity(image, input_dir=['/scratch/input/wflow_rhine_sbm'])
+    work_dir = '/tmp/run1'
+    client = BmiClientSingularity(image, work_dir, input_dir=['/scratch/input/wflow_rhine_sbm'])
 
      # Interact with model
     client.initialize('/scratch/input/wflow_rhine_sbm/wflow_sbm_bmi.ini')

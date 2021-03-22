@@ -88,14 +88,14 @@ mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
 will automatically launch the server in a sub-process and
 ```python
 from grpc4bmi.bmi_client_docker import BmiClientDocker
-mymodel = BmiClientDocker(<IMAGE>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
+mymodel = BmiClientDocker(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
 will launch a Docker container based on supplied Docker image
 and will mount supplied directories to share files between the container and host.
 
 ```python
 from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-mymodel = BmiClientSingularity(<IMAGE>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
+mymodel = BmiClientSingularity(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
 will launch a singularity container on based supplied Singularity image
 and will mount supplied directories to share files between the container and host.

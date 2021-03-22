@@ -40,7 +40,7 @@ class BmiClientDocker(BmiClient):
 
             All of directories will be mounted read-only inside Singularity container on same path as outside container.
 
-        work_dir (Optional[str]): Working directory for model.
+        work_dir (str): Working directory for model.
 
             Directory is mounted inside container and changed into.
             If absent then Docker defaults to whatever image has as work directory.
@@ -61,8 +61,8 @@ class BmiClientDocker(BmiClient):
 
     See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
     """
-    def __init__(self, image, image_port=50051, host=None,
-                 input_dirs=tuple(), work_dir=None,
+    def __init__(self, image: str, work_dir: str, image_port=50051, host=None,
+                 input_dirs=tuple(),
                  user=os.getuid(), remove=False, delay=5,
                  timeout=None):
         port = BmiClient.get_unique_port()
@@ -74,15 +74,12 @@ class BmiClientDocker(BmiClient):
                 raise NotADirectoryError(input_dir)
             volumes[input_dir] = {"bind": input_dir, "mode": "ro"}
 
-        if work_dir is not None:
-            self.work_dir = abspath(work_dir)
-            if self.work_dir in volumes:
-                raise ValueError('Found work_dir equal to one of the input directories. Please drop that input dir.')
-            if not os.path.isdir(self.work_dir):
-                raise NotADirectoryError(self.work_dir)
-            volumes[self.work_dir] = {"bind": self.work_dir, "mode": "rw"}
-        else:
-            self.work_dir = None
+        self.work_dir = abspath(work_dir)
+        if self.work_dir in volumes:
+            raise ValueError('Found work_dir equal to one of the input directories. Please drop that input dir.')
+        if not os.path.isdir(self.work_dir):
+            raise NotADirectoryError(self.work_dir)
+        volumes[self.work_dir] = {"bind": self.work_dir, "mode": "rw"}
         self.container = client.containers.run(image,
                                                ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,

@@ -1,4 +1,5 @@
 import subprocess
+from tempfile import TemporaryDirectory
 from textwrap import dedent
 
 import pytest
@@ -21,15 +22,19 @@ def walrus_model(tmp_path, walrus_input):
 
 @pytest.fixture()
 def walrus_model_with_input_dir(tmp_path, walrus_input):
-    model = BmiClientSingularity(image=IMAGE_NAME, input_dirs=[str(tmp_path)])
+    work_dir = TemporaryDirectory()
+    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=work_dir.name, input_dirs=[str(tmp_path)])
     yield model
     del model
+    work_dir.cleanup()
 
 
 @pytest.fixture()
-def walrus_model_with_2input_dirs(walrus_2input_dirs):
+def walrus_model_with_2input_dirs(walrus_2input_dirs, tmp_path):
+    work_dir = tmp_path / 'work'
+    work_dir.mkdir()
     input_dirs = walrus_2input_dirs['input_dirs']
-    model = BmiClientSingularity(image=IMAGE_NAME, input_dirs=input_dirs)
+    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(work_dir), input_dirs=input_dirs)
     yield model
     del model
 
@@ -47,9 +52,11 @@ def walrus_model_with_work_dir(tmp_path):
 
 @pytest.fixture()
 def walrus_model_with_config_inside_image(tmp_path):
-    data_file = tmp_path / 'PEQ_Hupsel.dat'
+    input_dir = tmp_path / 'input'
+    input_dir.mkdir()
+    data_file = input_dir / 'PEQ_Hupsel.dat'
     write_datafile(data_file)
-    cfg_file = tmp_path / 'config.yml'
+    cfg_file = input_dir / 'config.yml'
     write_config(cfg_file, '/scratch/PEQ_Hupsel.dat')
     def_file = tmp_path / 'walrus.def'
     def_file.write_text(f'''Bootstrap: docker
@@ -62,11 +69,15 @@ From: {IMAGE_NAME.replace('docker://', '')}
     image = tmp_path / 'walrus-image'
     subprocess.run(['singularity', 'build', '--sandbox', '--fakeroot', image, def_file])
 
-    model = BmiClientSingularity(image)
+    work_dir = tmp_path / 'work'
+    work_dir.mkdir()
+    model = BmiClientSingularity(str(image), str(work_dir))
 
     yield model
 
     del model
+    # Singularity generates some files with permissions that pytest clean up does not handle
+    subprocess.run(['rm', '-rf', str(image)])
 
 
 class TestBmiClientSingularity:
@@ -124,8 +135,10 @@ class TestBmiClientSingularity:
     def test_inputdir_absent(self, tmp_path):
         dirthatdoesnotexist = 'dirthatdoesnotexist'
         input_dir = tmp_path / dirthatdoesnotexist
+        work_dir = tmp_path / 'work'
+        work_dir.mkdir()
         with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
-            BmiClientSingularity(image=IMAGE_NAME, input_dirs=[str(input_dir)])
+            BmiClientSingularity(image=IMAGE_NAME, work_dir=str(work_dir), input_dirs=[str(input_dir)])
 
     def test_workdir_absent(self, tmp_path):
         dirthatdoesnotexist = 'dirthatdoesnotexist'
@@ -149,14 +162,15 @@ class TestBmiClientSingularity:
 
 
 @pytest.fixture
-def notebook():
+def notebook(tmp_path):
+    tmp_path.mkdir(exist_ok=True)
     cells = [
         new_code_cell(dedent("""\
             from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-            walrus_model = BmiClientSingularity(image='{0}')
+            walrus_model = BmiClientSingularity(image='{0}', work_dir='{1}')
             assert walrus_model.get_component_name() == 'WALRUS'
             del walrus_model
-        """.format(IMAGE_NAME)))
+        """.format(IMAGE_NAME, str(tmp_path))))
     ]
     return new_notebook(cells=cells)
 
