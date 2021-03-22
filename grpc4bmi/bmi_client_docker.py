@@ -43,7 +43,6 @@ class BmiClientDocker(BmiClient):
         work_dir (str): Working directory for model.
 
             Directory is mounted inside container and changed into.
-            If absent then Docker defaults to whatever image has as work directory.
 
         user (str): Username or UID of Docker container. Defaults to own UID.
         remove (bool): Automatically remove the container and logs when it exits.

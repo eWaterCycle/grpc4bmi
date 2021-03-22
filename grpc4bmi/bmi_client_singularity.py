@@ -36,7 +36,6 @@ class BmiClientSingularity(BmiClient):
         work_dir (str): Working directory for model.
 
             Directory is mounted inside container and changed into.
-            If absent then Singularity defaults to using current working directory outside container also inside.
 
             To create a random work directory you could use
 
