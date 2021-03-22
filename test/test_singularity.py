@@ -50,7 +50,7 @@ def walrus_model_with_config_inside_image(tmp_path):
     data_file = tmp_path / 'PEQ_Hupsel.dat'
     write_datafile(data_file)
     cfg_file = tmp_path / 'config.yml'
-    write_config(cfg_file, data_file)
+    write_config(cfg_file, '/scratch/PEQ_Hupsel.dat')
     def_file = tmp_path / 'walrus.def'
     def_file.write_text(f'''Bootstrap: docker
 From: {IMAGE_NAME.replace('docker://', '')}
