@@ -91,3 +91,7 @@ class TestBmiClientDocker:
         match = 'Found work_dir equal to one of the input directories. Please drop that input dir.'
         with pytest.raises(ValueError, match=match):
             BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dirs=(some_dir,), work_dir=some_dir)
+
+    def test_workdir_as_number(self):
+        with pytest.raises(TypeError, match='must be str'):
+            BmiClientDocker(image=walrus_docker_image, work_dir=42)

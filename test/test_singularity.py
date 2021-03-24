@@ -160,6 +160,10 @@ class TestBmiClientSingularity:
         # After initialization and update the forcings have been read from the scratch dir
         assert len(model.get_value('Q')) == 1
 
+    def test_workdir_as_number(self):
+        with pytest.raises(TypeError, match='must be str'):
+            BmiClientSingularity(image=IMAGE_NAME, work_dir=42)
+
 
 @pytest.fixture
 def notebook(tmp_path):

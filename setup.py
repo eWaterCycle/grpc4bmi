@@ -32,6 +32,7 @@ setup(name="grpc4bmi",
           "docker",
           "basic-modeling-interface",
           "semver",
+          "typeguard",
       ],
       extras_require={
           'R': ['rpy2'],

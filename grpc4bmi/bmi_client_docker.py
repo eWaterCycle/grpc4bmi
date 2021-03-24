@@ -1,8 +1,10 @@
 import os
 import time
 from os.path import abspath
+from typing import Iterable
 
 import docker
+from typeguard import check_argument_types
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 
@@ -61,9 +63,10 @@ class BmiClientDocker(BmiClient):
     See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
     """
     def __init__(self, image: str, work_dir: str, image_port=50051, host=None,
-                 input_dirs=tuple(),
+                 input_dirs: Iterable[str] = tuple(),
                  user=os.getuid(), remove=False, delay=5,
                  timeout=None):
+        assert check_argument_types()
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}

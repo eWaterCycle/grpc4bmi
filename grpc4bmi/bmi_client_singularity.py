@@ -3,8 +3,10 @@ import time
 from os.path import abspath
 import subprocess
 import logging
+from typing import Iterable
 
 import semver
+from typeguard import check_argument_types
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 
@@ -119,9 +121,13 @@ class BmiClientSingularity(BmiClient):
 
     **Example 4: Model writes in sub directory of input directory**
 
-    The input directories are mounted read-only so use writable work directory instead.
+    Some models, for example wflow, write output in a sub-directory of the input directory.
+    If the input directory is set with the `input_dirs` argument then the model will be unable to write its output as
+    input directories are mounted read-only. That will most likely cause the model to die.
+    A workaround is to use the `work_dir` argument with input directory as value instead.
+    This will make the whole input directory writable so the model can do its thing.
 
-    When input directory is on a shared disk where you don not have write permission then
+    When input directory is on a shared disk where you do not have write permission then
     the input dir should be copied to a work directory (`/scratch/wflow`) so model can write.
 
     .. code-block:: python
@@ -170,7 +176,8 @@ class BmiClientSingularity(BmiClient):
         del client_rhine
 
     """
-    def __init__(self, image: str, work_dir: str, input_dirs=tuple(), delay=0, timeout=None):
+    def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None):
+        assert check_argument_types()
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
@@ -180,6 +187,7 @@ class BmiClientSingularity(BmiClient):
             "--contain",
             "--env", f"BMI_PORT={port}"
         ]
+
         for raw_input_dir in input_dirs:
             input_dir = abspath(raw_input_dir)
             if not os.path.isdir(input_dir):
