@@ -30,13 +30,15 @@ class BmiClientSingularity(BmiClient):
     Args:
         image: Singularity image.
 
-            For Docker Hub image use `docker://*` or the Docker image can be converted to a Singularity image file with
+            For Docker Hub image use `docker://*` or convert it to a Singularity image file.
+
+            To convert Docker image
+            `ewatercycle/walrus-grpc4bmi <https://hub.docker.com/layers/ewatercycle/walrus-grpc4bmi>`_
+            with `v0.2.0` tag to `./ewatercycle-walrus-grpc4bmi_v0.2.0.sif` Singularity image file use:
 
             .. code-block:: console
 
-            singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
-
-            This will write a `./walrus-grpc4bmi_v0.2.0.sif` Singularity image file.
+              singularity pull ewatercycle-walrus-grpc4bmi_v0.2.0.sif docker://ewatercycle/walrus-grpc4bmi:v0.2.0
 
         input_dirs (Iterable[str]): Directories for input files of model.
 
@@ -55,7 +57,7 @@ class BmiClientSingularity(BmiClient):
 
               work_dir = TemporaryDirectory()
 
-              image = 'walrus-grpc4bmi_v0.2.0.sif'
+              image = 'ewatercycle-walrus-grpc4bmi_v0.2.0.sif'
               client =  BmiClientSingularity(image, work_dir.name)
 
               # Write config to work_dir and interact with client
@@ -108,7 +110,7 @@ class BmiClientSingularity(BmiClient):
     .. code-block:: python
 
         from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='docker://ewatercycle/walrus-grpc4bmi:v0.2.0',
+        client = BmiClientSingularity(image='ewatercycle-walrus-grpc4bmi_v0.2.0.sif',
                                       input_dirs=['/shared/forcings/walrus'],
                                       work_dir='/tmp/work')
         client.initialize('walrus.yml')
@@ -118,7 +120,8 @@ class BmiClientSingularity(BmiClient):
     **Example 4: Model writes in sub directory of input directory**
 
     The input directories are mounted read-only so use writable work directory instead.
-    When input directory is read-only to the user then
+
+    When input directory is on a shared disk where you don not have write permission then
     the input dir should be copied to a work directory (`/scratch/wflow`) so model can write.
 
     .. code-block:: python
