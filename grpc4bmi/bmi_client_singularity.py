@@ -28,7 +28,16 @@ class BmiClientSingularity(BmiClient):
     The port is passed to the container using the BMI_PORT environment variable.
 
     Args:
-        image: Singularity image. For Docker Hub image use `docker://*`.
+        image: Singularity image.
+
+            For Docker Hub image use `docker://*` or the Docker image can be converted to a Singularity image file with
+
+            .. code-block:: console
+
+            singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
+
+            This will write a `./walrus-grpc4bmi_v0.2.0.sif` Singularity image file.
+
         input_dirs (Iterable[str]): Directories for input files of model.
 
             All of directories will be mounted read-only inside Singularity container on same path as outside container.
@@ -46,7 +55,7 @@ class BmiClientSingularity(BmiClient):
 
               work_dir = TemporaryDirectory()
 
-              image = 'docker://ewatercycle/marrmot-grpc4bmi:latest'
+              image = 'walrus-grpc4bmi_v0.2.0.sif'
               client =  BmiClientSingularity(image, work_dir.name)
 
               # Write config to work_dir and interact with client
