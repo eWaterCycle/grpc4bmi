@@ -146,8 +146,8 @@ class BmiClientSingularity(BmiClient):
 
         from grpc4bmi.bmi_client_singularity import BmiClientSingularity
         client_muese = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                            work_dir='/scratch/wflow-muese')
-        client_muese.initialize('wflow_sbm.muese.ini')
+                                            work_dir='/scratch/wflow-meuse')
+        client_muese.initialize('wflow_sbm.meuse.ini')
         client_rhine = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
                                             work_dir='/scratch/wflow-rhine')
         client_rhine.initialize('wflow_sbm.rhine.ini')
