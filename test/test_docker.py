@@ -10,7 +10,7 @@ walrus_docker_image = 'ewatercycle/walrus-grpc4bmi:v0.2.0'
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dir=str(tmp_path))
+    model = BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(tmp_path))
     yield model
     del model
 
@@ -26,12 +26,14 @@ def exit_container():
 
 
 @pytest.fixture()
-def walrus_model_with_extra_volume(tmp_path, walrus_input_on_extra_volume):
-    (input_dir, extra_volumes) = walrus_input_on_extra_volume
+def walrus_model_with_2input_dirs(tmp_path, walrus_2input_dirs):
+    input_dirs = walrus_2input_dirs['input_dirs']
+    work_dir = tmp_path / 'work'
+    work_dir.mkdir()
     model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.2.0",
                             image_port=55555,
-                            input_dir=str(input_dir),
-                            extra_volumes=extra_volumes)
+                            work_dir=str(work_dir),
+                            input_dirs=input_dirs)
     yield model
     del model
 
@@ -53,23 +55,53 @@ class TestBmiClientDocker:
         with pytest.raises(NotImplementedError):
             walrus_model.get_value_ref('Q')
 
-    def test_extra_volume(self, walrus_model_with_extra_volume):
-        walrus_model_with_extra_volume.initialize('/data/input/config.yml')
-        walrus_model_with_extra_volume.update()
+    def test_2input_dirs(self, walrus_2input_dirs, walrus_model_with_2input_dirs):
+        config_file = walrus_2input_dirs['cfg']
+        walrus_model_with_2input_dirs.initialize(config_file)
+        walrus_model_with_2input_dirs.update()
         # After initialization and update the forcings have been read from the extra volume
-        assert len(walrus_model_with_extra_volume.get_value('Q')) == 1
+        assert len(walrus_model_with_2input_dirs.get_value('Q')) == 1
 
     def test_inputdir_absent(self, tmp_path):
         dirthatdoesnotexist = 'dirthatdoesnotexist'
         input_dir = tmp_path / dirthatdoesnotexist
+        work_dir = tmp_path / 'work'
+        work_dir.mkdir()
         with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
-            BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dir=str(input_dir))
+            BmiClientDocker(image=walrus_docker_image, image_port=55555,
+                            work_dir=str(work_dir), input_dirs=[str(input_dir)])
 
-    def test_container_start_failure(self, exit_container):
+    def test_workdir_absent(self, tmp_path):
+        dirthatdoesnotexist = 'dirthatdoesnotexist'
+        work_dir = tmp_path / dirthatdoesnotexist
+        with pytest.raises(NotADirectoryError, match=dirthatdoesnotexist):
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(work_dir))
+
+    def test_container_start_failure(self, exit_container, tmp_path):
         expected = r"Failed to start Docker container with image"
         with pytest.raises(DeadDockerContainerException, match=expected) as excinfo:
-            BmiClientDocker(image=exit_container)
+            BmiClientDocker(image=exit_container, work_dir=str(tmp_path))
 
         assert excinfo.value.exitcode == 25
         assert b'my stderr' in excinfo.value.logs
         assert b'my stdout' in excinfo.value.logs
+
+    def test_same_inputdir_and_workdir(self, tmp_path):
+        some_dir = str(tmp_path)
+        match = 'Found work_dir equal to one of the input directories. Please drop that input dir.'
+        with pytest.raises(ValueError, match=match):
+            BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dirs=(some_dir,), work_dir=some_dir)
+
+    def test_workdir_as_number(self):
+        with pytest.raises(TypeError, match='must be str'):
+            BmiClientDocker(image=walrus_docker_image, work_dir=42)
+
+    def test_inputdirs_as_str(self, tmp_path):
+        some_dir = str(tmp_path)
+        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
+            BmiClientDocker(image=walrus_docker_image, input_dirs='old type', work_dir=some_dir)
+
+    def test_inputdirs_as_number(self, tmp_path):
+        some_dir = str(tmp_path)
+        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
+            BmiClientDocker(image=walrus_docker_image, input_dirs=42, work_dir=some_dir)

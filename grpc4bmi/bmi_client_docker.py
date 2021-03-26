@@ -1,11 +1,12 @@
 import os
-import errno
 import time
+from os.path import abspath
+from typing import Iterable
 
 import docker
+from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-from grpc4bmi.utils import stage_config_file
 
 
 class DeadDockerContainerException(ChildProcessError):
@@ -37,59 +38,58 @@ class BmiClientDocker(BmiClient):
         image (str): Docker image name of grpc4bmi wrapped model
         image_port (int): Port of server inside the image
         host (str): Host on which the image port is published on a random port
-        input_dir (str): Directory for input files of model
-        output_dir (str): Directory for input files of model
-        user (str): Username or UID of Docker container
+        input_dirs (Iterable[str]): Directories for input files of model.
+
+            All of directories will be mounted read-only inside Singularity container on same path as outside container.
+
+        work_dir (str): Working directory for model.
+
+            Directory is mounted inside container and changed into.
+
+        user (str): Username or UID of Docker container. Defaults to own UID.
         remove (bool): Automatically remove the container and logs when it exits.
+
+            Enable to get logs when container dies prematurely.
+
         delay (int): Seconds to wait for Docker container to startup, before connecting to it
-        timeout (int): Seconds to wait for gRPC client to connect to server
-        extra_volumes (Dict[str,Dict]): Extra volumes to attach to Docker container.
 
-            The key is either the hosts path or a volume name and the value is a dictionary with the keys:
+            Increase when container takes a long time to startup.
 
-            - ``bind`` The path to mount the volume inside the container
-            - ``mode`` Either ``rw`` to mount the volume read/write, or ``ro`` to mount it read-only.
+        timeout (int): Seconds to wait for gRPC client to connect to server.
 
-            For example:
+            By default will try forever to connect to gRPC server inside container.
+            Set to low number to escape endless wait.
 
-            .. code-block:: python
-
-                    {'/data/shared/forcings/': {'bind': '/forcings', 'mode': 'ro'}}
-
+    See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
     """
-
-    input_mount_point = "/data/input"
-    output_mount_point = "/data/output"
-
-    def __init__(self, image, image_port=50051, host=None,
-                 input_dir=None, output_dir=None,
+    def __init__(self, image: str, work_dir: str, image_port=50051, host=None,
+                 input_dirs: Iterable[str] = tuple(),
                  user=os.getuid(), remove=False, delay=5,
-                 timeout=None, extra_volumes=None):
+                 timeout=None):
+        assert check_argument_types()
+        if type(input_dirs) == str:
+            msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
+                  f'got {qualified_name(input_dirs)} instead'
+            raise TypeError(msg)
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
-        if extra_volumes is not None:
-            volumes.update(extra_volumes)
-        self.input_dir = None
-        if input_dir is not None:
-            self.input_dir = os.path.abspath(input_dir)
-            if not os.path.isdir(self.input_dir):
+        for raw_input_dir in input_dirs:
+            input_dir = abspath(raw_input_dir)
+            if not os.path.isdir(input_dir):
                 raise NotADirectoryError(input_dir)
-            volumes[self.input_dir] = {"bind": BmiClientDocker.input_mount_point, "mode": "rw"}
-        self.output_dir = None
-        if output_dir is not None:
-            self.output_dir = os.path.abspath(output_dir)
-            try:
-                # Create output dir ourselves, otherwise Docker will create it as root user, resulting in permission
-                # errors
-                os.mkdir(self.output_dir)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
-            volumes[self.output_dir] = {"bind": BmiClientDocker.output_mount_point, "mode": "rw"}
+            volumes[input_dir] = {"bind": input_dir, "mode": "ro"}
+
+        self.work_dir = abspath(work_dir)
+        if self.work_dir in volumes:
+            raise ValueError('Found work_dir equal to one of the input directories. Please drop that input dir.')
+        if not os.path.isdir(self.work_dir):
+            raise NotADirectoryError(self.work_dir)
+        volumes[self.work_dir] = {"bind": self.work_dir, "mode": "rw"}
         self.container = client.containers.run(image,
                                                ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,
+                                               working_dir=self.work_dir,
                                                user=user,
                                                remove=remove,
                                                detach=True)
@@ -108,10 +108,6 @@ class BmiClientDocker(BmiClient):
     def __del__(self):
         if hasattr(self, "container"):
             self.container.stop()
-
-    def initialize(self, filename):
-        fn = stage_config_file(filename, self.input_dir, self.input_mount_point)
-        super(BmiClientDocker, self).initialize(fn)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")

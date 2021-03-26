@@ -3,13 +3,15 @@ import math
 import os
 import socket
 from contextlib import closing
+from typing import Optional
 
 import basic_modeling_interface.bmi as bmi
 import grpc
 import numpy
+from typeguard import check_argument_types
 
 from . import bmi_pb2, bmi_pb2_grpc
-from .utils import GRPC_MAX_MESSAGE_LENGTH
+from .constants import GRPC_MAX_MESSAGE_LENGTH
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +56,8 @@ class BmiClient(bmi.Bmi):
             s.bind(("" if host is None else host, 0))
             return int(s.getsockname()[1])
 
-    def initialize(self, filename):
+    def initialize(self, filename: Optional[str]):
+        assert check_argument_types()
         fname = "" if filename is None else filename
         self.stub.initialize(bmi_pb2.InitializeRequest(config_file=fname))
 
