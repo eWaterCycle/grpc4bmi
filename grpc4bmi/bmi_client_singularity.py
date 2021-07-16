@@ -25,7 +25,7 @@ def check_singularity_version():
 
 class DeadSingularityContainerException(ChildProcessError):
     """
-    Exception for when a Docker container has died.
+    Exception for when a Singularity container has died.
 
     Args:
         message (str): Human readable error message
