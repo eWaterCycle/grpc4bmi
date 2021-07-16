@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 from os.path import abspath
-from typing import Iterable, BinaryIO, TextIO, Union, Literal
+from typing import Iterable, BinaryIO, TextIO, Union
 
 import semver
 from typeguard import check_argument_types, qualified_name
