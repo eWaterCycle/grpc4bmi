@@ -1,9 +1,9 @@
+import logging
 import os
+import subprocess
 import time
 from os.path import abspath
-import subprocess
-import logging
-from typing import Iterable
+from typing import Iterable, BinaryIO, TextIO, Union, Literal
 
 import semver
 from typeguard import check_argument_types, qualified_name
@@ -21,6 +21,21 @@ def check_singularity_version():
     if not semver.match(stdout.decode('utf-8').replace('_', '-'), REQUIRED_SINGULARITY_VERSION):
         raise Exception(f'Wrong version of singularity found, require version {REQUIRED_SINGULARITY_VERSION}')
     return True
+
+
+class DeadSingularityContainerException(ChildProcessError):
+    """
+    Exception for when a Docker container has died.
+
+    Args:
+        message (str): Human readable error message
+        exitcode (int): The non-zero exit code of the container
+
+    """
+    def __init__(self, message, exitcode, *args):
+        super().__init__(message, *args)
+        #: Exit code of container
+        self.exitcode = exitcode
 
 
 class BmiClientSingularity(BmiClient):
@@ -75,6 +90,19 @@ class BmiClientSingularity(BmiClient):
 
             By default will try forever to connect to gRPC server inside container.
             Set to low number to escape endless wait.
+
+        stderr (Union[None, BinaryIO, TextIO, int]): Redirect stderr of singularity container.
+
+            By default will inherit stderr file handle from current Python process.
+            Can be set to a file object to log stdout to a file.
+            Or can be set to `subprocess.DEVNULL` to redirect to null device never to be seen again.
+            Or can be set to `subprocess.STDOUT` to redirect the stderr to stdout.
+
+        stdout (Union[None, BinaryIO, TextIO, int]): Redirect stdout of singularity container.
+
+            By default will inherit stdout file handle from current Python process.
+            Can be set to a file object to log stdout to a file.
+            Or can be set to `subprocess.DEVNULL` to redirect to null device never to be seen again.
 
     **Example 1: Config file already inside image**
 
@@ -176,7 +204,11 @@ class BmiClientSingularity(BmiClient):
         del client_rhine
 
     """
-    def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None):
+
+    def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None,
+                 stderr: Union[None, BinaryIO, TextIO, int] = None,
+                 stdout: Union[None, BinaryIO, TextIO, int] = None
+                 ):
         assert check_argument_types()
         if type(input_dirs) == str:
             msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
@@ -207,8 +239,11 @@ class BmiClientSingularity(BmiClient):
         args += ["--pwd", self.work_dir]
         args.append(image)
         logging.info(f'Running {image} singularity container on port {port}')
-        self.container = subprocess.Popen(args, preexec_fn=os.setsid)
+        self.container = subprocess.Popen(args, preexec_fn=os.setsid, stderr=stderr, stdout=stdout)
         time.sleep(delay)
+        returncode = self.container.poll()
+        if returncode is not None:
+            raise DeadSingularityContainerException(f'singularity container {image} prematurely exited with code {returncode}', returncode)
         super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
