@@ -10,7 +10,7 @@ from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 
-REQUIRED_SINGULARITY_VERSION = '>=3.6.0'
+REQUIRED_SINGULARITY_VERSION = '3.6.0'
 
 
 def check_singularity_version():
@@ -18,8 +18,10 @@ def check_singularity_version():
     (stdout, _stderr) = p.communicate()
     if p.returncode != 0:
         raise Exception('Unable to determine singularity version')
-    if not semver.match(stdout.decode('utf-8').replace('_', '-'), REQUIRED_SINGULARITY_VERSION):
-        raise Exception(f'Wrong version of singularity found, require version {REQUIRED_SINGULARITY_VERSION}')
+    local_version = semver.VersionInfo.parse(stdout.decode('utf-8').replace('_', '-'))
+    if local_version < REQUIRED_SINGULARITY_VERSION:
+        raise Exception(f'Wrong version ({local_version}) of singularity found, '
+                        f'require version {REQUIRED_SINGULARITY_VERSION}')
     return True
 
 
