@@ -187,24 +187,18 @@ class TestRedirectOutput:
         return hello_image
 
     def test_default(self, image, tmp_path, capfd):
-        with pytest.raises(DeadSingularityContainerException):
+        with pytest.raises(DeadSingularityContainerException) as excinf:
             BmiClientSingularity(image=image, work_dir=str(tmp_path), delay=2)
 
-        assert self.EXPECTED in capfd.readouterr().out
-
-    def test_textfile(self, image, tmp_path):
-        mylog = tmp_path / 'mylog.txt'
-
-        with mylog.open('w') as f, pytest.raises(DeadSingularityContainerException):
-            BmiClientSingularity(image=image, work_dir=str(tmp_path), stdout=f, delay=2)
-
-        assert self.EXPECTED in mylog.read_text()
+        assert self.EXPECTED not in capfd.readouterr().out
+        assert self.EXPECTED in excinf.value.logs
 
     def test_devnull(self, image, tmp_path, capfd):
-        with pytest.raises(DeadSingularityContainerException):
-            BmiClientSingularity(image=image, work_dir=str(tmp_path), stdout=subprocess.DEVNULL, delay=2)
+        with pytest.raises(DeadSingularityContainerException) as excinf:
+            BmiClientSingularity(image=image, work_dir=str(tmp_path), capture_logs=False, delay=2)
 
         assert self.EXPECTED not in capfd.readouterr().out
+        assert self.EXPECTED not in excinf.value.logs
 
 
 @pytest.fixture

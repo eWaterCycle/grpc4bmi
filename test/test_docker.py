@@ -105,3 +105,9 @@ class TestBmiClientDocker:
         some_dir = str(tmp_path)
         with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
             BmiClientDocker(image=walrus_docker_image, input_dirs=42, work_dir=some_dir)
+
+    def test_logs(self, walrus_model, capfd):
+        logs = walrus_model.logs()
+
+        assert 'R[write to console]' in logs
+        assert 'R[write to console]' not in capfd.readouterr().out

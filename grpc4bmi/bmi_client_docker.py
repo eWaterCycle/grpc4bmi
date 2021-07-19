@@ -19,6 +19,7 @@ class DeadDockerContainerException(ChildProcessError):
         logs (str): Logs the container produced
 
     """
+
     def __init__(self, message, exitcode, logs, *args):
         super().__init__(message, *args)
         #: Exit code of container
@@ -62,6 +63,7 @@ class BmiClientDocker(BmiClient):
 
     See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
     """
+
     def __init__(self, image: str, work_dir: str, image_port=50051, host=None,
                  input_dirs: Iterable[str] = tuple(),
                  user=os.getuid(), remove=False, delay=5,
@@ -111,3 +113,10 @@ class BmiClientDocker(BmiClient):
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
+
+    def logs(self) -> str:
+        """Returns complete combined stdout and stderr written by the Docker container.
+        """
+        if hasattr(self, "container"):
+            return self.container.logs().decode('utf8')
+        return ''

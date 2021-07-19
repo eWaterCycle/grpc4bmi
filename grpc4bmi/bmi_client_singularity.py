@@ -3,7 +3,8 @@ import os
 import subprocess
 import time
 from os.path import abspath
-from typing import Iterable, BinaryIO, TextIO, Union
+from tempfile import SpooledTemporaryFile
+from typing import Iterable
 
 import semver
 from typeguard import check_argument_types, qualified_name
@@ -32,12 +33,15 @@ class DeadSingularityContainerException(ChildProcessError):
     Args:
         message (str): Human readable error message
         exitcode (int): The non-zero exit code of the container
+        logs (str): Logs the container produced
 
     """
-    def __init__(self, message, exitcode, *args):
+    def __init__(self, message, exitcode, logs, *args):
         super().__init__(message, *args)
         #: Exit code of container
         self.exitcode = exitcode
+        #: Stdout and stderr of container
+        self.logs = logs
 
 
 class BmiClientSingularity(BmiClient):
@@ -93,18 +97,11 @@ class BmiClientSingularity(BmiClient):
             By default will try forever to connect to gRPC server inside container.
             Set to low number to escape endless wait.
 
-        stderr (Union[None, BinaryIO, TextIO, int]): Redirect stderr of singularity container.
+        capture_logs (bool): Whether to capture stdout and stderr of container .
 
-            By default will inherit stderr file handle from current Python process.
-            Can be set to a file object to log stdout to a file.
-            Or can be set to `subprocess.DEVNULL` to redirect to null device never to be seen again.
-            Or can be set to `subprocess.STDOUT` to redirect the stderr to stdout.
-
-        stdout (Union[None, BinaryIO, TextIO, int]): Redirect stdout of singularity container.
-
-            By default will inherit stdout file handle from current Python process.
-            Can be set to a file object to log stdout to a file.
-            Or can be set to `subprocess.DEVNULL` to redirect to null device never to be seen again.
+            If false then redirects output to null device never to be seen again.
+            If true then redirects output to temporary file which can be read with :py:func:`BmiClientSingularity.logs()`.
+            The temporary file gets removed when this object is deleted.
 
     **Example 1: Config file already inside image**
 
@@ -208,8 +205,7 @@ class BmiClientSingularity(BmiClient):
     """
 
     def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None,
-                 stderr: Union[None, BinaryIO, TextIO, int] = None,
-                 stdout: Union[None, BinaryIO, TextIO, int] = None
+                 capture_logs=True,
                  ):
         assert check_argument_types()
         if type(input_dirs) == str:
@@ -232,7 +228,7 @@ class BmiClientSingularity(BmiClient):
                 raise NotADirectoryError(input_dir)
             args += ["--bind", f'{input_dir}:{input_dir}:ro']
         self.work_dir = abspath(work_dir)
-        if self.work_dir in set([abspath(d) for d in input_dirs]):
+        if self.work_dir in {abspath(d) for d in input_dirs}:
             raise ValueError('Found work_dir equal to one of the input directories. Please drop that input dir.')
         if not os.path.isdir(self.work_dir):
             raise NotADirectoryError(self.work_dir)
@@ -241,17 +237,48 @@ class BmiClientSingularity(BmiClient):
         args += ["--pwd", self.work_dir]
         args.append(image)
         logging.info(f'Running {image} singularity container on port {port}')
-        self.container = subprocess.Popen(args, preexec_fn=os.setsid, stderr=stderr, stdout=stdout)
+        if capture_logs:
+            self.logfile = SpooledTemporaryFile(max_size=2**16,  # keep until 65Kb in memory if bigger write to disk
+                                                prefix='grpc4bmi-singularity-log',
+                                                mode='w+t',
+                                                encoding='utf8')
+            stdout = self.logfile
+        else:
+            stdout = subprocess.DEVNULL
+        self.container = subprocess.Popen(args, preexec_fn=os.setsid, stderr=subprocess.STDOUT, stdout=stdout)
         time.sleep(delay)
         returncode = self.container.poll()
         if returncode is not None:
-            raise DeadSingularityContainerException(f'singularity container {image} prematurely exited with code {returncode}', returncode)
+            raise DeadSingularityContainerException(
+                f'singularity container {image} prematurely exited with code {returncode}',
+                returncode,
+                self.logs()
+            )
         super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
         if hasattr(self, "container"):
             self.container.terminate()
             self.container.wait()
+        if hasattr(self, "logfile"):
+            # Force deletion of log file
+            self.logfile.close()
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
+
+    def logs(self) -> str:
+        """Returns complete combined stdout and stderr written by the Singularity container.
+
+        When object was created with `log_enable=False` argument then always returns empty string.
+        """
+        if not hasattr(self, "logfile"):
+            return ''
+
+        current_position = self.logfile.tell()
+        # Read from start
+        self.logfile.seek(0)
+        content = self.logfile.read()
+        # Write from last position
+        self.logfile.seek(current_position)
+        return content
