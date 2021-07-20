@@ -1,25 +1,29 @@
+import logging
 import os
+import subprocess
 import time
 from os.path import abspath
-import subprocess
-import logging
+from tempfile import SpooledTemporaryFile
 from typing import Iterable
 
 import semver
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
+from grpc4bmi.exceptions import DeadContainerException, SingularityVersionException
 
-REQUIRED_SINGULARITY_VERSION = '>=3.6.0'
+REQUIRED_SINGULARITY_VERSION = '3.6.0'
 
 
 def check_singularity_version():
     p = subprocess.Popen(['singularity', 'version'], stdout=subprocess.PIPE)
     (stdout, _stderr) = p.communicate()
     if p.returncode != 0:
-        raise Exception('Unable to determine singularity version')
-    if not semver.match(stdout.decode('utf-8').replace('_', '-'), REQUIRED_SINGULARITY_VERSION):
-        raise Exception(f'Wrong version of singularity found, require version {REQUIRED_SINGULARITY_VERSION}')
+        raise SingularityVersionException('Unable to determine singularity version')
+    local_version = semver.VersionInfo.parse(stdout.decode('utf-8').replace('_', '-'))
+    if local_version < REQUIRED_SINGULARITY_VERSION:
+        raise SingularityVersionException(f'Wrong version ({local_version}) of singularity found, '
+                                          f'require version {REQUIRED_SINGULARITY_VERSION}')
     return True
 
 
@@ -75,6 +79,12 @@ class BmiClientSingularity(BmiClient):
 
             By default will try forever to connect to gRPC server inside container.
             Set to low number to escape endless wait.
+
+        capture_logs (bool): Whether to capture stdout and stderr of container .
+
+            If false then redirects output to null device never to be seen again.
+            If true then redirects output to temporary file which can be read with :py:func:`BmiClientSingularity.logs()`.
+            The temporary file gets removed when this object is deleted.
 
     **Example 1: Config file already inside image**
 
@@ -176,7 +186,10 @@ class BmiClientSingularity(BmiClient):
         del client_rhine
 
     """
-    def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None):
+
+    def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None,
+                 capture_logs=True,
+                 ):
         assert check_argument_types()
         if type(input_dirs) == str:
             msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
@@ -198,7 +211,7 @@ class BmiClientSingularity(BmiClient):
                 raise NotADirectoryError(input_dir)
             args += ["--bind", f'{input_dir}:{input_dir}:ro']
         self.work_dir = abspath(work_dir)
-        if self.work_dir in set([abspath(d) for d in input_dirs]):
+        if self.work_dir in {abspath(d) for d in input_dirs}:
             raise ValueError('Found work_dir equal to one of the input directories. Please drop that input dir.')
         if not os.path.isdir(self.work_dir):
             raise NotADirectoryError(self.work_dir)
@@ -207,14 +220,48 @@ class BmiClientSingularity(BmiClient):
         args += ["--pwd", self.work_dir]
         args.append(image)
         logging.info(f'Running {image} singularity container on port {port}')
-        self.container = subprocess.Popen(args, preexec_fn=os.setsid)
+        if capture_logs:
+            self.logfile = SpooledTemporaryFile(max_size=2 ** 16,  # keep until 65Kb in memory if bigger write to disk
+                                                prefix='grpc4bmi-singularity-log',
+                                                mode='w+t',
+                                                encoding='utf8')
+            stdout = self.logfile
+        else:
+            stdout = subprocess.DEVNULL
+        self.container = subprocess.Popen(args, preexec_fn=os.setsid, stderr=subprocess.STDOUT, stdout=stdout)
         time.sleep(delay)
+        returncode = self.container.poll()
+        if returncode is not None:
+            raise DeadContainerException(
+                f'singularity container {image} prematurely exited with code {returncode}',
+                returncode,
+                self.logs()
+            )
         super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
         if hasattr(self, "container"):
             self.container.terminate()
             self.container.wait()
+        if hasattr(self, "logfile"):
+            # Force deletion of log file
+            self.logfile.close()
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
+
+    def logs(self) -> str:
+        """Returns complete combined stdout and stderr written by the Singularity container.
+
+        When object was created with `log_enable=False` argument then always returns empty string.
+        """
+        if not hasattr(self, "logfile"):
+            return ''
+
+        current_position = self.logfile.tell()
+        # Read from start
+        self.logfile.seek(0)
+        content = self.logfile.read()
+        # Write from last position
+        self.logfile.seek(current_position)
+        return content

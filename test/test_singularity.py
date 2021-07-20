@@ -1,3 +1,4 @@
+import os
 import subprocess
 from tempfile import TemporaryDirectory
 from textwrap import dedent
@@ -8,6 +9,7 @@ from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
 from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+from grpc4bmi.exceptions import DeadContainerException
 from test.conftest import write_config, write_datafile
 
 IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
@@ -173,6 +175,31 @@ class TestBmiClientSingularity:
         some_dir = str(tmp_path)
         with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
             BmiClientSingularity(image=IMAGE_NAME, input_dirs=42, work_dir=some_dir)
+
+
+class TestRedirectOutput:
+    EXPECTED = 'Hello from Docker!'
+
+    @pytest.fixture
+    def image(self):
+        hello_image = 'docker://hello-world'
+        # Cache image, first test does not use delay time to build image
+        os.system(f'singularity run {hello_image}')
+        return hello_image
+
+    def test_default(self, image, tmp_path, capfd):
+        with pytest.raises(DeadContainerException) as excinf:
+            BmiClientSingularity(image=image, work_dir=str(tmp_path), delay=2)
+
+        assert self.EXPECTED not in capfd.readouterr().out
+        assert self.EXPECTED in excinf.value.logs
+
+    def test_devnull(self, image, tmp_path, capfd):
+        with pytest.raises(DeadContainerException) as excinf:
+            BmiClientSingularity(image=image, work_dir=str(tmp_path), capture_logs=False, delay=2)
+
+        assert self.EXPECTED not in capfd.readouterr().out
+        assert self.EXPECTED not in excinf.value.logs
 
 
 @pytest.fixture
