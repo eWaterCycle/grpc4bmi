@@ -10,6 +10,7 @@ import semver
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
+from grpc4bmi.exceptions import DeadContainerException, SingularityVersionException
 
 REQUIRED_SINGULARITY_VERSION = '3.6.0'
 
@@ -18,30 +19,12 @@ def check_singularity_version():
     p = subprocess.Popen(['singularity', 'version'], stdout=subprocess.PIPE)
     (stdout, _stderr) = p.communicate()
     if p.returncode != 0:
-        raise Exception('Unable to determine singularity version')
+        raise SingularityVersionException('Unable to determine singularity version')
     local_version = semver.VersionInfo.parse(stdout.decode('utf-8').replace('_', '-'))
     if local_version < REQUIRED_SINGULARITY_VERSION:
-        raise Exception(f'Wrong version ({local_version}) of singularity found, '
-                        f'require version {REQUIRED_SINGULARITY_VERSION}')
+        raise SingularityVersionException(f'Wrong version ({local_version}) of singularity found, '
+                                          f'require version {REQUIRED_SINGULARITY_VERSION}')
     return True
-
-
-class DeadSingularityContainerException(ChildProcessError):
-    """
-    Exception for when a Singularity container has died.
-
-    Args:
-        message (str): Human readable error message
-        exitcode (int): The non-zero exit code of the container
-        logs (str): Logs the container produced
-
-    """
-    def __init__(self, message, exitcode, logs, *args):
-        super().__init__(message, *args)
-        #: Exit code of container
-        self.exitcode = exitcode
-        #: Stdout and stderr of container
-        self.logs = logs
 
 
 class BmiClientSingularity(BmiClient):
@@ -238,7 +221,7 @@ class BmiClientSingularity(BmiClient):
         args.append(image)
         logging.info(f'Running {image} singularity container on port {port}')
         if capture_logs:
-            self.logfile = SpooledTemporaryFile(max_size=2**16,  # keep until 65Kb in memory if bigger write to disk
+            self.logfile = SpooledTemporaryFile(max_size=2 ** 16,  # keep until 65Kb in memory if bigger write to disk
                                                 prefix='grpc4bmi-singularity-log',
                                                 mode='w+t',
                                                 encoding='utf8')
@@ -249,7 +232,7 @@ class BmiClientSingularity(BmiClient):
         time.sleep(delay)
         returncode = self.container.poll()
         if returncode is not None:
-            raise DeadSingularityContainerException(
+            raise DeadContainerException(
                 f'singularity container {image} prematurely exited with code {returncode}',
                 returncode,
                 self.logs()

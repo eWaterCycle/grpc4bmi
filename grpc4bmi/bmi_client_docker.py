@@ -7,25 +7,7 @@ import docker
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-
-
-class DeadDockerContainerException(ChildProcessError):
-    """
-    Exception for when a Docker container has died.
-
-    Args:
-        message (str): Human readable error message
-        exitcode (int): The non-zero exit code of the container
-        logs (str): Logs the container produced
-
-    """
-
-    def __init__(self, message, exitcode, logs, *args):
-        super().__init__(message, *args)
-        #: Exit code of container
-        self.exitcode = exitcode
-        #: Stdout and stderr of container
-        self.logs = logs
+from grpc4bmi.exceptions import DeadContainerException
 
 
 class BmiClientDocker(BmiClient):
@@ -103,7 +85,7 @@ class BmiClientDocker(BmiClient):
                 exitcode = self.container.attrs["State"]["ExitCode"]
                 logs = self.logs()
                 msg = f'Failed to start Docker container with image {image}, Container log: {logs}'
-                raise DeadDockerContainerException(msg, exitcode, logs)
+                raise DeadContainerException(msg, exitcode, logs)
 
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 

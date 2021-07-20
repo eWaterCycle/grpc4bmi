@@ -8,7 +8,8 @@ from grpc import RpcError
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
-from grpc4bmi.bmi_client_singularity import BmiClientSingularity, DeadSingularityContainerException
+from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+from grpc4bmi.exceptions import DeadContainerException
 from test.conftest import write_config, write_datafile
 
 IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
@@ -187,14 +188,14 @@ class TestRedirectOutput:
         return hello_image
 
     def test_default(self, image, tmp_path, capfd):
-        with pytest.raises(DeadSingularityContainerException) as excinf:
+        with pytest.raises(DeadContainerException) as excinf:
             BmiClientSingularity(image=image, work_dir=str(tmp_path), delay=2)
 
         assert self.EXPECTED not in capfd.readouterr().out
         assert self.EXPECTED in excinf.value.logs
 
     def test_devnull(self, image, tmp_path, capfd):
-        with pytest.raises(DeadSingularityContainerException) as excinf:
+        with pytest.raises(DeadContainerException) as excinf:
             BmiClientSingularity(image=image, work_dir=str(tmp_path), capture_logs=False, delay=2)
 
         assert self.EXPECTED not in capfd.readouterr().out

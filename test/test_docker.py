@@ -3,7 +3,8 @@ from io import BytesIO
 import docker
 import pytest
 
-from grpc4bmi.bmi_client_docker import BmiClientDocker, DeadDockerContainerException
+from grpc4bmi.bmi_client_docker import BmiClientDocker
+from grpc4bmi.exceptions import DeadContainerException
 
 walrus_docker_image = 'ewatercycle/walrus-grpc4bmi:v0.2.0'
 
@@ -79,12 +80,12 @@ class TestBmiClientDocker:
 
     def test_container_start_failure(self, exit_container, tmp_path):
         expected = r"Failed to start Docker container with image"
-        with pytest.raises(DeadDockerContainerException, match=expected) as excinfo:
+        with pytest.raises(DeadContainerException, match=expected) as excinfo:
             BmiClientDocker(image=exit_container, work_dir=str(tmp_path))
 
         assert excinfo.value.exitcode == 25
-        assert b'my stderr' in excinfo.value.logs
-        assert b'my stdout' in excinfo.value.logs
+        assert 'my stderr' in excinfo.value.logs
+        assert 'my stdout' in excinfo.value.logs
 
     def test_same_inputdir_and_workdir(self, tmp_path):
         some_dir = str(tmp_path)
