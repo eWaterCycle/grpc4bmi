@@ -101,7 +101,7 @@ class BmiClientDocker(BmiClient):
             self.container.reload()
             if self.container.status == 'exited':
                 exitcode = self.container.attrs["State"]["ExitCode"]
-                logs = self.container.logs()
+                logs = self.logs()
                 msg = f'Failed to start Docker container with image {image}, Container log: {logs}'
                 raise DeadDockerContainerException(msg, exitcode, logs)
 
