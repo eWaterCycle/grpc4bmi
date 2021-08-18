@@ -14,6 +14,8 @@ from grpc4bmi.exceptions import DeadContainerException, SingularityVersionExcept
 
 REQUIRED_SINGULARITY_VERSION = '3.6.0'
 
+log = logging.getLogger(__name__)
+
 
 def check_singularity_version():
     p = subprocess.Popen(['singularity', 'version'], stdout=subprocess.PIPE)
@@ -219,7 +221,7 @@ class BmiClientSingularity(BmiClient):
         # Change into working directory
         args += ["--pwd", self.work_dir]
         args.append(image)
-        logging.info(f'Running {image} singularity container on port {port}')
+        log.info(f'Running {image} singularity container on port {port}')
         if capture_logs:
             self.logfile = SpooledTemporaryFile(max_size=2 ** 16,  # keep until 65Kb in memory if bigger write to disk
                                                 prefix='grpc4bmi-singularity-log',
