@@ -24,7 +24,7 @@ jobs:
     - name: Setup Singularity
       uses: eWaterCycle/setup-singularity@v6
       with:
-        singularity-version: 3.7.1
+        singularity-version: 3.8.3
     - name: Pull Docker image
       run: docker pull ewatercycle/walrus-grpc4bmi:v0.2.0
     - name: Cache Singularity image
