@@ -1,4 +1,4 @@
-from bmi import Bmi
+from basic_modeling_interface.bmi import Bmi
 
 
 class MemoizedBmi(Bmi):
