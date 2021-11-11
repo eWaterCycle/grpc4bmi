@@ -4,7 +4,7 @@ grpcio
 grpcio-tools
 grpcio-reflection
 numpy
-docutils
+docutils<0.18
 protobuf
 PyYAML
 numpydoc
