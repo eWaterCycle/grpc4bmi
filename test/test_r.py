@@ -1,3 +1,4 @@
+from pathlib import Path
 import numpy as np
 import pytest
 from rpy2.rinterface_lib.embedded import RRuntimeError
@@ -6,7 +7,8 @@ from grpc4bmi.run_server import BmiR, build_r
 
 @pytest.fixture
 def model():
-    return build_r('FakeFailingRModel', 'test/fake.r')
+    source_fn = str(Path(__file__).parent / 'fake.r')
+    return build_r('FakeFailingRModel', source_fn)
 
 @pytest.mark.skipif(not BmiR, reason='R and its dependencies are not installed')
 class TestFakeFailingRModel:
