@@ -13,7 +13,6 @@ scipy
 docker
 pytest
 pytest-cov
-futures
 https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
 sphinx
 sphinxcontrib-apidoc
