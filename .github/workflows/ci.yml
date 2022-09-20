@@ -25,9 +25,9 @@ jobs:
         pip install -e .[R]
         export R_LIBS_USER=~/.Renviron
     - name: Setup Singularity
-      uses: eWaterCycle/setup-singularity@v6
+      uses: eWaterCycle/setup-apptainer@v1
       with:
-        singularity-version: 3.8.3
+        appversion-version: 1.0.3
     - name: Pull Docker image
       run: docker pull ewatercycle/walrus-grpc4bmi:v0.2.0
     - name: Cache Singularity image
