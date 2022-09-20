@@ -14,6 +14,8 @@ docker
 pytest
 pytest-cov
 https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
+# Pin scipy as bmi-heat needs it for `from scipy import random`
+scipy==1.8.1
 sphinx
 sphinxcontrib-apidoc
 sphinxcontrib-napoleon
