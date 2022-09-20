@@ -41,15 +41,14 @@ jobs:
       run: singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
     - name: Install R dependencies
       run: |
+        export R_LIBS_USER=~/.Renviron
         mkdir -p $R_LIBS_USER
         Rscript -e "install.packages('remotes')"
         Rscript -e "install.packages('R6')"
-      env:
-        R_LIBS_USER: ~/.Renviron
     - name: Test with pytest
-      run: pytest --cov=grpc4bmi --cov-report xml
-      env:
-        R_LIBS_USER: ~/.Renviron
+      run: |
+        export R_LIBS_USER=~/.Renviron
+        pytest --cov=grpc4bmi --cov-report xml
     - name: Correct coverage paths
       run: sed -i "s+$PWD/++g" coverage.xml
     - name: SonarCloud analysis
