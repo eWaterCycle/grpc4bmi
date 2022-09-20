@@ -15,8 +15,8 @@ from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerExceptio
 REQUIRED_SINGULARITY_VERSION = '3.6.0'
 REQUIRED_APPTAINER_VERSION = '1.0.0-rc.2'  # First apptainer release with binaries
 
-def check_singularity_version_string(versionOutput: str) -> bool:
-    (app, _, version) = versionOutput.replace('_', '-').split(' ')
+def check_singularity_version_string(version_output: str) -> bool:
+    (app, _, version) = version_output.replace('_', '-').split(' ')
     local_version = semver.VersionInfo.parse(version)
     if app == 'singularity' and local_version < REQUIRED_SINGULARITY_VERSION:
         raise SingularityVersionException(f'Wrong version ({local_version}) of singularity found, '
