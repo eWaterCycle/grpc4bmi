@@ -7,8 +7,7 @@ from grpc4bmi.run_server import BmiR, build_r
 
 @pytest.fixture
 def model():
-    source_fn = str(Path(__file__).parent / 'fake.r')
-    return build_r('FakeFailingRModel', source_fn)
+    return build_r('FakeFailingRModel', 'test/fake.r')
 
 @pytest.mark.skipif(not BmiR, reason='R and its dependencies are not installed')
 class TestFakeFailingRModel:
