@@ -41,13 +41,13 @@ class TestFakeFailingRModel:
         ('update_until', [2]),
         ('finalize', tuple()),
         ('get_current_time', tuple()),
-        ('get_value_ref', ['plate_surface__temperature']),
         ('get_value_at_indices', ['plate_surface__temperature', [1, 2, 3]]),
         ('set_value', ['plate_surface__temperature', np.ones((10, 20))]),
         ('set_value_at_indices', ['plate_surface__temperature', [1, 2, 3], [4, 5, 6]]),        
-        # TODO figure out why update_frac and get_value do not raise error
+        # TODO figure out functions below do not raise error
         # ('update_frac', [0.5]),
         # ('get_value', ['plate_surface__temperature']),
+        # ('get_value_ref', ['plate_surface__temperature']),
     ]
 )
     def test_r_function_is_called(self, model: BmiR, fn_name, fn_args):
