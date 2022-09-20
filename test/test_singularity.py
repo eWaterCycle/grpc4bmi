@@ -2,14 +2,15 @@ import os
 import subprocess
 from tempfile import TemporaryDirectory
 from textwrap import dedent
+from typing import Type, Union
 
 import pytest
 from grpc import RpcError
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
-from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-from grpc4bmi.exceptions import DeadContainerException
+from grpc4bmi.bmi_client_singularity import REQUIRED_APPTAINER_VERSION, REQUIRED_SINGULARITY_VERSION, BmiClientSingularity, check_singularity_version_string
+from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
 from test.conftest import write_config, write_datafile
 
 IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
@@ -219,3 +220,25 @@ def notebook(tmp_path):
 def test_from_notebook(notebook, tmp_path):
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
     ep.preprocess(notebook, {'metadata': {'path': tmp_path}})
+
+class Test_check_singularity_version_string:
+    @pytest.mark.parametrize("test_input", [
+        ('singularity version 3.6.0'),
+        ('singularity version 3.8.7'),  # Last OSS version before fork
+        ('apptainer version 1.0.0-rc.2'),  
+        ('apptainer version 1.0.0'),
+        ('apptainer version 1.0.3'),
+        ('apptainer version 1.1.0-rc.3'),
+    ])
+    def test_ok(self, test_input: str):
+        result = check_singularity_version_string(test_input)
+        assert result
+
+
+    @pytest.mark.parametrize("test_input,error_class,expected", [
+        ('singularity version 3.5.0', SingularityVersionException, REQUIRED_SINGULARITY_VERSION),
+        ('apptainer version 1.0.0-rc.1', ApptainerVersionException, REQUIRED_APPTAINER_VERSION),
+    ])
+    def test_too_old(self, test_input: str, error_class: Union[Type[ApptainerVersionException], Type[SingularityVersionException]], expected: str):
+        with pytest.raises(error_class, match=expected):
+            check_singularity_version_string(test_input)

@@ -10,21 +10,29 @@ import semver
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-from grpc4bmi.exceptions import DeadContainerException, SingularityVersionException
+from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
 
 REQUIRED_SINGULARITY_VERSION = '3.6.0'
+REQUIRED_APPTAINER_VERSION = '1.0.0-rc.2'  # First apptainer release with binaries
 
-
-def check_singularity_version():
-    p = subprocess.Popen(['singularity', 'version'], stdout=subprocess.PIPE)
-    (stdout, _stderr) = p.communicate()
-    if p.returncode != 0:
-        raise SingularityVersionException('Unable to determine singularity version')
-    local_version = semver.VersionInfo.parse(stdout.decode('utf-8').replace('_', '-'))
-    if local_version < REQUIRED_SINGULARITY_VERSION:
+def check_singularity_version_string(versionOutput: str) -> bool:
+    (app, _, version) = versionOutput.replace('_', '-').split(' ')
+    local_version = semver.VersionInfo.parse(version)
+    if app == 'singularity' and local_version < REQUIRED_SINGULARITY_VERSION:
         raise SingularityVersionException(f'Wrong version ({local_version}) of singularity found, '
                                           f'require version {REQUIRED_SINGULARITY_VERSION}')
+    # Apptainer creates /usr/bin/singularity symlink, so if installed will report the apptainer version.
+    if app == 'apptainer' and local_version < REQUIRED_APPTAINER_VERSION:
+        raise ApptainerVersionException(f'Wrong version ({local_version}) of apptainer found, '
+                                          f'require version {REQUIRED_APPTAINER_VERSION}')
     return True
+
+def check_singularity_version():
+    p = subprocess.Popen(['singularity', '--version'], stdout=subprocess.PIPE)
+    (stdout, _) = p.communicate()
+    if p.returncode != 0:
+        raise SingularityVersionException('Unable to determine singularity version')
+    check_singularity_version_string(stdout.decode('utf-8'))
 
 
 class BmiClientSingularity(BmiClient):
