@@ -47,7 +47,7 @@ jobs:
         Rscript -e "install.packages('R6')"
     - name: Test with pytest
       run: |
-        pytest --cov=grpc4bmi --cov-report xml
+        pytest -vv --cov=grpc4bmi --cov-report xml
     - name: Correct coverage paths
       run: sed -i "s+$PWD/++g" coverage.xml
     - name: SonarCloud analysis
