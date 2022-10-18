@@ -5,7 +5,8 @@ grpcio-tools
 grpcio-reflection
 numpy
 docutils<0.18
-protobuf
+# Pin protobuf, see https://github.com/eWaterCycle/grpc4bmi/issues/115
+protobuf<=3.20.3
 PyYAML
 numpydoc
 cfunits
@@ -13,7 +14,6 @@ scipy
 docker
 pytest
 pytest-cov
-futures
 https://github.com/eWaterCycle/bmi-python/archive/master.zip#egg=bmi-heat
 sphinx
 sphinxcontrib-apidoc

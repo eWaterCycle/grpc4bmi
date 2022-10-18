@@ -31,7 +31,7 @@ class BmiR(Bmi):
         self.model['updateUntil'](time)
 
     def update_fraq(self, time_frac):
-        self.model['updateFrac '](time_frac)
+        self.model['updateFrac'](time_frac)
 
     def finalize(self):
         self.model['bmi_finalize']()

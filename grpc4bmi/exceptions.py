@@ -19,3 +19,6 @@ class DeadContainerException(ChildProcessError):
 
 class SingularityVersionException(ValueError):
     pass
+
+class ApptainerVersionException(ValueError):
+    pass
