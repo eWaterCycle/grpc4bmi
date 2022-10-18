@@ -27,7 +27,8 @@ setup(name="grpc4bmi",
       install_requires=[
           "grpcio",
           "grpcio-reflection",
-          "protobuf",
+          # Pin protobuf, see https://github.com/eWaterCycle/grpc4bmi/issues/115
+          "protobuf<=3.20.3",
           "numpy",
           "docker",
           "basic-modeling-interface",
