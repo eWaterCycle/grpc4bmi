@@ -12,8 +12,6 @@ on:
 jobs:
   python:
     runs-on: ubuntu-latest
-    env:
-      R_LIBS_USER: ~/.Renviron
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -40,9 +38,11 @@ jobs:
     - name: Pull Singularity image
       if: steps.cache-singularity-image.outputs.cache-hit != 'true'
       run: singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: '4.2.1'
     - name: Install R dependencies
       run: |
-        mkdir -p $R_LIBS_USER
         Rscript -e "install.packages('remotes')"
         Rscript -e "install.packages('R6')"
     - name: Test with pytest
