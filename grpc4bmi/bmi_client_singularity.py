@@ -6,25 +6,26 @@ from os.path import abspath
 from tempfile import SpooledTemporaryFile
 from typing import Iterable
 
-import semver
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
 
-REQUIRED_SINGULARITY_VERSION = '3.6.0'
-REQUIRED_APPTAINER_VERSION = '1.0.0-rc.2'  # First apptainer release with binaries
+SUPPORTED_SINGULARITY_VERSIONS = '>=3.6.0'
+SUPPORTED_APPTAINER_VERSIONS = '>=1.0.0-rc.2'  # First apptainer release with binaries
 
 def check_singularity_version_string(version_output: str) -> bool:
-    (app, _, version) = version_output.replace('_', '-').split(' ')
-    local_version = semver.VersionInfo.parse(version)
-    if app == 'singularity' and local_version < REQUIRED_SINGULARITY_VERSION:
-        raise SingularityVersionException(f'Wrong version ({local_version}) of singularity found, '
-                                          f'require version {REQUIRED_SINGULARITY_VERSION}')
+    (app, _, version) = version_output.split(' ')
+    local_version = Version(version)
+    if app == 'singularity' and local_version not in SpecifierSet(SUPPORTED_SINGULARITY_VERSIONS):
+        raise SingularityVersionException(f'Unsupported version ({version_output}) of singularity found, '
+                                          f'supported versions {SUPPORTED_SINGULARITY_VERSIONS}')
     # Apptainer creates /usr/bin/singularity symlink, so if installed will report the apptainer version.
-    if app == 'apptainer' and local_version < REQUIRED_APPTAINER_VERSION:
-        raise ApptainerVersionException(f'Wrong version ({local_version}) of apptainer found, '
-                                          f'require version {REQUIRED_APPTAINER_VERSION}')
+    if app == 'apptainer' and local_version not in SpecifierSet(SUPPORTED_APPTAINER_VERSIONS):
+        raise ApptainerVersionException(f'Unsupported version ({version_output}) of apptainer found, '
+                                          f'supported versions {SUPPORTED_APPTAINER_VERSIONS}')
     return True
 
 def check_singularity_version():

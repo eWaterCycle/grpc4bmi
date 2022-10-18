@@ -9,7 +9,7 @@ from grpc import RpcError
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 
-from grpc4bmi.bmi_client_singularity import REQUIRED_APPTAINER_VERSION, REQUIRED_SINGULARITY_VERSION, BmiClientSingularity, check_singularity_version_string
+from grpc4bmi.bmi_client_singularity import SUPPORTED_APPTAINER_VERSIONS, SUPPORTED_SINGULARITY_VERSIONS, BmiClientSingularity, check_singularity_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
 from test.conftest import write_config, write_datafile
 
@@ -229,6 +229,7 @@ class Test_check_singularity_version_string:
         ('apptainer version 1.0.0'),
         ('apptainer version 1.0.3'),
         ('apptainer version 1.1.0-rc.3'),
+        ('apptainer version 1.1.2'),
     ])
     def test_ok(self, test_input: str):
         result = check_singularity_version_string(test_input)
@@ -236,8 +237,9 @@ class Test_check_singularity_version_string:
 
 
     @pytest.mark.parametrize("test_input,error_class,expected", [
-        ('singularity version 3.5.0', SingularityVersionException, REQUIRED_SINGULARITY_VERSION),
-        ('apptainer version 1.0.0-rc.1', ApptainerVersionException, REQUIRED_APPTAINER_VERSION),
+        ('singularity version 3.5.0', SingularityVersionException, SUPPORTED_SINGULARITY_VERSIONS),
+        ('apptainer version 1.0.0-rc.1', ApptainerVersionException, SUPPORTED_APPTAINER_VERSIONS),
+        ('apptainer version 0.1.0', ApptainerVersionException, SUPPORTED_APPTAINER_VERSIONS),
     ])
     def test_too_old(self, test_input: str, error_class: Union[Type[ApptainerVersionException], Type[SingularityVersionException]], expected: str):
         with pytest.raises(error_class, match=expected):

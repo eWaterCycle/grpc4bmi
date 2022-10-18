@@ -31,7 +31,7 @@ setup(name="grpc4bmi",
           "numpy",
           "docker",
           "basic-modeling-interface",
-          "semver>=2.10.0",
+          "packaging",
           "typeguard",
       ],
       extras_require={
