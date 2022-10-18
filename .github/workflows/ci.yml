@@ -12,6 +12,8 @@ on:
 jobs:
   python:
     runs-on: ubuntu-latest
+    env:
+      R_LIBS_USER: ~/.Renviron
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -23,7 +25,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -e .[R]
-        export R_LIBS_USER=~/.Renviron
     - name: Setup Singularity
       uses: eWaterCycle/setup-singularity@v6
       with:
@@ -41,13 +42,11 @@ jobs:
       run: singularity pull docker://ewatercycle/walrus-grpc4bmi:v0.2.0
     - name: Install R dependencies
       run: |
-        export R_LIBS_USER=~/.Renviron
         mkdir -p $R_LIBS_USER
         Rscript -e "install.packages('remotes')"
         Rscript -e "install.packages('R6')"
     - name: Test with pytest
       run: |
-        export R_LIBS_USER=~/.Renviron
         pytest --cov=grpc4bmi --cov-report xml
     - name: Correct coverage paths
       run: sed -i "s+$PWD/++g" coverage.xml
