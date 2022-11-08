@@ -23,7 +23,7 @@ class BmiClientDocker(BmiClient):
         host (str): Host on which the image port is published on a random port
         input_dirs (Iterable[str]): Directories for input files of model.
 
-            All of directories will be mounted read-only inside Singularity container on same path as outside container.
+            All of directories will be mounted read-only inside Docker container on same path as outside container.
 
         work_dir (str): Working directory for model.
 
@@ -43,7 +43,7 @@ class BmiClientDocker(BmiClient):
             By default will try forever to connect to gRPC server inside container.
             Set to low number to escape endless wait.
 
-    See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
+    See :py:class:`grpc4bmi.bmi_client_apptainer.BmiClientApptainer` for examples using `input_dirs` and `work_dir`.
     """
 
     def __init__(self, image: str, work_dir: str, image_port=50051, host=None,

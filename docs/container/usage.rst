@@ -78,6 +78,19 @@ For example for the wflow Docker image the commands would be the following
 
 .. _Singularity: https://www.sylabs.io/guides/latest/user-guide/
 
+Apptainer
+---------
+
+Grpc4bmi can run containers on `Apptainer`_.
+
+Apptainer is an open source fork of singularity.
+
+It behaves very similar to singularity so everything described for it also goes for apptainer.
+You just need to replace the `singularity` command with `apptainer` and :class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` class with
+:class:`grpc4bmi.bmi_client_apptainer.BmiClientApptainer` class.
+
+.. _Apptainer: https://apptainer.org/docs/user/main/
+
 Sharing files between host computer and container
 -------------------------------------------------
 

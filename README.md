@@ -8,7 +8,7 @@
 
 ## Purpose
 
-This software allows you to wrap your BMI implementation (https://github.com/csdms/bmi) in a server process and communicate with it via the included python client. The communication is serialized to protocol buffers by GRPC (https://grpc.io/) and occurs over network ports.
+This software allows you to wrap your [Basic Model Interface (BMI)](https://github.com/csdms/bmi) implementation in a server process and communicate with it via the included Python client. The communication is serialized to protocol buffers by [GRPC](https://grpc.io/) and occurs over network ports. Can run models in isolated containers using Docker or Apptainer.
 
 ## Installation
 
@@ -80,7 +80,7 @@ mymodel.initialize(<FILEPATH>)
 ```
 
 The package contains also client implementation that own the server process, either as a Python subprocess or a Docker
-container or a Singularity container running the ```run-bmi-server``` script. For instance
+container or a Singularity container or a Apptainer container running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
@@ -98,6 +98,13 @@ from grpc4bmi.bmi_client_singularity import BmiClientSingularity
 mymodel = BmiClientSingularity(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
 will launch a singularity container on based supplied Singularity image
+and will mount supplied directories to share files between the container and host.
+
+```python
+from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+mymodel = BmiClientApptainer(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
+```
+will launch a apptainer container on based supplied Apptainer image
 and will mount supplied directories to share files between the container and host.
 
 ## Development: generating the grpc code
