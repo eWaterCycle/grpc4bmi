@@ -18,7 +18,6 @@ SUPPORTED_APPTAINER_VERSIONS = '>=1.0.0-rc.2'  # First apptainer release with bi
 def check_apptainer_version_string(version_output: str) -> bool:
     version = version_output.split(' ').pop()
     local_version = Version(version)
-    # Apptainer creates /usr/bin/apptainer symlink, so if installed will report the apptainer version.
     if local_version not in SpecifierSet(SUPPORTED_APPTAINER_VERSIONS):
         raise ApptainerVersionException(f'Unsupported version ({version_output}) of apptainer found, '
                                         f'supported versions {SUPPORTED_APPTAINER_VERSIONS}')
@@ -33,9 +32,11 @@ def check_apptainer_version():
 
 
 class BmiClientApptainer(BmiClient):
-    """BMI GRPC client for `apptainer <https://apptainer.org/>`_ server processes
-    During initialization launches a apptainer container with run-bmi-server as its command.
-    The client picks a random port and expects the container to run the server on that port.
+    """BMI GRPC client for model running inside a `Apptainer <https://apptainer.org/>`_ container.
+
+    On instantization launches an Apptainer container.
+    The Apptainer container image is expected to run a BMI GRPC server as its default command.
+    The client picks a random port and expects the container to run the BMI GRPC server on that port.
     The port is passed to the container using the BMI_PORT environment variable.
 
     Args:
@@ -113,8 +114,8 @@ class BmiClientApptainer(BmiClient):
         from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
         # Generate config file called 'config.mat' in `/tmp/input` directory
         client = BmiClientApptainer(image='docker://ewatercycle/marrmot-grpc4bmi:latest',
-                                      input_dirs=['/tmp/input'],
-                                      work_dir='/tmp/work')
+                                    input_dirs=['/tmp/input'],
+                                    work_dir='/tmp/work')
         client.initialize('/tmp/input/config.mat')
         client.update_until(client.get_end_time())
         del client
@@ -128,8 +129,8 @@ class BmiClientApptainer(BmiClient):
 
         from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
         client = BmiClientApptainer(image='ewatercycle-walrus-grpc4bmi_v0.2.0.sif',
-                                      input_dirs=['/shared/forcings/walrus'],
-                                      work_dir='/tmp/work')
+                                    input_dirs=['/shared/forcings/walrus'],
+                                    work_dir='/tmp/work')
         client.initialize('walrus.yml')
         client.update_until(client.get_end_time())
         del client
@@ -149,7 +150,7 @@ class BmiClientApptainer(BmiClient):
 
         from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
         client = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                      work_dir='/scratch/wflow')
+                                    work_dir='/scratch/wflow')
         client.initialize('wflow_sbm.ini')
         client.update_until(client.get_end_time())
         del client
@@ -164,9 +165,9 @@ class BmiClientApptainer(BmiClient):
 
         from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
         client = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                      input_dirs=['/shared/forcings/muese',
-                                                  '/shared/model/wflow/staticmaps'],
-                                      work_dir='/tmp/work')
+                                    input_dirs=['/shared/forcings/muese',
+                                                '/shared/model/wflow/staticmaps'],
+                                    work_dir='/tmp/work')
         client.initialize('wflow_sbm.ini')
         client.update_until(client.get_end_time())
         del client
@@ -179,10 +180,10 @@ class BmiClientApptainer(BmiClient):
 
         from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
         client_muese = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                            work_dir='/scratch/wflow-meuse')
+                                          work_dir='/scratch/wflow-meuse')
         client_muese.initialize('wflow_sbm.meuse.ini')
         client_rhine = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                            work_dir='/scratch/wflow-rhine')
+                                          work_dir='/scratch/wflow-rhine')
         client_rhine.initialize('wflow_sbm.rhine.ini')
         ...
         # Run models and set/get values

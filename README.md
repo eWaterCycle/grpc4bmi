@@ -104,7 +104,7 @@ and will mount supplied directories to share files between the container and hos
 from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
 mymodel = BmiClientApptainer(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
-will launch a apptainer container on based supplied Apptainer image
+will launch a Apptainer container on based supplied Apptainer image
 and will mount supplied directories to share files between the container and host.
 
 ## Development: generating the grpc code

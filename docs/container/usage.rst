@@ -26,6 +26,8 @@ For example the PCR-GLOBWB model can be started in a Docker container with
 
 .. _Docker engine: https://docs.docker.com/
 
+.. _Singularity-section:
+
 Singularity
 -----------
 
@@ -85,8 +87,8 @@ Grpc4bmi can run containers on `Apptainer`_.
 
 Apptainer is an open source fork of singularity.
 
-It behaves very similar to singularity so everything described for it also goes for apptainer.
-You just need to replace the `singularity` command with `apptainer` and :class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` class with
+Apptainer behaves very similar to singularity so everything described in :ref:`Singularity-section` chapter also goes for Apptainer.
+You will need to replace the `singularity` command with `apptainer` and :class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` class with
 :class:`grpc4bmi.bmi_client_apptainer.BmiClientApptainer` class.
 
 .. _Apptainer: https://apptainer.org/docs/user/main/

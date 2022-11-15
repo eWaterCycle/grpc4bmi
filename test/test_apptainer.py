@@ -6,10 +6,8 @@ import pytest
 from grpc4bmi.bmi_client_apptainer import SUPPORTED_APPTAINER_VERSIONS, BmiClientApptainer, check_apptainer_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException
 
-class Test_check_singularity_version_string:
+class Test_check_apptainer_version_string:
     @pytest.mark.parametrize("test_input", [
-        ('singularity version 3.6.0'),
-        ('singularity version 3.8.7'),  # Last OSS version before fork
         ('apptainer version 1.0.0-rc.2'),  
         ('apptainer version 1.0.0'),
         ('apptainer version 1.0.3'),
