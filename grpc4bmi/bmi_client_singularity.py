@@ -102,7 +102,8 @@ class BmiClientSingularity(BmiClient):
     .. code-block:: python
 
         from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest')
+        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest', 
+                                      work_dir='/opt/MARRMoT/BMI/Config'))
         client.initialize('/opt/MARRMoT/BMI/Config/BMI_testcase_m01_BuffaloRiver_TN_USA.mat')
         client.update_until(client.get_end_time())
         del client
