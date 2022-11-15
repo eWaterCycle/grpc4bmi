@@ -2,13 +2,13 @@
 
 [![DOI](https://zenodo.org/badge/130237165.svg)](https://zenodo.org/badge/latestdoi/130237165)
 [![CI](https://github.com/eWaterCycle/grpc4bmi/workflows/CI/badge.svg)](https://github.com/eWaterCycle/grpc4bmi/actions?query=workflow%3ACI)
-[![Documentation Status](https://readthedocs.org/projects/grpc4bmi/badge/?version=latest)](https://grpc4bmi.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/grpc4bmi/badge/?version=0.2.x)](https://grpc4bmi.readthedocs.io/en/0.2.x/)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=grpc4bmi&metric=alert_status)](https://sonarcloud.io/dashboard?id=grpc4bmi)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=grpc4bmi&metric=coverage)](https://sonarcloud.io/dashboard?id=grpc4bmi)
 
 ## Purpose
 
-This software allows you to wrap your BMI implementation (https://github.com/csdms/bmi) in a server process and communicate with it via the included python client. The communication is serialized to protocol buffers by GRPC (https://grpc.io/) and occurs over network ports.
+This software allows you to wrap your [Basic Model Interface (BMI)](https://github.com/csdms/bmi) implementation in a server process and communicate with it via the included Python client. The communication is serialized to protocol buffers by [GRPC](https://grpc.io/) and occurs over network ports. Can run models in isolated containers using Docker or Apptainer.
 
 ## Installation
 
@@ -80,7 +80,7 @@ mymodel.initialize(<FILEPATH>)
 ```
 
 The package contains also client implementation that own the server process, either as a Python subprocess or a Docker
-container or a Singularity container running the ```run-bmi-server``` script. For instance
+container or a Singularity container or a Apptainer container running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
@@ -98,6 +98,13 @@ from grpc4bmi.bmi_client_singularity import BmiClientSingularity
 mymodel = BmiClientSingularity(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
 will launch a singularity container on based supplied Singularity image
+and will mount supplied directories to share files between the container and host.
+
+```python
+from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+mymodel = BmiClientApptainer(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
+```
+will launch a Apptainer container on based supplied Apptainer image
 and will mount supplied directories to share files between the container and host.
 
 ## Development: generating the grpc code

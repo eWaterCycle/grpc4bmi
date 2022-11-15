@@ -11,53 +11,50 @@ from packaging.version import Version
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
-from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
+from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException
 
-SUPPORTED_SINGULARITY_VERSIONS = '>=3.6.0'
 SUPPORTED_APPTAINER_VERSIONS = '>=1.0.0-rc.2'  # First apptainer release with binaries
 
-def check_singularity_version_string(version_output: str) -> bool:
-    (app, _, version) = version_output.split(' ')
+def check_apptainer_version_string(version_output: str) -> bool:
+    version = version_output.split(' ').pop()
     local_version = Version(version)
-    if app == 'singularity' and local_version not in SpecifierSet(SUPPORTED_SINGULARITY_VERSIONS):
-        raise SingularityVersionException(f'Unsupported version ({version_output}) of singularity found, '
-                                          f'supported versions {SUPPORTED_SINGULARITY_VERSIONS}')
-    # Apptainer creates /usr/bin/singularity symlink, so if installed will report the apptainer version.
-    if app == 'apptainer' and local_version not in SpecifierSet(SUPPORTED_APPTAINER_VERSIONS):
+    if local_version not in SpecifierSet(SUPPORTED_APPTAINER_VERSIONS):
         raise ApptainerVersionException(f'Unsupported version ({version_output}) of apptainer found, '
-                                          f'supported versions {SUPPORTED_APPTAINER_VERSIONS}')
+                                        f'supported versions {SUPPORTED_APPTAINER_VERSIONS}')
     return True
 
-def check_singularity_version():
-    p = subprocess.Popen(['singularity', '--version'], stdout=subprocess.PIPE)
+def check_apptainer_version():
+    p = subprocess.Popen(['apptainer', '--version'], stdout=subprocess.PIPE)
     (stdout, _) = p.communicate()
     if p.returncode != 0:
-        raise SingularityVersionException('Unable to determine singularity version')
-    check_singularity_version_string(stdout.decode('utf-8'))
+        raise ApptainerVersionException('Unable to determine apptainer version')
+    check_apptainer_version_string(stdout.decode('utf-8'))
 
 
-class BmiClientSingularity(BmiClient):
-    """BMI GRPC client for singularity server processes
-    During initialization launches a singularity container with run-bmi-server as its command.
-    The client picks a random port and expects the container to run the server on that port.
+class BmiClientApptainer(BmiClient):
+    """BMI GRPC client for model running inside a `Apptainer <https://apptainer.org/>`_ container.
+
+    On instantization launches an Apptainer container.
+    The Apptainer container image is expected to run a BMI GRPC server as its default command.
+    The client picks a random port and expects the container to run the BMI GRPC server on that port.
     The port is passed to the container using the BMI_PORT environment variable.
 
     Args:
-        image: Singularity image.
+        image: Apptainer image.
 
-            For Docker Hub image use `docker://*` or convert it to a Singularity image file.
+            For Docker Hub image use `docker://*` or convert it to a Apptainer image file.
 
             To convert Docker image
             `ewatercycle/walrus-grpc4bmi <https://hub.docker.com/layers/ewatercycle/walrus-grpc4bmi>`_
-            with `v0.2.0` tag to `./ewatercycle-walrus-grpc4bmi_v0.2.0.sif` Singularity image file use:
+            with `v0.2.0` tag to `./ewatercycle-walrus-grpc4bmi_v0.2.0.sif` Apptainer image file use:
 
             .. code-block:: console
 
-              singularity pull ewatercycle-walrus-grpc4bmi_v0.2.0.sif docker://ewatercycle/walrus-grpc4bmi:v0.2.0
+              apptainer pull ewatercycle-walrus-grpc4bmi_v0.2.0.sif docker://ewatercycle/walrus-grpc4bmi:v0.2.0
 
         input_dirs (Iterable[str]): Directories for input files of model.
 
-            All of directories will be mounted read-only inside Singularity container on same path as outside container.
+            All of directories will be mounted read-only inside Apptainer container on same path as outside container.
 
         work_dir (str): Working directory for model.
 
@@ -68,19 +65,19 @@ class BmiClientSingularity(BmiClient):
             .. code-block:: python
 
               from tempfile import TemporaryDirectory
-              from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+              from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
 
               work_dir = TemporaryDirectory()
 
               image = 'ewatercycle-walrus-grpc4bmi_v0.2.0.sif'
-              client =  BmiClientSingularity(image, work_dir.name)
+              client =  BmiClientApptainer(image, work_dir.name)
 
               # Write config to work_dir and interact with client
 
               # After checking output in work_dir, clean up
               work_dir.cleanup()
 
-        delay (int): Seconds to wait for Singularity container to startup, before connecting to it
+        delay (int): Seconds to wait for Apptainer container to startup, before connecting to it
 
             Increase when container takes a long time to startup.
 
@@ -92,7 +89,7 @@ class BmiClientSingularity(BmiClient):
         capture_logs (bool): Whether to capture stdout and stderr of container .
 
             If false then redirects output to null device never to be seen again.
-            If true then redirects output to temporary file which can be read with :py:func:`BmiClientSingularity.logs()`.
+            If true then redirects output to temporary file which can be read with :py:func:`BmiClientApptainer.logs()`.
             The temporary file gets removed when this object is deleted.
 
     **Example 1: Config file already inside image**
@@ -101,9 +98,9 @@ class BmiClientSingularity(BmiClient):
 
     .. code-block:: python
 
-        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest', 
-                                      work_dir='/opt/MARRMoT/BMI/Config'))
+        from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+        client = BmiClientApptainer(image='docker://ewatercycle/marrmot-grpc4bmi:latest', 
+                                    work_dir='/opt/MARRMoT/BMI/Config')
         client.initialize('/opt/MARRMoT/BMI/Config/BMI_testcase_m01_BuffaloRiver_TN_USA.mat')
         client.update_until(client.get_end_time())
         del client
@@ -115,11 +112,11 @@ class BmiClientSingularity(BmiClient):
 
     .. code-block:: python
 
-        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
+        from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
         # Generate config file called 'config.mat' in `/tmp/input` directory
-        client = BmiClientSingularity(image='docker://ewatercycle/marrmot-grpc4bmi:latest',
-                                      input_dirs=['/tmp/input'],
-                                      work_dir='/tmp/work')
+        client = BmiClientApptainer(image='docker://ewatercycle/marrmot-grpc4bmi:latest',
+                                    input_dirs=['/tmp/input'],
+                                    work_dir='/tmp/work')
         client.initialize('/tmp/input/config.mat')
         client.update_until(client.get_end_time())
         del client
@@ -131,10 +128,10 @@ class BmiClientSingularity(BmiClient):
 
     .. code-block:: python
 
-        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='ewatercycle-walrus-grpc4bmi_v0.2.0.sif',
-                                      input_dirs=['/shared/forcings/walrus'],
-                                      work_dir='/tmp/work')
+        from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+        client = BmiClientApptainer(image='ewatercycle-walrus-grpc4bmi_v0.2.0.sif',
+                                    input_dirs=['/shared/forcings/walrus'],
+                                    work_dir='/tmp/work')
         client.initialize('walrus.yml')
         client.update_until(client.get_end_time())
         del client
@@ -152,9 +149,9 @@ class BmiClientSingularity(BmiClient):
 
     .. code-block:: python
 
-        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                      work_dir='/scratch/wflow')
+        from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+        client = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                    work_dir='/scratch/wflow')
         client.initialize('wflow_sbm.ini')
         client.update_until(client.get_end_time())
         del client
@@ -167,11 +164,11 @@ class BmiClientSingularity(BmiClient):
 
     .. code-block:: python
 
-        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                      input_dirs=['/shared/forcings/muese',
-                                                  '/shared/model/wflow/staticmaps'],
-                                      work_dir='/tmp/work')
+        from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+        client = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                    input_dirs=['/shared/forcings/muese',
+                                                '/shared/model/wflow/staticmaps'],
+                                    work_dir='/tmp/work')
         client.initialize('wflow_sbm.ini')
         client.update_until(client.get_end_time())
         del client
@@ -182,12 +179,12 @@ class BmiClientSingularity(BmiClient):
 
     .. code-block:: python
 
-        from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-        client_muese = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                            work_dir='/scratch/wflow-meuse')
+        from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+        client_muese = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                          work_dir='/scratch/wflow-meuse')
         client_muese.initialize('wflow_sbm.meuse.ini')
-        client_rhine = BmiClientSingularity(image='docker://ewatercycle/wflow-grpc4bmi:latest',
-                                            work_dir='/scratch/wflow-rhine')
+        client_rhine = BmiClientApptainer(image='docker://ewatercycle/wflow-grpc4bmi:latest',
+                                          work_dir='/scratch/wflow-rhine')
         client_rhine.initialize('wflow_sbm.rhine.ini')
         ...
         # Run models and set/get values
@@ -205,11 +202,11 @@ class BmiClientSingularity(BmiClient):
             msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
                   f'got {qualified_name(input_dirs)} instead'
             raise TypeError(msg)
-        check_singularity_version()
+        check_apptainer_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
         args = [
-            "singularity",
+            "apptainer",
             "run",
             "--contain",
             "--env", f"BMI_PORT={port}"
@@ -229,10 +226,10 @@ class BmiClientSingularity(BmiClient):
         # Change into working directory
         args += ["--pwd", self.work_dir]
         args.append(image)
-        logging.info(f'Running {image} singularity container on port {port}')
+        logging.info(f'Running {image} apptainer container on port {port}')
         if capture_logs:
             self.logfile = SpooledTemporaryFile(max_size=2 ** 16,  # keep until 65Kb in memory if bigger write to disk
-                                                prefix='grpc4bmi-singularity-log',
+                                                prefix='grpc4bmi-apptainer-log',
                                                 mode='w+t',
                                                 encoding='utf8')
             stdout = self.logfile
@@ -243,11 +240,11 @@ class BmiClientSingularity(BmiClient):
         returncode = self.container.poll()
         if returncode is not None:
             raise DeadContainerException(
-                f'singularity container {image} prematurely exited with code {returncode}',
+                f'apptainer container {image} prematurely exited with code {returncode}',
                 returncode,
                 self.logs()
             )
-        super(BmiClientSingularity, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
+        super(BmiClientApptainer, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
         if hasattr(self, "container"):
@@ -261,7 +258,7 @@ class BmiClientSingularity(BmiClient):
         raise NotImplementedError("Cannot exchange memory references across process boundary")
 
     def logs(self) -> str:
-        """Returns complete combined stdout and stderr written by the Singularity container.
+        """Returns complete combined stdout and stderr written by the Apptainer container.
 
         When object was created with `log_enable=False` argument then always returns empty string.
         """
