@@ -156,6 +156,18 @@ def test_get_value_huge():
     del client
 
 
+def test_get_value_huge():
+    os.environ["PYTHONPATH"] = os.path.dirname(os.path.abspath(__file__))
+    client = BmiClientSubProcess("fake_models.HugeModel")
+    local = HugeModel()
+    varname = local.get_output_var_names()[0]
+
+    result = client.get_value(varname)
+    expected = local.get_value(varname)
+    assert numpy.array_equal(result, expected)
+    del client
+
+
 def test_get_var_ptr():
     client, local = make_bmi_classes(True)
     varname = local.get_output_var_names()[0]

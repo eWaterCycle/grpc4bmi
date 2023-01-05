@@ -1,5 +1,12 @@
 setuptools
-docutils
+googleapis-common-protos
+grpcio
+grpcio-tools
+grpcio-reflection
+numpy
+docutils<0.18
+# Pin protobuf, see https://github.com/eWaterCycle/grpc4bmi/issues/115
+protobuf<=3.20.3
 PyYAML
 numpydoc
 cfunits
@@ -10,6 +17,7 @@ pytest-cov
 futures
 https://github.com/csdms/bmi-example-python/archive/master.zip#egg=bmi-heat
 sphinx
+sphinxcontrib-apidoc
 sphinxcontrib-napoleon
 sphinx-argparse
 sphinx_rtd_theme

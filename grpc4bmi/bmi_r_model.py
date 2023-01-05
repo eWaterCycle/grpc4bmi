@@ -34,6 +34,9 @@ class BmiR(Bmi):
     def update(self):
         self.model['update']()
 
+    def update_until(self, time):
+        self.model['updateUntil'](time)
+
     def finalize(self):
         self.model['bmi_finalize']()
 

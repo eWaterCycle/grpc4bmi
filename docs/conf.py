@@ -30,7 +30,10 @@ sys.path.insert(0, os.path.abspath('.'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.intersphinx', 'sphinxarg.ext']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode',
+              'sphinx.ext.napoleon', 'sphinx.ext.intersphinx',
+              'sphinxarg.ext', 'sphinxcontrib.apidoc',
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -76,6 +79,11 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+apidoc_module_dir = "../grpc4bmi"
+apidoc_separate_modules = True
+apidoc_toc_file = False
+# Ignore generated files
+apidoc_excluded_paths = ["bmi_pb2_grpc.py", "bmi_pb2.py"]
 
 # -- Options for HTML output ----------------------------------------------
 
