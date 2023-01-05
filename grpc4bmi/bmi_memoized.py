@@ -1,4 +1,4 @@
-from basic_modeling_interface.bmi import Bmi
+from bmipy import Bmi
 
 
 class MemoizedBmi(Bmi):
@@ -68,6 +68,12 @@ class MemoizedBmi(Bmi):
     def get_component_name(self):
         return self._cache('get_component_name')
 
+    def get_input_item_count(self):
+        return self._cache('get_input_item_count')
+
+    def get_output_item_count(self):
+        return self._cache('get_output_item_count')
+
     def get_input_var_names(self):
         return self._cache('get_input_var_names')
 
@@ -101,16 +107,19 @@ class MemoizedBmi(Bmi):
     def get_var_nbytes(self, var_name):
         return self._cache('get_var_nbytes', var_name)
 
+    def get_var_location(self, var_name):
+        return self._cache('get_var_location', var_name)
+
     def get_var_grid(self, var_name):
         return self._cache('get_var_grid', var_name)
 
     def get_value(self, var_name):
         return self.origin.get_value(var_name)
 
-    def get_value_ref(self, var_name):
-        return self.origin.get_value_ref(var_name)
+    def get_value_ptr(self, var_name):
+        return self.origin.get_value_ptr(var_name)  
 
-    def get_value_at_indices(self, var_name, indices):
+    def get_value_at_indices(self, var_name, dest, indices):
         return self.origin.get_value_at_indices(var_name, indices)
 
     def set_value(self, var_name, src):
@@ -119,35 +128,50 @@ class MemoizedBmi(Bmi):
     def set_value_at_indices(self, var_name, indices, src):
         return self.origin.set_value_at_indices(var_name, indices, src)
 
-    def get_grid_shape(self, grid_id):
-        return self._cache('get_grid_shape', grid_id)
+    def get_grid_shape(self, grid, shape):
+        return self._cache('get_grid_shape', grid)
 
-    def get_grid_x(self, grid_id):
-        return self._cache('get_grid_x', grid_id)
+    def get_grid_x(self, grid, x):
+        return self._cache('get_grid_x', grid)
 
-    def get_grid_y(self, grid_id):
-        return self._cache('get_grid_y', grid_id)
+    def get_grid_y(self, grid, y):
+        return self._cache('get_grid_y', grid)
 
-    def get_grid_z(self, grid_id):
-        return self._cache('get_grid_z', grid_id)
+    def get_grid_z(self, grid, z):
+        return self._cache('get_grid_z', grid)
 
-    def get_grid_spacing(self, grid_id):
-        return self._cache('get_grid_spacing', grid_id)
+    def get_grid_spacing(self, grid, spacing):
+        return self._cache('get_grid_spacing', grid)
 
-    def get_grid_origin(self, grid_id):
-        return self._cache('get_grid_origin', grid_id)
+    def get_grid_origin(self, grid, origin):
+        return self._cache('get_grid_origin', grid)
 
-    def get_grid_connectivity(self, grid_id):
-        return self._cache('get_grid_connectivity', grid_id)
+    def get_grid_rank(self, grid):
+        return self._cache('get_grid_rank', grid)
 
-    def get_grid_offset(self, grid_id):
-        return self._cache('get_grid_offset', grid_id)
+    def get_grid_size(self, grid):
+        return self._cache('get_grid_size', grid)
 
-    def get_grid_rank(self, grid_id):
-        return self._cache('get_grid_rank', grid_id)
+    def get_grid_type(self, grid):
+        return self._cache('get_grid_type', grid)
 
-    def get_grid_size(self, grid_id):
-        return self._cache('get_grid_size', grid_id)
+    def get_grid_node_count(self, grid):
+        return self._cache('get_grid_node_count', grid)
 
-    def get_grid_type(self, grid_id):
-        return self._cache('get_grid_type', grid_id)
+    def get_grid_edge_count(self, grid):
+        return self._cache('get_grid_edge_count', grid)
+
+    def get_grid_face_count(self, grid):
+        return self._cache('get_grid_face_count', grid)
+
+    def get_grid_edge_nodes(self, grid, edge_nodes):
+        return self._cache('get_grid_edge_nodes', grid)
+
+    def get_grid_face_edges(self, grid, face_edges):
+        return self._cache('get_grid_face_edges', grid)
+
+    def get_grid_face_nodes(self, grid, face_nodes):
+        return self._cache('get_grid_face_nodes', grid)
+    
+    def get_grid_nodes_per_face(self, grid, nodes_per_face):
+        return self._cache('get_grid_nodes_per_face', grid)

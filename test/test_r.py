@@ -1,9 +1,12 @@
 from pathlib import Path
 import numpy as np
 import pytest
-from rpy2.rinterface_lib.embedded import RRuntimeError
 
-from grpc4bmi.run_server import BmiR, build_r
+try:
+    from grpc4bmi.run_server import BmiR
+except ImportError:
+    BmiR = False
+from grpc4bmi.run_server import build_r
 
 @pytest.fixture
 def model():
@@ -53,6 +56,7 @@ class TestFakeFailingRModel:
     def test_r_function_is_called(self, model: BmiR, fn_name, fn_args):
         # Every method in 'test/fake.r' executes the stop error action
         # So if no stop then no r function is called
+        from rpy2.rinterface_lib.embedded import RRuntimeError
         with pytest.raises(RRuntimeError, match="Always fails"):
             fn = getattr(model, fn_name)
             fn(*fn_args)

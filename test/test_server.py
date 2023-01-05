@@ -6,12 +6,12 @@ import numpy.random
 import pytest
 import grpc
 from google.rpc import error_details_pb2, status_pb2
+from heat import BmiHeat
 
 from grpc4bmi import bmi_pb2
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_padding
 from test.fake_models import SomeException, FailingModel, Rect3DGridModel, UnstructuredGridBmiModel
-from test.flatbmiheat import FlatBmiHeat
 
 """
 Unit tests for the BMI server class. Every test performs cross-checking with a local instance of the BMI heat toy model.
@@ -46,7 +46,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiServer(FlatBmiHeat()), FlatBmiHeat()
+    server, local = BmiServer(BmiHeat()), BmiHeat()
     if init:
         req = RequestStub()
         numpy.random.seed(0)
@@ -219,24 +219,11 @@ def test_get_value_at_indices():
     varname = local.get_output_var_names()[0]
     indices = numpy.array([29, 8, 19, 81])
     setattr(request, "name", varname)
-    setattr(request, "indices", indices.flatten())
+    setattr(request, "indices", indices)
     setattr(request, "index_size", 1)
     dest = numpy.empty(4)
     values = local.get_value_at_indices(varname, dest, indices)
-    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
-
-
-def test_get_vals_indices_2d():
-    server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
-    setattr(request, "name", varname)
-    setattr(request, "indices", indices.flatten())
-    setattr(request, "index_size", 2)
-    dest = numpy.empty(6)
-    values = local.get_value_at_indices(varname, dest, indices)
-    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
+    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values)
 
 
 def test_set_var_values():
@@ -263,7 +250,7 @@ def test_set_values_indices():
     values = numpy.array([0.123, 4.567, 8.901])
     setattr(request, "name", varname)
     setattr(request, "values_double", value_wrapper(values))
-    setattr(request, "indices", indices.flatten())
+    setattr(request, "indices", indices)
     setattr(request, "index_size", 1)
     server.setValueAtIndices(request, None)
     delattr(request, "values_double")
@@ -372,7 +359,7 @@ def test_method_exceptions_with_stacktrace(server_method, server_request):
     metadata = status_pb2.Status.FromString(status.trailing_metadata[0][1])
     debuginfo = error_details_pb2.DebugInfo()
     metadata.details[0].Unpack(debuginfo)
-    assert debuginfo.detail == "SomeException('Bmi method always fails',)"
+    assert debuginfo.detail == "SomeException('Bmi method always fails')"
     assert len(debuginfo.stack_entries) > 0
 
 

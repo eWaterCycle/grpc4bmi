@@ -136,6 +136,11 @@ For more documentation see [https://grpc4bmi.readthedocs.io/](https://grpc4bmi.r
 When developers change the proto-file, it is necessary to install gRPC tools Python packages in your Python environment:
 
 ```bash
+# Create virtual env
+python3 -m venv .venv
+. venv/bin/activate
+# Make sure latest pip and wheel are install
+pip install -U pip wheel
 pip install -e .[dev]
 # For R integration also install the R extras with
 pip install -e .[R]

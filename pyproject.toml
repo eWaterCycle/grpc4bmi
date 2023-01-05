@@ -40,10 +40,11 @@ dependencies = [
 [project.optional-dependencies]
 R = ["rpy2"]
 dev = [
+    "build",
     "pytest",
     "pytest-cov",
     "grpcio-tools", # Used to generate Python bindings from proto file
-    "bmi-heat@https://github.com/csdms/bmi-example-python/archive/master.zip",
+    "bmi-heat@https://github.com/csdms/bmi-example-python/archive/refs/heads/master.zip",
     "sphinx",
     "sphinxcontrib-apidoc",
     "sphinxcontrib-napoleon",
@@ -68,3 +69,6 @@ run-bmi-server = "grpc4bmi.run_server:main"
 where = ["."]
 include = ["grpc4bmi"]
 namespaces = false
+
+[tool.setuptools.package-data]
+grpc4bmi = ["py.typed"]

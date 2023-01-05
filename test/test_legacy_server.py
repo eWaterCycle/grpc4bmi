@@ -5,7 +5,7 @@ import numpy.random
 import pytest
 
 from grpc4bmi.bmi_grpc_legacy_server import BmiLegacyServer02
-from test.flatbmiheat import FlatLegacyBmiHeat
+from test.legacybmiheat import LegacyBmiHeat
 
 """
 Unit tests for the BMI server class. Every test performs cross-checking with a local instance of the BMI heat toy model.
@@ -40,7 +40,7 @@ def make_list(obj):
 
 
 def make_bmi_classes(init=False):
-    server, local = BmiLegacyServer02(FlatLegacyBmiHeat()), FlatLegacyBmiHeat()
+    server, local = BmiLegacyServer02(LegacyBmiHeat()), LegacyBmiHeat()
     if init:
         req = RequestStub()
         numpy.random.seed(0)

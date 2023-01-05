@@ -395,7 +395,7 @@ class BooleanModel(DTypeModel):
 
 
 class HugeModel(DTypeModel):
-    """Model which has value which does not fit in message body
+    """Model which has value which does not fit in single message body
 
     Can be run from command line with
 

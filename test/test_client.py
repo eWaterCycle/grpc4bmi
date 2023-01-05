@@ -8,6 +8,7 @@ import pytest
 from google.protobuf import any_pb2
 from google.rpc import error_details_pb2, status_pb2, code_pb2
 from grpc_status import rpc_status
+from heat import BmiHeat
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
@@ -15,7 +16,6 @@ from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_pa
 from test.fake_models import SomeException, FailingModel, Rect3DGridModel, UnstructuredGridBmiModel, UniRectGridModel, \
     Rect2DGridModel, Structured3DQuadrilateralsGridModel, Structured2DQuadrilateralsGridModel, Float32Model, Int32Model, \
     BooleanModel
-from test.flatbmiheat import FlatBmiHeat
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -52,8 +52,8 @@ class ServerWrapper(object):
 
 
 def make_bmi_classes(init=False):
-    client = BmiClient(stub=ServerWrapper(BmiServer(FlatBmiHeat())))
-    local = FlatBmiHeat()
+    client = BmiClient(stub=ServerWrapper(BmiServer(BmiHeat())))
+    local = BmiHeat()
     if init:
         numpy.random.seed(0)
         client.initialize(None)
@@ -563,7 +563,7 @@ class TestUnstructuredGridBmiModel:
         assert result == 3
 
     def test_get_grid_edge_nodes(self, bmiclient):
-        placeholder = numpy.empty(16, dtype=numpy.int)
+        placeholder = numpy.empty(16, dtype=numpy.int_)
 
         result = bmiclient.get_grid_edge_nodes(0, placeholder)
 
@@ -571,7 +571,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_nodes(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=numpy.int_)
 
         result = bmiclient.get_grid_face_nodes(0, placeholder)
 
@@ -579,7 +579,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_edges(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=numpy.int_)
 
         result = bmiclient.get_grid_face_edges(0, placeholder)
 
@@ -587,7 +587,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_nodes_per_face(self, bmiclient):
-        placeholder = numpy.empty(3, dtype=numpy.int)
+        placeholder = numpy.empty(3, dtype=numpy.int_)
 
         result = bmiclient.get_grid_nodes_per_face(0, placeholder)
 
@@ -710,16 +710,16 @@ class TestBooleanModel:
 
     def test_get_value_at_indices(self, bmiclient):
         with pytest.raises(MyRpcError):
-            bmiclient.get_value_at_indices(self.name, numpy.empty(1, dtype=numpy.bool), numpy.array([1]))
+            bmiclient.get_value_at_indices(self.name, numpy.empty(1, dtype=numpy.bool_), numpy.array([1]))
 
     def test_set_value(self, bmiclient):
-        value = numpy.array((False, False, False), dtype=numpy.bool)
+        value = numpy.array((False, False, False), dtype=numpy.bool_)
 
         with pytest.raises(NotImplementedError):
             bmiclient.set_value(self.name, value)
 
     def test_set_value_at_indices(self, bmiclient):
-        value = numpy.array([False], dtype=numpy.bool)
+        value = numpy.array([False], dtype=numpy.bool_)
 
         with pytest.raises(NotImplementedError):
             bmiclient.set_value_at_indices(self.name, numpy.array([1]), value)
