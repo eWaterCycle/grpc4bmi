@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grpc4bmi"
+version = "0.3.2"
+description = "Run your BMI implementation in a separate process and expose it as BMI-python with GRPC"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "Apache License 2.0" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Utilities",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: Apache Software License"
+]
+dependencies = [
+    "grpcio",
+    "grpcio-reflection",
+    "grpcio-status",
+    "googleapis-common-protos>=1.5.5",
+    # Pin protobuf, see https://github.com/eWaterCycle/grpc4bmi/issues/115
+    "protobuf<=3.20.3",
+    "numpy",
+    "docker",
+    "bmipy",
+    "packaging",
+    "typeguard",
+]
+
+[project.optional-dependencies]
+R = ["rpy2"]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "grpcio-tools", # Used to generate Python bindings from proto file
+    "bmi-heat@https://github.com/csdms/bmi-example-python/archive/master.zip",
+    "sphinx",
+    "sphinxcontrib-apidoc",
+    "sphinxcontrib-napoleon",
+    "sphinx-argparse",
+    "sphinx_rtd_theme",
+    "numpydoc",
+    "nbconvert",
+    "ipykernel",
+    "nbformat",
+]
+
+[project.scripts]
+run-bmi-server = "grpc4bmi.run_server:main"
+
+[project.urls]
+"Homepage" = "https://github.com/eWaterCycle/grpc4bmi"
+"Bug Tracker" = "https://github.com/eWaterCycle/grpc4bmi/issues"
+"Documentation" = "https://grpc4bmi.readthedocs.io/"
+"Source code" = "https://github.com/eWaterCycle/grpc4bmi"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["grpc4bmi"]
+namespaces = false
