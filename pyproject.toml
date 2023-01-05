@@ -29,7 +29,7 @@ dependencies = [
     "grpcio-status",
     "googleapis-common-protos>=1.5.5",
     # Pin protobuf, see https://github.com/eWaterCycle/grpc4bmi/issues/115
-    "protobuf<=3.20.3",
+    "protobuf>=3.18.3,<=3.20.3",
     "numpy",
     "docker",
     "bmipy",
