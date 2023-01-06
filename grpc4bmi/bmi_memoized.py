@@ -39,14 +39,17 @@ class MemoizedBmi(Bmi):
         self.origin = origin
         self.cache = dict()
 
-    def _cache(self, fn, arg=None):
+    def _cache(self, fn, arg=None, output=None):
         if fn not in self.cache:
             self.cache[fn] = dict()
         if arg not in self.cache[fn]:
             if arg is None:
                 self.cache[fn][arg] = getattr(self.origin, fn)()
             else:
-                self.cache[fn][arg] = getattr(self.origin, fn)(arg)
+                if output is None:
+                    self.cache[fn][arg] = getattr(self.origin, fn)(arg)
+                else:
+                    self.cache[fn][arg] = getattr(self.origin, fn)(arg, output)
         return self.cache[fn][arg]
 
     def initialize(self, filename):
@@ -58,9 +61,6 @@ class MemoizedBmi(Bmi):
 
     def update_until(self, time):
         self.origin.update_until(time)
-
-    def update_frac(self, time_frac):
-        self.origin.update_frac(time_frac)
 
     def finalize(self):
         self.origin.finalize()
@@ -113,14 +113,14 @@ class MemoizedBmi(Bmi):
     def get_var_grid(self, var_name):
         return self._cache('get_var_grid', var_name)
 
-    def get_value(self, var_name):
-        return self.origin.get_value(var_name)
+    def get_value(self, var_name, dest):
+        return self.origin.get_value(var_name, dest)
 
     def get_value_ptr(self, var_name):
         return self.origin.get_value_ptr(var_name)  
 
-    def get_value_at_indices(self, var_name, dest, indices):
-        return self.origin.get_value_at_indices(var_name, indices)
+    def get_value_at_indices(self, var_name, dest, inds):
+        return self.origin.get_value_at_indices(var_name, dest, inds)
 
     def set_value(self, var_name, src):
         return self.origin.set_value(var_name, src)
@@ -129,22 +129,28 @@ class MemoizedBmi(Bmi):
         return self.origin.set_value_at_indices(var_name, indices, src)
 
     def get_grid_shape(self, grid, shape):
-        return self._cache('get_grid_shape', grid)
+        shape[:] = self._cache('get_grid_shape', grid, shape)
+        return shape
 
     def get_grid_x(self, grid, x):
-        return self._cache('get_grid_x', grid)
+        x[:] = self._cache('get_grid_x', grid, x)
+        return x
 
     def get_grid_y(self, grid, y):
-        return self._cache('get_grid_y', grid)
+        y[:] = self._cache('get_grid_y', grid, y)
+        return y
 
     def get_grid_z(self, grid, z):
-        return self._cache('get_grid_z', grid)
+        z[:] = self._cache('get_grid_z', grid, z)
+        return z
 
     def get_grid_spacing(self, grid, spacing):
-        return self._cache('get_grid_spacing', grid)
+        spacing[:] = self._cache('get_grid_spacing', grid, spacing)
+        return spacing
 
     def get_grid_origin(self, grid, origin):
-        return self._cache('get_grid_origin', grid)
+        origin[:] = self._cache('get_grid_origin', grid, origin)
+        return origin
 
     def get_grid_rank(self, grid):
         return self._cache('get_grid_rank', grid)
@@ -165,13 +171,17 @@ class MemoizedBmi(Bmi):
         return self._cache('get_grid_face_count', grid)
 
     def get_grid_edge_nodes(self, grid, edge_nodes):
-        return self._cache('get_grid_edge_nodes', grid)
+        edge_nodes[:] = self._cache('get_grid_edge_nodes', grid, edge_nodes)
+        return edge_nodes
 
     def get_grid_face_edges(self, grid, face_edges):
-        return self._cache('get_grid_face_edges', grid)
+        face_edges[:] = self._cache('get_grid_face_edges', grid, face_edges)
+        return face_edges
 
     def get_grid_face_nodes(self, grid, face_nodes):
-        return self._cache('get_grid_face_nodes', grid)
+        face_nodes[:] = self._cache('get_grid_face_nodes', grid, face_nodes)
+        return face_nodes
     
     def get_grid_nodes_per_face(self, grid, nodes_per_face):
-        return self._cache('get_grid_nodes_per_face', grid)
+        nodes_per_face[:] = self._cache('get_grid_nodes_per_face', grid, nodes_per_face)
+        return nodes_per_face

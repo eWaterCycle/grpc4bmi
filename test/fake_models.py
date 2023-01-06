@@ -143,6 +143,9 @@ class GridModel(FailingModel):
     def __init__(self):
         super(GridModel, self).__init__(SomeException('not used'))
 
+    def initialize(self, filename):
+        pass
+
     def get_output_var_names(self) -> Tuple[str]:
         return 'plate_surface__temperature',
 
