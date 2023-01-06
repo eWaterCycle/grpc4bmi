@@ -44,6 +44,12 @@ class BmiR(Bmi):
     def get_component_name(self):
         return self.model['getComponentName']()[0]
 
+    def get_input_item_count(self):
+        return self.model['getInputItemCount']()
+
+    def get_output_item_count(self):
+        return self.model['getOutputItemCount']()
+
     def get_input_var_names(self):
         return self.model['getInputVarNames']()
 
@@ -177,6 +183,11 @@ class BmiR(Bmi):
         result = self.model['getGridFaceNodes'](grid)
         np.copyto(src=result, dst=face_nodes)
         return face_nodes
+
+    def get_grid_face_edges(self, grid, face_edges):
+        result = self.model['getGridFaceEdges'](grid)
+        np.copyto(src=result, dst=face_edges)
+        return face_edges
 
     def get_grid_nodes_per_face(self, grid, edge_nodes):
         result = self.model['getGridNodesPerFace'](grid)

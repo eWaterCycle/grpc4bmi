@@ -6,12 +6,13 @@ FakeFailingRModel <- R6Class(
     bmi_initialize = function(config_file) stop('Always fails'),
     update = function() stop('Always fails'),
     updateUntil = function(until) stop('Always fails'),
-    updateFrac = function(frac) stop('Always fails'),
     # R6 destructor is also called finalize so rename bmi finalize
     bmi_finalize = function() stop('Always fails'),
     runModel = function() stop('Always fails'),
 
     getComponentName = function() stop('Always fails'),
+    getInputItemCount = function() stop('Always fails'),
+    getOutputItemCount = function() stop('Always fails'),  
     getInputVarNames = function() stop('Always fails'),
     getOutputVarNames = function() stop('Always fails'),
 
@@ -26,6 +27,7 @@ FakeFailingRModel <- R6Class(
     getVarItemSize = function(name) stop('Always fails'),
     getVarUnits = function(name) stop('Always fails'),
     getVarNBytes = function(name) stop('Always fails'),
+    getVarLocation = function(name) stop('Always fails'),
 
     getValue = function(name) stop('Always fails'),
     getValueAtIndices = function(name, indices) stop('Always fails'),
@@ -42,7 +44,12 @@ FakeFailingRModel <- R6Class(
     getGridX = function(grid_id) stop('Always fails'),
     getGridY = function(grid_id) stop('Always fails'),
     getGridZ = function(grid_id) stop('Always fails'),
-    getGridConnectivity = function(grid_id) stop('Always fails'),
-    getGridOffset = function(grid_id) stop('Always fails')
+    getGridNodeCount = function(grid_id) stop('Always fails'),
+    getGridEdgeCount = function(grid_id) stop('Always fails'),
+    getGridFaceCount = function(grid_id) stop('Always fails'),
+    getGridEdgeNodes = function(grid_id) stop('Always fails'),
+    getGridFaceNodes = function(grid_id) stop('Always fails'),
+    getGridFaceEdges = function(grid_id) stop('Always fails'),
+    getGridNodesPerFace = function(grid_id) stop('Always fails')
   )
 )
