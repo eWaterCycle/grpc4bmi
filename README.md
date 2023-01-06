@@ -43,7 +43,11 @@ in the cpp folder.
 
 ### Model written in Python
 
-For inspiration look at the example in the test directory. To start a server process that allows calls to your BMI implementation, type
+A model should be a subclass of the `Bmi` class from the [bmipy](https://pypi.org/project/bmipy/2.0/) package.
+
+For inspiration look at the [example](test/fake_models.py) in the test directory. 
+
+To start a server process that allows calls to your BMI implementation, type
 
 ```bash
 run-bmi-server --name <PACKAGE>.<MODULE>.<CLASS> --port <PORT> --path <PATH>
