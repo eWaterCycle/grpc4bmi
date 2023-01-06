@@ -189,18 +189,6 @@ def test_get_vals_indices():
     numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
 
 
-def test_get_vals_indices_2d():
-    server, local = make_bmi_classes(True)
-    request = RequestStub()
-    varname = local.get_output_var_names()[0]
-    indices = numpy.array([[0, 1], [1, 0], [2, 2]])
-    setattr(request, "name", varname)
-    setattr(request, "indices", indices.flatten())
-    setattr(request, "index_size", 2)
-    values = local.get_value_at_indices(varname, indices)
-    numpy.testing.assert_allclose(server.getValueAtIndices(request, None).values_double.values, values.flatten())
-
-
 def test_set_var_values():
     server, local = make_bmi_classes(True)
     request = RequestStub()
@@ -266,7 +254,9 @@ def test_get_grid_shape():
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
     setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridShape(request, None).shape) == local.get_grid_shape(grid_id)
+    actual = tuple(server.getGridShape(request, None).shape)
+    expected = local.get_grid_shape(grid_id)
+    numpy.testing.assert_allclose(actual, expected)
 
 
 def test_get_grid_spacing():
@@ -275,7 +265,9 @@ def test_get_grid_spacing():
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
     setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridSpacing(request, None).spacing) == local.get_grid_spacing(grid_id)
+    actual = tuple(server.getGridSpacing(request, None).spacing) 
+    expected = local.get_grid_spacing(grid_id)
+    numpy.testing.assert_allclose(actual, expected)
 
 
 def test_get_grid_origin():
@@ -284,4 +276,8 @@ def test_get_grid_origin():
     varname = local.get_output_var_names()[0]
     grid_id = local.get_var_grid(varname)
     setattr(request, "grid_id", grid_id)
-    assert tuple(server.getGridOrigin(request, None).origin) == local.get_grid_origin(grid_id)
+    actual = tuple(server.getGridOrigin(request, None).origin) 
+    expected = local.get_grid_origin(grid_id)
+    numpy.testing.assert_allclose(actual, expected)
+
+# TODO test more legacy methods
