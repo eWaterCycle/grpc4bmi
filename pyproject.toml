@@ -43,6 +43,7 @@ dev = [
     "build",
     "pytest",
     "pytest-cov",
+    "coverage[toml]",
     "grpcio-tools", # Used to generate Python bindings from proto file
     "bmi-heat@https://github.com/csdms/bmi-example-python/archive/refs/heads/master.zip",
     "sphinx",
@@ -72,3 +73,11 @@ namespaces = false
 
 [tool.setuptools.package-data]
 grpc4bmi = ["py.typed"]
+
+[tool.coverage.run]
+branch = true
+
+[tool.pytest.ini_options]
+testpaths = [
+    "test",
+]
