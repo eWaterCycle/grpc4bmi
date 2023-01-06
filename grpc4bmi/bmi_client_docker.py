@@ -4,6 +4,7 @@ from os.path import abspath
 from typing import Iterable
 
 import docker
+from docker.models.containers import Container
 from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
@@ -81,7 +82,7 @@ class BmiClientDocker(BmiClient):
         if not os.path.isdir(self.work_dir):
             raise NotADirectoryError(self.work_dir)
         volumes[self.work_dir] = {"bind": self.work_dir, "mode": "rw"}
-        self.container = client.containers.run(image,
+        self.container: Container = client.containers.run(image,
                                                ports={str(image_port) + "/tcp": port},
                                                volumes=volumes,
                                                working_dir=self.work_dir,
@@ -90,7 +91,7 @@ class BmiClientDocker(BmiClient):
                                                detach=True)
         time.sleep(delay)
         if not remove:
-            # Only able to reload, read logs when container is not in auto remove mode
+            # Only able to reload, read logs on exited container when remove=False
             self.container.reload()
             if self.container.status == 'exited':
                 exitcode = self.container.attrs["State"]["ExitCode"]
@@ -101,18 +102,9 @@ class BmiClientDocker(BmiClient):
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
-        if hasattr(self, "container"):
-            self.container.stop()
-
-    def get_value_ref(self, var_name):
-        raise NotImplementedError("Cannot exchange memory references across process boundary")
+        self.container.stop()
 
     def logs(self) -> str:
         """Returns complete combined stdout and stderr written by the Docker container.
         """
-        if hasattr(self, "container"):
-            try:
-                return self.container.logs().decode('utf8')
-            except docker.errors.APIError as e:
-                raise LogsException("Unable to fetch logs, try pass remove=False to BmiClientDocker constructor, so logs are retained after container dies") from e
-        return ''
+        return self.container.logs().decode('utf8')
