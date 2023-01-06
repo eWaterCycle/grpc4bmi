@@ -5,6 +5,7 @@ import numpy.random
 import pytest
 
 from grpc4bmi.bmi_grpc_legacy_server import BmiLegacyServer02
+from test.fake_models import Rect3DGridModel
 from test.legacybmiheat import LegacyBmiHeat
 
 """
@@ -39,8 +40,8 @@ def make_list(obj):
     return [obj]
 
 
-def make_bmi_classes(init=False):
-    server, local = BmiLegacyServer02(LegacyBmiHeat()), LegacyBmiHeat()
+def make_bmi_classes(init=False, bmi_class=LegacyBmiHeat):
+    server, local = BmiLegacyServer02(bmi_class()), bmi_class()
     if init:
         req = RequestStub()
         numpy.random.seed(0)
@@ -158,6 +159,13 @@ def test_get_var_nbytes():
     assert server.getVarNBytes(request, None).nbytes == local.get_var_nbytes(varname)
     del server
 
+def test_get_var_itemsize():
+    server, local = make_bmi_classes(True)
+    request = RequestStub()
+    varname = local.get_output_var_names()[0]
+    setattr(request, "name", varname)
+    assert server.getVarItemSize(request, None).size == local.get_var_itemsize(varname)
+    del server
 
 def test_get_var_values():
     server, local = make_bmi_classes(True)
@@ -280,4 +288,43 @@ def test_get_grid_origin():
     expected = local.get_grid_origin(grid_id)
     numpy.testing.assert_allclose(actual, expected)
 
-# TODO test more legacy methods
+class LegacyRect3DGridModel(Rect3DGridModel):
+    def get_grid_x(self, grid: int):
+        return numpy.array([0.1, 0.2, 0.3, 0.4])
+
+    def get_grid_y(self, grid: int):
+        return numpy.array([1.1, 1.2, 1.3])
+
+    def get_grid_z(self, grid: int):
+        return numpy.array([2.1, 2.2])
+
+class TestLegacyRect3DGrid:
+    def test_get_grid_x(self):
+        server, local = make_bmi_classes(True, LegacyRect3DGridModel)
+        request = RequestStub()
+        varname = local.get_output_var_names()[0]
+        grid_id = local.get_var_grid(varname)
+        setattr(request, "grid_id", grid_id)
+        actual = tuple(server.getGridX(request, None).coordinates) 
+        expected = local.get_grid_x(grid_id)
+        numpy.testing.assert_allclose(actual, expected)
+
+    def test_get_grid_y(self):
+        server, local = make_bmi_classes(True, LegacyRect3DGridModel)
+        request = RequestStub()
+        varname = local.get_output_var_names()[0]
+        grid_id = local.get_var_grid(varname)
+        setattr(request, "grid_id", grid_id)
+        actual = tuple(server.getGridY(request, None).coordinates) 
+        expected = local.get_grid_y(grid_id)
+        numpy.testing.assert_allclose(actual, expected)
+
+    def test_get_grid_z(self):
+        server, local = make_bmi_classes(True, LegacyRect3DGridModel)
+        request = RequestStub()
+        varname = local.get_output_var_names()[0]
+        grid_id = local.get_var_grid(varname)
+        setattr(request, "grid_id", grid_id)
+        actual = tuple(server.getGridZ(request, None).coordinates) 
+        expected = local.get_grid_z(grid_id)
+        numpy.testing.assert_allclose(actual, expected)
