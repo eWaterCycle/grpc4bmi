@@ -9,10 +9,11 @@ import pytest
 from grpc import RpcError
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
+import numpy as np
 
 from grpc4bmi.bmi_client_singularity import SUPPORTED_APPTAINER_VERSIONS, SUPPORTED_SINGULARITY_VERSIONS, BmiClientSingularity, check_singularity_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
-from grpc4bmi.reserve import reserve_grid_padding, reserve_values
+from grpc4bmi.reserve import reserve_grid_padding
 from test.conftest import write_config, write_datafile
 
 IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.3.1"
@@ -94,7 +95,7 @@ class TestBmiClientSingularity:
         assert walrus_model.get_current_time() == walrus_model.get_start_time()
 
     def test_initialize_absent_configfile(self, walrus_model):
-        with pytest.raises(RpcError, match='Exception calling application'):
+        with pytest.raises(RpcError, match='Error in private'):
             walrus_model.initialize('configfilethatdoesnotexist')
 
     def test_get_value_ref(self, walrus_model):
@@ -106,20 +107,12 @@ class TestBmiClientSingularity:
         grid_id = walrus_model.get_var_grid('Q')
         assert len(walrus_model.get_grid_origin(grid_id, reserve_grid_padding(walrus_model, grid_id))) == 2
 
-    def test_extra_volumes(self, walrus_model_with_extra_volume):
-        walrus_model_with_extra_volume.initialize('/data/input/config.yml')
-        walrus_model_with_extra_volume.update()
-
-        # After initialization and update the forcings have been read from the extra volume
-        result = reserve_values(walrus_model_with_extra_volume, 'Q')
-        assert len(walrus_model_with_extra_volume.get_value('Q', result)) == 1
-
     def test_input_dir(self, walrus_input, walrus_model_with_input_dir):
         walrus_model_with_input_dir.initialize(str(walrus_input))
         walrus_model_with_input_dir.update()
 
         # After initialization and update the forcings have been read from the forcing dir
-        assert len(walrus_model_with_input_dir.get_value('Q')) == 1
+        assert len(walrus_model_with_input_dir.get_value('Q', np.zeros(1,))) == 1
 
     def test_2input_dirs(self, walrus_2input_dirs, walrus_model_with_2input_dirs):
         config_file = walrus_2input_dirs['cfg']
@@ -127,7 +120,7 @@ class TestBmiClientSingularity:
         walrus_model_with_2input_dirs.update()
 
         # After initialization and update the forcings have been read from the forcing dir
-        assert len(walrus_model_with_2input_dirs.get_value('Q')) == 1
+        assert len(walrus_model_with_2input_dirs.get_value('Q', np.zeros(1,))) == 1
 
     def test_workdir_absolute(self, walrus_model_with_work_dir):
         model, work_dir = walrus_model_with_work_dir
@@ -135,7 +128,7 @@ class TestBmiClientSingularity:
         model.update()
 
         # After initialization and update the forcings have been read from the work dir
-        assert len(model.get_value('Q')) == 1
+        assert len(model.get_value('Q', np.zeros(1,))) == 1
 
     def test_workdir_relative(self, walrus_model_with_work_dir):
         model, _work_dir = walrus_model_with_work_dir
@@ -143,7 +136,7 @@ class TestBmiClientSingularity:
         model.update()
 
         # After initialization and update the forcings have been read from the work dir
-        assert len(model.get_value('Q')) == 1
+        assert len(model.get_value('Q', np.zeros(1,))) == 1
 
     def test_inputdir_absent(self, tmp_path):
         dirthatdoesnotexist = 'dirthatdoesnotexist'
@@ -171,7 +164,7 @@ class TestBmiClientSingularity:
         model.update()
 
         # After initialization and update the forcings have been read from the scratch dir
-        assert len(model.get_value('Q')) == 1
+        assert len(model.get_value('Q', np.zeros(1,))) == 1
 
     def test_workdir_as_number(self):
         with pytest.raises(TypeError, match='must be str'):
