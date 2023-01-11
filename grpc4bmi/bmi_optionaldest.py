@@ -10,22 +10,28 @@ class OptionalDestBmi(Bmi):
     Some Bmi methods accept a numpy array as argument (dest) that must be filled by the model.
     This class makes that argument optional.
 
-    Example:
+    For example to get the value of a `heat model <https://github.com/csdms/bmi-example-python>`_:
 
-        A heat model to make output arguments optional use the following.
+    .. code-block:: python
 
-        >>> from heat import BmiHeat
-        >>> import numpy as np
-        >>> orig_model = BmiHeat()
-        >>> orig_model.initialize()
-        >>> dest = np.zeros(200)
-        >>> dest2 = orig_model.get_value('plate_surface__temperature', dest)
-        >>> np.testing.assert_equal(dest, dest2)
-        >>> from grpc4bmi.bmi_optionaldest import OptionalDestBmi
-        >>> model = OptionalDestBmi(orig_model)
-        >>> # With OptionalDestBmi the dest argument is no longer needed.
-        >>> dest3 = orig_model.get_value('plate_surface__temperature')
-        >>> np.testing.assert_equal(dest2, dest3)
+            from heat import BmiHeat
+            import numpy as np
+
+            orig_model = BmiHeat()
+            orig_model.initialize()
+            dest = np.empty((200,), dtype=np.float64)
+            dest2 = orig_model.get_value('plate_surface__temperature', dest)
+
+    A `dest` variable must created and passed to the `get_value` method.
+    It must be set to a Numpy array with the shape and type the model requires.
+    By using this class we no longer need do create and pass it.
+
+    .. code-block:: python
+
+        from grpc4bmi.bmi_optionaldest import OptionalDestBmi
+
+        model = OptionalDestBmi(orig_model)
+        dest3 = model.get_value('plate_surface__temperature')
 
     This class will create dest variables by calling other Bmi methods for its shape.
     When using a slow model it is strongly suggested to wrap the BmiClient with :class:`grpc4bmi.bmi_memoized.MemoizedBmi` first to prevent a lot of calls.
