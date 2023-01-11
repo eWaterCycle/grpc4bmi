@@ -71,7 +71,7 @@ def test_memoized_methods(model, mut_name, mut_args):
         ('get_value', ['plate_surface__temperature', np.zeros((200,))]),
         ('get_value_ptr', ['plate_surface__temperature']),
         ('get_value_at_indices', ['plate_surface__temperature', np.array([0, 0, 0]), [1, 2, 3]]),
-        ('set_value', ['plate_surface__temperature', np.ones((10, 20))]),
+        ('set_value', ['plate_surface__temperature', np.ones((200,))]),
         ('set_value_at_indices', ['plate_surface__temperature', [1, 2, 3], [4, 5, 6]]),
     ]
 )
