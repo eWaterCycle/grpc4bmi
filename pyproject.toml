@@ -46,15 +46,18 @@ dev = [
     "coverage[toml]",
     "grpcio-tools", # Used to generate Python bindings from proto file
     "bmi-heat@https://github.com/csdms/bmi-example-python/archive/refs/heads/master.zip",
+    "nbconvert",
+    "ipykernel",
+    "nbformat",
+]
+docs = [
     "sphinx",
     "sphinxcontrib-apidoc",
     "sphinxcontrib-napoleon",
     "sphinx-argparse",
     "sphinx_rtd_theme",
     "numpydoc",
-    "nbconvert",
-    "ipykernel",
-    "nbformat",
+    "sphinx-copybutton",
 ]
 
 [project.scripts]

@@ -148,6 +148,8 @@ pip install -U pip wheel
 pip install -e .[dev]
 # For R integration also install the R extras with
 pip install -e .[R]
+# For building docs (cd docs && make html) also install the docs extras with
+pip install -e .[docs]
 ```
 
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
