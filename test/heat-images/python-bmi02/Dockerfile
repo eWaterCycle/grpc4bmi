@@ -1,4 +1,4 @@
-# Python heat model with BMI v0.2
+# Python heat model with BMI v0.2 and pb3
 #
 # Build with
 #
@@ -20,7 +20,7 @@
 
 FROM python:3.10-buster
 
-RUN pip install numpy 'scipy==1.8.1' PyYAML
+RUN pip install numpy 'scipy==1.8.1' 'PyYAML<6'
 
 RUN pip install https://github.com/csdms/bmi-example-python/archive/refs/tags/v0.1.zip
 

@@ -1,14 +1,14 @@
-# Python heat model with BMI v2.0 and pb3
+# Python heat model with BMI v2.0
 #
 # Build with
 #
-#   docker build -t heat:py-2.0 test/heat-images/python-bmi20
+#   docker build -t heat:py-2.0-pb4 test/heat-images/python-bmi20-pb4
 #
 #
 # Run with
 
 #   from grpc4bmi.bmi_client_docker import BmiClientDocker
-#   model = BmiClientDocker('heat:py-2.0', work_dir='/tmp', delay=1)
+#   model = BmiClientDocker('heat:py-2.0-pb4', work_dir='/tmp', delay=1)
 #
 # docker run -ti --entrypoint pip heat:py-2.0 list |grep grpc
 # grpc4bmi                 0.3.2
@@ -23,6 +23,6 @@ FROM python:3.10-buster
 
 RUN pip install https://github.com/csdms/bmi-example-python/archive/44c7d4c54f7fa4c17f51f86a645ba3e2633a4dfb.zip
 
-RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/refs/heads/bmi2.zip
+RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/refs/heads/latest-protobuf.zip
 
 ENTRYPOINT ["run-bmi-server", "--name", "heat.BmiHeat", "--port", "50051"]
