@@ -30,7 +30,7 @@ jobs:
       run: docker pull ewatercycle/walrus-grpc4bmi:v0.3.1
     - name: Cache Apptainer image
       id: cache-apptainer-image
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.apptainer
         key: apptainer-image
