@@ -19,11 +19,9 @@ RUN cmake -DgRPC_INSTALL=ON  -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF 
     && make -j6 && make install && ldconfig
 
 # grpc4bmi
-# WORKDIR /opt/grpc4bmi
-# RUN git clone -b latest-protobuf https://github.com/eWaterCycle/grpc4bmi .
-# RUN git submodule update --init
-COPY cpp /opt/grpc4bmi/cpp
-COPY proto /opt/grpc4bmi/proto
+WORKDIR /opt/grpc4bmi
+RUN git clone -b latest-protobuf https://github.com/eWaterCycle/grpc4bmi .
+RUN git submodule update --init
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake .. && make install
 
