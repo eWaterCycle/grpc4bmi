@@ -2,6 +2,7 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
+// TODO use bmi.h from /usr/local/include
 #include "bmi-c/bmi.h"
 #undef BMI_SUCCESS
 #undef BMI_FAILURE

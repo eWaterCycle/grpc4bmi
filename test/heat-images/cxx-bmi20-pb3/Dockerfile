@@ -1,6 +1,11 @@
 # Build with
 #
-#  docker build -t heat:py-2.0 test/heat-images/cxx-bmi20-pb3
+#  docker build -t heat:cxx-bmi20-pb3 test/heat-images/cxx-bmi20-pb3
+#
+# Run with
+#
+#   from grpc4bmi.bmi_client_docker import BmiClientDocker
+#   model = BmiClientDocker('heat:cxx-bmi20-pb3', work_dir='/tmp', delay=1)
 #
 FROM debian:buster AS builder
 
@@ -50,10 +55,20 @@ COPY CMakeLists.txt /opt/grpc4bmiheatcxx
 # Compile
 RUN cmake .. && make 
 
-# run container
-FROM debian:buster
+ENV BMI_PORT=50051
+ENTRYPOINT [ "/opt/grpc4bmiheatcxx/build/run_heat_bmi_model " ]
 
-# Copy compiled and deps over
-COPY --from=builder /optgrpc4bmiheatcxx/build/run_heat_bmi_model /bin/run_heat_bmi_model
+# # run container
+# FROM debian:buster
 
-ENTRYPOINT ["/opt/grpc4bmiheatcxx/build/run_heat_bmi_model"]
+# RUN apt-get update && apt-get install -qy libssl1.1
+
+# # Copy compiled and deps over
+# COPY --from=builder /opt/grpc4bmiheatcxx/build/run_heat_bmi_model /bin/run_heat_bmi_model
+# COPY --from=builder /usr/local/lib/ /usr/local/lib/
+
+# RUN ldconfig
+
+# ENV BMI_PORT=50051
+
+# ENTRYPOINT ["/bin/run_heat_bmi_model"]

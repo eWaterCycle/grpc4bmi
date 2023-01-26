@@ -820,9 +820,14 @@ void run_bmi_server(BmiClass *model, int argc, char *argv[])
     }
     std::cerr << "BMI grpc server attached to server address " << server_address << std::endl;
     BmiGRPCService service(model);
+    std::cerr << "Service build";
     grpc::ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    std::cerr << "Added listening port";
     builder.RegisterService(&service);
+    std::cerr << "Registered service";
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    std::cerr << "Server started";
     server->Wait();
+    std::cerr << "Waiting";
 }
