@@ -49,7 +49,6 @@ COPY CMakeLists.txt /opt/grpc4bmiheatcxx
 
 # Compile
 RUN cmake .. && make 
-RUN make install
 
 # run container
 FROM debian:buster
@@ -57,4 +56,4 @@ FROM debian:buster
 # Copy compiled and deps over
 COPY --from=builder /optgrpc4bmiheatcxx/build/run_heat_bmi_model /bin/run_heat_bmi_model
 
-ENTRYPOINT ["/bin/run_heat_bmi_model"]
+ENTRYPOINT ["/opt/grpc4bmiheatcxx/build/run_heat_bmi_model"]
