@@ -1,9 +1,10 @@
-#include <grpc/grpc.h>
+#include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
+#include <grpcpp/health_check_service_interface.h>
 #include "bmi_grpc_server.h"
 #include "bmi_c_wrapper.h"
 
@@ -819,16 +820,19 @@ void run_bmi_server(BmiClass *model, int argc, char *argv[])
     if(const char* bmi_port = std::getenv("BMI_PORT")) {
         server_address = "0.0.0.0:" + std::string(bmi_port);
     }
-    std::cerr << "Model into service";
+    std::cerr << "Model into service" << std::endl;
     BmiGRPCService service(model);
-    std::cerr << "Service build";
+    std::cerr << "Enable healthcheck & reflection" << std::endl;
+    grpc::EnableDefaultHealthCheckService(true);
     grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+    std::cerr << "Service build" << std::endl;
     grpc::ServerBuilder builder;
-    std::cerr << "Server builder constructed";
+    std::cerr << "server_address=" << server_address << std::endl;
+    std::cerr << "Server builder constructed" << std::endl;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    std::cerr << "Added listening port";
+    std::cerr << "Added listening port" << std::endl;
     builder.RegisterService(&service);
-    std::cerr << "Registered service";
+    std::cerr << "Registered service" << std::endl;
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
     std::cerr << "BMI grpc server attached to server address " << server_address << std::endl;
     server->Wait();

@@ -1,74 +1,71 @@
 # Build with
 #
-#  docker build -t heat:cxx-bmi20-pb3 test/heat-images/cxx-bmi20-pb3
+#  docker build -t heat:cxx-bmi20-pb3 -f test/heat-images/cxx-bmi20-pb3/Dockerfile .
 #
 # Run with
 #
 #   from grpc4bmi.bmi_client_docker import BmiClientDocker
 #   model = BmiClientDocker('heat:cxx-bmi20-pb3', work_dir='/tmp', delay=1)
+#   model.initialize('/opt/bmi-example-cxx/testing/config.txt')
 #
 FROM debian:buster AS builder
 
+# Install build deps
 RUN apt-get update && apt-get install -qy git build-essential cmake autoconf libtool pkg-config libssl-dev
 
 # Compile gRPC
 WORKDIR /opt/grpc
-
 ARG GRPC_VERSION=v1.51.1
 RUN echo ${GRPC_VERSION}
 RUN git clone -b ${GRPC_VERSION} --depth 1 https://github.com/grpc/grpc . && git submodule update --init
-
 WORKDIR /opt/grpc/cmake/build
-
 RUN cmake -DgRPC_INSTALL=ON  -DgRPC_SSL_PROVIDER=package -DgRPC_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=ON ../.. \
     && make -j6 && make install && ldconfig
 
-# grpc4bmi
-WORKDIR /opt/grpc4bmi
-RUN echo ff && git clone -b latest-protobuf https://github.com/eWaterCycle/grpc4bmi .
-RUN git submodule update --init 
-WORKDIR /opt/grpc4bmi/cpp/build
-RUN cmake .. && make install
-
 # Install bmi-cxx
-WORKDIR /opt/grpc4bmi/cpp/bmi-cxx/build
+ARG BMICXX_VERSION=v2.0
+RUN git clone -b ${BMICXX_VERSION} https://github.com/csdms/bmi-cxx.git /opt/bmi-cxx
+WORKDIR /opt/bmi-cxx/build
 RUN cmake .. && make install
 
 # Install bmi-c
-WORKDIR /opt/grpc4bmi/cpp/bmi-c/build
+ARG BMIC_VERSION=v2.1
+RUN git clone -b ${BMIC_VERSION} https://github.com/csdms/bmi-c.git /opt/bmi-c
+WORKDIR /opt/bmi-c/build
 RUN cmake .. && make install
 
-# Fetch heat-cxx
-WORKDIR /opt/bmi-example-cxx
-
+# Install heat-cxx
 ARG HEAT_VERSION=v2.1
-RUN git clone -b ${HEAT_VERSION} https://github.com/csdms/bmi-example-cxx .
+RUN git clone -b ${HEAT_VERSION} https://github.com/csdms/bmi-example-cxx /opt/bmi-example-cxx
 WORKDIR /opt/bmi-example-cxx/build
 RUN cmake .. && make install && ldconfig
 
+# Install grpc4bmi, use locally cloned repo
+WORKDIR /opt/grpc4bmi
+COPY cpp/ /opt/grpc4bmi/cpp/
+COPY proto/ /opt/grpc4bmi/proto/
+RUN rm -rf /opt/grpc4bmi/cpp/build
+WORKDIR /opt/grpc4bmi/cpp/build
+RUN cmake .. && make install
+
+# Compile main
 WORKDIR /opt/grpc4bmiheatcxx/build
+COPY test/heat-images/cxx-bmi20-pb3/run_bmi_server.cc /opt/grpc4bmiheatcxx
+COPY test/heat-images/cxx-bmi20-pb3/CMakeLists.txt /opt/grpc4bmiheatcxx
+RUN cmake .. && make install
 
-# Add main
-COPY run_heat_bmi_model.cc /opt/grpc4bmiheatcxx
-COPY CMakeLists.txt /opt/grpc4bmiheatcxx
+# run container
+FROM debian:buster
 
-# Compile
-RUN cmake .. && make 
+# Install runtime deps
+RUN apt-get update && apt-get install -qy libssl1.1 && rm -rf /var/lib/apt/lists/*
+
+# Copy compiled and deps
+COPY --from=builder /usr/local/bin/run_bmi_server /usr/local/bin/run_bmi_server
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
+
+RUN ldconfig
 
 ENV BMI_PORT=50051
-ENTRYPOINT [ "/opt/grpc4bmiheatcxx/build/run_heat_bmi_model " ]
 
-# # run container
-# FROM debian:buster
-
-# RUN apt-get update && apt-get install -qy libssl1.1
-
-# # Copy compiled and deps over
-# COPY --from=builder /opt/grpc4bmiheatcxx/build/run_heat_bmi_model /bin/run_heat_bmi_model
-# COPY --from=builder /usr/local/lib/ /usr/local/lib/
-
-# RUN ldconfig
-
-# ENV BMI_PORT=50051
-
-# ENTRYPOINT ["/bin/run_heat_bmi_model"]
+ENTRYPOINT ["/usr/local/bin/run_bmi_server"]

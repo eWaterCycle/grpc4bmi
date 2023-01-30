@@ -2,11 +2,10 @@
 #define BMI_GRPC_SERVER_H_INCLUDED
 
 #include "bmi.grpc.pb.h"
-// TODO use bmi.h from /usr/local/include
-#include "bmi-c/bmi.h"
+#include "bmi.h"
 #undef BMI_SUCCESS
 #undef BMI_FAILURE
-#include "bmi-cxx/bmi.hxx"
+#include "bmi.hxx"
 
 typedef bmi::Bmi BmiClass;
 typedef Bmi BmiModel;

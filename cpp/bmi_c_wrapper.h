@@ -6,10 +6,10 @@
 
 #ifndef BMI_INCLUDED
 #define BMI_INCLUDED
-#include "bmi-c/bmi.h"
+#include "bmi.h"
 #undef BMI_SUCCESS
 #undef BMI_FAILURE
-#include "bmi-cxx/bmi.hxx"
+#include "bmi.hxx"
 #endif
   
 typedef Bmi BMIModel;
