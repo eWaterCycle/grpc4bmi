@@ -63,14 +63,25 @@ jobs:
       - name: Install grpc
         uses: ewatercycle/setup-grpc@v4
         with:
-          grpc-version: 1.48.2
+          grpc-version: 1.51.1
       - name: Copy grpc to system default
         run: |
           sudo rsync -a $GRPC_ROOT/ /usr/local
           sudo ldconfig
-      - name: Build & install bmi-c
-        run: mkdir -p build && cd build && cmake .. && sudo make install
-        working-directory: cpp/bmi-c
+      - name: Install bmi-cxx
+        run: |
+          git clone -b v2.0 https://github.com/csdms/bmi-cxx.git bmi-cxx
+          mkdir bmi-cxx/build 
+          cd bmi-cxx/build
+          cmake ..
+          make install
+      - name: Install bmi-cxx
+        run: |
+          git clone -b v2.1 https://github.com/csdms/bmi-c.git bmi-c
+          mkdir bmi-c/build 
+          cd bmi-c/build
+          cmake ..
+          make install          
       - name: Build dir
         run: mkdir -p cpp/build
       - name: configure

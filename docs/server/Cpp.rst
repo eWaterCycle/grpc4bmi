@@ -24,11 +24,11 @@ You will also need the install the BMI C and C++ headers
 
 .. code-block:: sh
 
-    git clone -b v2.0 https://github.com/csdms/bmi-cxx.git /opt/bmi-cxx
-    cd /opt/bmi-cxx && mkdir build && cd build cmake .. && make install
+    git clone -b v2.0 https://github.com/csdms/bmi-cxx.git bmi-cxx
+    cd bmi-cxx && mkdir build && cd build cmake .. && make install
 
-    git clone -b v2.1 https://github.com/csdms/bmi-c.git /opt/bmi-c
-    cd /opt/bmi-c && mkdir build && cd build cmake .. && make install
+    git clone -b v2.1 https://github.com/csdms/bmi-c.git bmi-c
+    cd bmi-c && mkdir build && cd build cmake .. && make install
 
 You will also need to compile grpc4bmi
 
