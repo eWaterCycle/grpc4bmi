@@ -4,9 +4,18 @@
 #
 # Run with
 #
-#   from grpc4bmi.bmi_client_docker import BmiClientDocker
-#   model = BmiClientDocker('heat:cxx-bmi20-pb3', work_dir='/tmp', delay=1)
-#   model.initialize('/opt/bmi-example-cxx/testing/config.txt')
+# ipython
+# from grpc4bmi.bmi_client_docker import BmiClientDocker
+# model = BmiClientDocker('heat:cxx-bmi20-pb3', work_dir='/tmp', delay=1)
+# model.get_component_name()
+# model.get_output_var_names()
+# from pathlib import Path
+# config = Path('/tmp/heat.config.txt')
+# config.write_text('1.5, 8.0, 7, 6')
+# model.initialize(str(config))
+# model.update()
+# import numpy as np
+# model.get_value('plate_surface__temperature', np.zeros(42))
 #
 FROM debian:buster AS builder
 

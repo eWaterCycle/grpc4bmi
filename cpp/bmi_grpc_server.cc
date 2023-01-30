@@ -820,19 +820,12 @@ void run_bmi_server(BmiClass *model, int argc, char *argv[])
     if(const char* bmi_port = std::getenv("BMI_PORT")) {
         server_address = "0.0.0.0:" + std::string(bmi_port);
     }
-    std::cerr << "Model into service" << std::endl;
     BmiGRPCService service(model);
-    std::cerr << "Enable healthcheck & reflection" << std::endl;
     grpc::EnableDefaultHealthCheckService(true);
     grpc::reflection::InitProtoReflectionServerBuilderPlugin();
-    std::cerr << "Service build" << std::endl;
     grpc::ServerBuilder builder;
-    std::cerr << "server_address=" << server_address << std::endl;
-    std::cerr << "Server builder constructed" << std::endl;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    std::cerr << "Added listening port" << std::endl;
     builder.RegisterService(&service);
-    std::cerr << "Registered service" << std::endl;
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
     std::cerr << "BMI grpc server attached to server address " << server_address << std::endl;
     server->Wait();

@@ -12,11 +12,14 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(Protobuf REQUIRED)
+message(STATUS "Using protobuf ${Protobuf_VERSION}")
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin REQUIRED)
 find_library(GRPCREFLECTION grpc++_reflection)
-find_library(GRPCLIB grpc)
+find_library(GRPCLIB grpc CONFIG REQUIRED)
+message(STATUS "Using gRPC ${GRPCLIB_VERSION}")
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(BMIC REQUIRED IMPORTED_TARGET bmic bmicxx)
+pkg_check_modules(BMI REQUIRED IMPORTED_TARGET bmic bmicxx)
+message(STATUS "Using BMI ${BMI_VERSION}")
 
 set(PROTO_PATH "${CMAKE_SOURCE_DIR}/../proto/grpc4bmi")
 add_custom_command(
@@ -36,11 +39,10 @@ add_custom_command(
     )
 set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.cc)
 set(GRPC_HDR_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.h)
-link_libraries()
 
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${BMIC_INCLUDE_DIRS})
+include_directories(${BMI_INCLUDE_DIRS})
 
 add_library (grpc4bmi SHARED bmi_cpp_extension.h bmi_cpp_extension.cc
     bmi_c_wrapper.h bmi_c_wrapper.cc bmi_grpc_server.cc bmi_grpc_server.h ${GRPC_SRC_FILES} ${GRPC_HDR_FILES})
