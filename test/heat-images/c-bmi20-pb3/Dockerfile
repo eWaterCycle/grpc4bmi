@@ -50,6 +50,7 @@ WORKDIR /opt/bmi-example-c/build
 RUN cmake .. && make install && ldconfig
 
 # Install grpc4bmi, use locally cloned repo
+RUN echo 12431f3132f411321g313f2gf11fg4cff4gdvf4b
 WORKDIR /opt/grpc4bmi
 COPY cpp/ /opt/grpc4bmi/cpp/
 COPY proto/ /opt/grpc4bmi/proto/

@@ -38,7 +38,7 @@ void BmiCWrapper::Finalize()
 
 std::string BmiCWrapper::GetComponentName()
 {
-    char* dest;
+    char dest[BMI_MAX_COMPONENT_NAME];
     checkStatus(this->model->get_component_name(this->model, dest));
     return dest;
 }
@@ -59,16 +59,42 @@ int BmiCWrapper::GetOutputItemCount()
 
 std::vector<std::string> BmiCWrapper::GetInputVarNames()
 {
-    char** dest;
+    size_t count = static_cast<size_t>(GetInputItemCount());
+    // TODO replace with std::vector<std::unique_ptr> oid???
+    // Current impl is not safe against exceptions
+    char** dest = reinterpret_cast<char **>(malloc(sizeof(char *) * count));
+    for (size_t i = 0; i < count; ++i) {
+        dest[i] = reinterpret_cast<char *>(malloc(BMI_MAX_VAR_NAME + 1));
+    }
     checkStatus(this->model->get_input_var_names(this->model, dest));
-    // TODO convert dest to vector of strings
+
+    std::vector<std::string> result;
+    for (size_t i = 0; i < count; ++i) {
+        result.emplace_back(dest[i]);
+        free(dest[i]);
+    }
+    free(dest);
+    return result;
 }
 
 std::vector<std::string> BmiCWrapper::GetOutputVarNames()
 {
-    char** dest;
+    size_t count = static_cast<size_t>(GetOutputItemCount());
+    // TODO replace with std::vector<std::unique_ptr> oid???
+    // Current impl is not safe against exceptions
+    char** dest = reinterpret_cast<char **>(malloc(sizeof(char *) * count));
+    for (size_t i = 0; i < count; ++i) {
+        dest[i] = reinterpret_cast<char *>(malloc(BMI_MAX_VAR_NAME + 1));
+    }
     checkStatus(this->model->get_output_var_names(this->model, dest));
-    // TODO convert dest to vector of strings
+
+    std::vector<std::string> result;
+    for (size_t i = 0; i < count; ++i) {
+        result.emplace_back(dest[i]);
+        free(dest[i]);
+    }
+    free(dest);
+    return result;
 }
 
 int BmiCWrapper::GetVarGrid(std::string name)
@@ -80,7 +106,7 @@ int BmiCWrapper::GetVarGrid(std::string name)
 
 std::string BmiCWrapper::GetVarType(std::string name)
 {
-    char* vtype;
+    char vtype[BMI_MAX_TYPE_NAME];
     checkStatus(this->model->get_var_type(this->model, const_cast<char*>(name.c_str()), vtype));
     return vtype;
 }
@@ -94,7 +120,7 @@ int BmiCWrapper::GetVarItemsize(std::string name)
 
 std::string BmiCWrapper::GetVarUnits(std::string name)
 {
-    char* dest;
+    char dest[BMI_MAX_VAR_NAME];
     checkStatus(this->model->get_var_units(this->model, const_cast<char*>(name.c_str()), dest));
     return dest;
 }
@@ -108,7 +134,7 @@ int BmiCWrapper::GetVarNbytes(std::string name)
 
 std::string BmiCWrapper::GetVarLocation(std::string name)
 {
-    char* location;
+    char location[BMI_MAX_UNITS_NAME];
     checkStatus(this->model->get_var_location(this->model, const_cast<char*>(name.c_str()), location));
     return location;
 }
@@ -136,7 +162,7 @@ double BmiCWrapper::GetEndTime()
 
 std::string BmiCWrapper::GetTimeUnits()
 {
-    char* dest;
+    char dest[BMI_MAX_UNITS_NAME];
     checkStatus(this->model->get_time_units(this->model, dest));
     return dest;
 }
@@ -191,7 +217,7 @@ int BmiCWrapper::GetGridRank(int id)
 
 std::string BmiCWrapper::GetGridType(int id)
 {
-    char* dest;
+    char dest[BMI_MAX_TYPE_NAME];
     checkStatus(this->model->get_grid_type(this->model, id, dest));
     return dest;
 }
