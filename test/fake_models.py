@@ -412,3 +412,11 @@ class HugeModel(DTypeModel):
         # Create value which is bigger than 4Mb
         dimension = (3 * GRPC_MAX_MESSAGE_LENGTH) // self.dtype.itemsize + 1000
         self.value = numpy.ones((dimension,), dtype=self.dtype)
+
+class WithItemSizeZeroAndVarTypeFloat32Model(Float32Model):
+    def get_var_itemsize(self, name):
+        return 0
+
+class WithItemSizeZeroAndUnknownVarType(WithItemSizeZeroAndVarTypeFloat32Model):
+    def get_var_type(self, name):
+        return 'real'

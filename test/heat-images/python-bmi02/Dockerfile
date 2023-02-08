@@ -1,4 +1,4 @@
-# Python heat model with BMI v0.2 and pb3
+# Python heat model with BMI v0.2, grpc4bmi==0.2 and pb3
 #
 # Build with
 #
