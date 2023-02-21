@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  c-bmi20:
+    image: heat:c-bmi20
+    build: 
+      context: ../..
+      dockerfile: test/heat-images/c-bmi20/Dockerfile
+  cxx-bmi20:
+    image: heat:cxx-bmi20
+    build: 
+      context: ../..
+      dockerfile: test/heat-images/cxx-bmi20/Dockerfile
+  python-bmi02:
+    image: heat:python-bmi02
+    build: 
+      context: ../..
+      dockerfile: test/heat-images/python-bmi02/Dockerfile
+  python-bmi02-legacy:
+    image: heat:py-0.2-legacy
+    build: 
+      context: ../..
+      dockerfile: test/heat-images/python-bmi02/Dockerfile
+  python-bmi20:
+    image: heat:py-2.0
+    build: 
+      context: ../..
+      dockerfile: test/heat-images/python-bmi20/Dockerfile
+  python-bmi20-pb4:
+    image: heat:py-2.0-pb4
+    build: 
+      context: ../..
+      dockerfile: test/heat-images/python-bmi20-pb4/Dockerfile

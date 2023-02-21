@@ -31,8 +31,8 @@ def test_heat(tmp_path: Path):
     'heat:py-0.2-legacy',py_config
     # 'heat:py-2.0',py_config
     # 'heat:py-2.0-pb4',py_config
-    # 'heat:cxx-bmi20-pb3', c_config
-    # 'heat:c-bmi20-pb3', c_config
+    # 'heat:cxx-bmi20', c_config
+    # 'heat:c-bmi20', c_config
     )
 
     config = tmp_path / 'config.yaml'

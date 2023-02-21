@@ -1,12 +1,12 @@
 # Build with
 #
-#  docker build -t heat:c-bmi20-pb3 -f test/heat-images/c-bmi20-pb3/Dockerfile .
+#  docker build -t heat:c-bmi20 -f test/heat-images/c-bmi20/Dockerfile .
 #
 # Run with
 #
 # ipython
 # from grpc4bmi.bmi_client_docker import BmiClientDocker
-# model = BmiClientDocker('heat:c-bmi20-pb3', work_dir='/tmp', delay=1)
+# model = BmiClientDocker('heat:c-bmi20', work_dir='/tmp', delay=1)
 # model.get_component_name()
 # model.get_output_var_names()
 # from pathlib import Path
@@ -49,18 +49,16 @@ RUN git clone -b ${HEAT_VERSION} https://github.com/csdms/bmi-example-c /opt/bmi
 WORKDIR /opt/bmi-example-c/build
 RUN cmake .. && make install && ldconfig
 
-# Install grpc4bmi, use locally cloned repo
-WORKDIR /opt/grpc4bmi
-COPY cpp/ /opt/grpc4bmi/cpp/
-COPY proto/ /opt/grpc4bmi/proto/
-RUN rm -rf /opt/grpc4bmi/cpp/build
+# Install grpc4bmi, use branch
+ARG GRPC4BMI_VERSION=latest-protobuf
+RUN git clone -b ${GRPC4BMI_VERSION} https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake .. && make install
 
 # Compile main
 WORKDIR /opt/grpc4bmiheatc/build
-COPY test/heat-images/c-bmi20-pb3/run_bmi_server.cc /opt/grpc4bmiheatc
-COPY test/heat-images/c-bmi20-pb3/CMakeLists.txt /opt/grpc4bmiheatc
+COPY test/heat-images/c-bmi20/run_bmi_server.cc /opt/grpc4bmiheatc
+COPY test/heat-images/c-bmi20/CMakeLists.txt /opt/grpc4bmiheatc
 RUN cmake .. && make install
 
 # run container
