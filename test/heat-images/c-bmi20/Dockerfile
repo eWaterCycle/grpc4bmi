@@ -51,7 +51,7 @@ RUN cmake .. && make install && ldconfig
 
 # Install grpc4bmi, use branch
 ARG GRPC4BMI_VERSION=latest-protobuf
-RUN git clone -b ${GRPC4BMI_VERSION} https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi
+RUN git clone --depth 1 -b ${GRPC4BMI_VERSION} https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake .. && make install
 

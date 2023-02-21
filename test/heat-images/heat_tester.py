@@ -1,11 +1,8 @@
 from pathlib import Path
-from tempfile import tempdir
 from textwrap import dedent
 
-import numpy as np
-
 from grpc4bmi.bmi_client_docker import BmiClientDocker
-from grpc4bmi.reserve import reserve_values
+from grpc4bmi.bmi_optionaldest import OptionalDestBmi
 
 def test_heat(tmp_path: Path):
     # Config file for Python based heat model
@@ -27,8 +24,8 @@ def test_heat(tmp_path: Path):
 
     image, config_body = (
         # Comment out line you want to run
-    # 'heat:py-0.2',py_config
-    'heat:py-0.2-legacy',py_config
+    'heat:py-0.2',py_config
+    # 'heat:py-0.2-legacy',py_config
     # 'heat:py-2.0',py_config
     # 'heat:py-2.0-pb4',py_config
     # 'heat:cxx-bmi20', c_config
@@ -39,7 +36,8 @@ def test_heat(tmp_path: Path):
     config.write_text(config_body)
 
     print(image)
-    model = BmiClientDocker(image, work_dir=str(tmp_path), delay=1)
+    dmodel = BmiClientDocker(image, work_dir=str(tmp_path), delay=1)
+    model = OptionalDestBmi(dmodel)
 
     model.initialize(str(config))
 
@@ -49,8 +47,10 @@ def test_heat(tmp_path: Path):
     model.update()
 
     var_name = 'plate_surface__temperature'
-    output = reserve_values(model, var_name)
-    values = model.get_value(var_name, output)
+    grid_id = model.get_var_grid(var_name)
+    print(model.get_grid_shape(grid_id))
+
+    values = model.get_value(var_name)
     print(values)
 
     model.finalize()
