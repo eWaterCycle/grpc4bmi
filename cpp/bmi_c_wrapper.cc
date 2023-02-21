@@ -211,7 +211,7 @@ int BmiCWrapper::GetGridSize(int id)
 int BmiCWrapper::GetGridRank(int id)
 {
     int dest;
-    checkStatus(this->model->get_grid_size(this->model, id, &dest));
+    checkStatus(this->model->get_grid_rank(this->model, id, &dest));
     return dest;
 }
 
