@@ -9,6 +9,7 @@ from google.protobuf import any_pb2
 from google.rpc import error_details_pb2, status_pb2, code_pb2
 from grpc_status import rpc_status
 from heat import BmiHeat
+from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
@@ -108,7 +109,7 @@ def test_initialize():
 def test_initialize_with_nonstring():
     client, local = make_bmi_classes(False)
     assert client is not None
-    with pytest.raises(TypeError, match='got int instead'):
+    with pytest.raises(TypeCheckError, match='did not match any element in the union'):
         client.initialize(42)
     client.finalize()
     del client
