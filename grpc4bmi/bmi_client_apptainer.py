@@ -8,7 +8,7 @@ from typing import Iterable
 
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
-from typeguard import typechecked
+from typeguard import qualified_name, typechecked
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException
@@ -198,6 +198,10 @@ class BmiClientApptainer(BmiClient):
     def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None,
                  capture_logs=True,
                  ):
+        if type(input_dirs) == str:
+            msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
+                  f'got {qualified_name(input_dirs)} instead'
+            raise TypeError(msg)
         check_apptainer_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)

@@ -5,7 +5,7 @@ from typing import Iterable
 
 import docker
 from docker.models.containers import Container
-from typeguard import typechecked
+from typeguard import qualified_name, typechecked
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.exceptions import DeadContainerException
@@ -63,6 +63,10 @@ class BmiClientDocker(BmiClient):
                  input_dirs: Iterable[str] = tuple(),
                  user=os.getuid(), remove=False, delay=5,
                  timeout=None):
+        if type(input_dirs) == str:
+            msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
+                  f'got {qualified_name(input_dirs)} instead'
+            raise TypeError(msg)
         port = BmiClient.get_unique_port()
         client = docker.from_env()
         volumes = {}
