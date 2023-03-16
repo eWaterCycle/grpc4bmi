@@ -1,7 +1,8 @@
 import os
-from typing import Type, Union
+from typing import Type
 
 import pytest
+from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_client_apptainer import SUPPORTED_APPTAINER_VERSIONS, BmiClientApptainer, check_apptainer_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException
@@ -64,17 +65,17 @@ class TestBmiClientApptainerBadDays:
             BmiClientApptainer(image=IMAGE_NAME, input_dirs=(some_dir,), work_dir=some_dir)
 
     def test_workdir_as_number(self):
-        with pytest.raises(TypeError, match='must be str'):
+        with pytest.raises(TypeCheckError, match='is not an instance of str'):
             BmiClientApptainer(image=IMAGE_NAME, work_dir=42)
 
     def test_inputdirs_as_str(self, tmp_path):
         some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
+        with pytest.raises(TypeError, match=' must be collections.abc.Iterable'):
             BmiClientApptainer(image=IMAGE_NAME, input_dirs='old type', work_dir=some_dir)
 
     def test_inputdirs_as_number(self, tmp_path):
         some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
+        with pytest.raises(TypeCheckError, match='is not an instance of collections.abc.Iterable'):
             BmiClientApptainer(image=IMAGE_NAME, input_dirs=42, work_dir=some_dir)
 
 

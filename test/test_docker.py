@@ -3,6 +3,7 @@ from io import BytesIO
 import docker
 import numpy as np
 import pytest
+from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_client_docker import BmiClientDocker
 from grpc4bmi.exceptions import DeadContainerException
@@ -102,17 +103,17 @@ class TestBmiClientDocker:
             BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dirs=(some_dir,), work_dir=some_dir)
 
     def test_workdir_as_number(self):
-        with pytest.raises(TypeError, match='must be str'):
+        with pytest.raises(TypeCheckError, match='is not an instance of str'):
             BmiClientDocker(image=walrus_docker_image, work_dir=42)
 
     def test_inputdirs_as_str(self, tmp_path):
         some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
+        with pytest.raises(TypeError, match='must be collections.abc.Iterable'):
             BmiClientDocker(image=walrus_docker_image, input_dirs='old type', work_dir=some_dir)
 
     def test_inputdirs_as_number(self, tmp_path):
         some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
+        with pytest.raises(TypeCheckError, match='is not an instance of collections.abc.Iterable'):
             BmiClientDocker(image=walrus_docker_image, input_dirs=42, work_dir=some_dir)
 
     def test_logs(self, walrus_model, capfd):
