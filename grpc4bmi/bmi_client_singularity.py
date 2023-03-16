@@ -8,7 +8,7 @@ from typing import Iterable
 
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
-from typeguard import check_argument_types, qualified_name
+from typeguard import typechecked
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
@@ -197,14 +197,10 @@ class BmiClientSingularity(BmiClient):
 
     """
 
+    @typechecked
     def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None,
                  capture_logs=True,
                  ):
-        assert check_argument_types()
-        if type(input_dirs) == str:
-            msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
-                  f'got {qualified_name(input_dirs)} instead'
-            raise TypeError(msg)
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)
