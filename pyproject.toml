@@ -28,7 +28,7 @@ dependencies = [
     "grpcio-reflection",
     "grpcio-status",
     "googleapis-common-protos>=1.5.5",
-    "protobuf",
+    "protobuf>=4,<5",
     "numpy",
     "docker",
     "bmipy",
