@@ -8,7 +8,7 @@ from typing import Iterable
 
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
-from typeguard import qualified_name, typechecked
+from typeguard import typechecked
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
@@ -203,7 +203,7 @@ class BmiClientSingularity(BmiClient):
                  ):
         if type(input_dirs) == str:
             msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
-                  f'got {qualified_name(input_dirs)} instead'
+                  f'got {type(input_dirs)} instead'
             raise TypeError(msg)
         check_singularity_version()
         host = 'localhost'
