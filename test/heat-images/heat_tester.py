@@ -24,7 +24,8 @@ def test_heat(tmp_path: Path):
 
     image, config_body = (
         # Comment out line you want to run
-    'heat:py-0.2',py_config
+    'heat:py-0.2',py_config,
+    # 'heat:py-bmi02', py_config,
     # 'heat:py-0.2-legacy',py_config
     # 'heat:py-2.0',py_config
     # 'heat:py-2.0-pb4',py_config

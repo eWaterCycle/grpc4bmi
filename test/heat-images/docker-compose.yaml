@@ -11,7 +11,7 @@ services:
       context: ../..
       dockerfile: test/heat-images/cxx-bmi20/Dockerfile
   python-bmi02:
-    image: heat:python-bmi02
+    image: heat:py-bmi02
     build: 
       context: ../..
       dockerfile: test/heat-images/python-bmi02/Dockerfile
