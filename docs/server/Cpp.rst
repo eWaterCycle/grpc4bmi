@@ -43,7 +43,7 @@ You will also need to compile grpc4bmi
 Creating
 --------
 
-The grpc4bmi requires a model implement the BMI interface in 
+The grpc4bmi package requires a model implementing the BMI interface in 
 `C with bmi.h <https://github.com/csdms/bmi-c/blob/v2.1/bmi.h>`_ 
 or `C++ with bmi.hxx <https://github.com/csdms/bmi-cxx/blob/v2.0/bmi.hxx>`_. 
 The header files will

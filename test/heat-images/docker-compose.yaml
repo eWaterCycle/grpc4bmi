@@ -19,7 +19,7 @@ services:
     image: heat:py-0.2-legacy
     build: 
       context: ../..
-      dockerfile: test/heat-images/python-bmi02/Dockerfile
+      dockerfile: test/heat-images/python-bmi02-legacy/Dockerfile
   python-bmi20:
     image: heat:py-2.0
     build: 
