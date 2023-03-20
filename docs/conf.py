@@ -59,7 +59,7 @@ author = u'Gijs van den Oord, Stefan Verhoeven'
 # built documents.
 #
 # The short X.Y version.
-version = u'0.3.2'
+version = u'0.4.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 
