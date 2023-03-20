@@ -7,7 +7,7 @@
 
 #ifndef BMI_INCLUDED
 #define BMI_INCLUDED
-#include "bmi-cxx/bmi.hxx"
+#include "bmi.hxx"
 #endif
 
 class BmiCppExtension: public bmi::Bmi 

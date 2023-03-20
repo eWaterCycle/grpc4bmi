@@ -1,6 +1,0 @@
-[submodule "cpp/bmi-cxx"]
-	path = cpp/bmi-cxx
-	url = https://github.com/csdms/bmi-cxx.git
-[submodule "cpp/bmi-c"]
-	path = cpp/bmi-c
-	url = https://github.com/csdms/bmi-c.git

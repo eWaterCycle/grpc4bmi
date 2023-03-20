@@ -144,7 +144,7 @@ def build_parser():
         lang_choices.append('R')
     parser.add_argument("--language", default="python", choices=lang_choices,
                         help="Language in which BMI implementation class is written")
-    parser.add_argument("--bmi-version", default="1.0.0", choices=["1.0.0", "0.2"],
+    parser.add_argument("--bmi-version", default="2.0.0", choices=["2.0.0", "0.2"],
                         help="Version of BMI interface implemented by model")
     parser.add_argument("--debug", action="store_true",
                         help="Run server in debug mode. "

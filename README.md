@@ -8,7 +8,7 @@
 
 ## Purpose
 
-This software allows you to wrap your Basic Model Interface (BMI) implementation ([https://github.com/csdms/bmi](https://github.com/csdms/bmi)) in a server process and communicate with it via the included Python client. The communication is serialized to protocol buffers by gRPC ([https://grpc.io/](https://grpc.io/)) and occurs over network ports.
+This software allows you to wrap your [Basic Model Interface (BMI)](https://github.com/csdms/bmi) implementation in a server process and communicate with it via the included Python client. The communication is serialized to protocol buffers by [GRPC](https://grpc.io/) and occurs over network ports. Can run models in isolated containers using Docker or Apptainer.
 
 ## Installation
 
@@ -43,13 +43,17 @@ in the cpp folder.
 
 ### Model written in Python
 
-For inspiration look at the example in the test directory. To start a server process that allows calls to your BMI implementation, type
+A model should be a subclass of the `Bmi` class from the [bmipy](https://pypi.org/project/bmipy/2.0/) package.
+
+For inspiration look at the [example](test/fake_models.py) in the test directory. 
+
+To start a server process that allows calls to your BMI implementation, type
 
 ```bash
 run-bmi-server --name <PACKAGE>.<MODULE>.<CLASS> --port <PORT> --path <PATH>
 ```
 
-where ```<PACKAGE>, <MODULE>``` are the Python package and module containing your implementation, ```<CLASS>``` is your
+where ```<PACKAGE>, <MODULE>``` are the python package and module containing your implementation, ```<CLASS>``` is your
 bmi model class name, ```<PORT>``` is any available port on the host system, and optionally ```<PATH>``` denotes an
 additional path that should be added to the system path to make your implementation work. The name option above is
 optional, and if not provided the script will look at the environment variables ```BMI_PACKAGE```, ```BMI_MODULE``` and
@@ -99,9 +103,8 @@ mymodel.initialize(<FILEPATH>)
 ...further BMI calls...
 ```
 
-The package contains also client implementation that own the server process, either as a Python subprocess or a docker
-image or a singularity image running the ```run-bmi-server``` script. For instance
-
+The package contains also client implementation that own the server process, either as a Python subprocess or a Docker
+container or a Singularity container or a Apptainer container running the ```run-bmi-server``` script. For instance
 ```python
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
@@ -110,18 +113,25 @@ mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
 will automatically launch the server in a sub-process and
 
 ```python
-from grpc4bmi.bmi_client_subproc import BmiClientDocker
-mymodel = BmiClientDocker(<IMAGE>,<PORT>)
+from grpc4bmi.bmi_client_docker import BmiClientDocker
+mymodel = BmiClientDocker(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
-
-will launch a docker container, assuming that a gRPC BMI server will start and exposes the port ```<PORT>```.
+will launch a Docker container based on supplied Docker image
+and will mount supplied directories to share files between the container and host.
 
 ```python
 from grpc4bmi.bmi_client_singularity import BmiClientSingularity
-mymodel = BmiClientSingularity(<IMAGE>,<PORT>)
+mymodel = BmiClientSingularity(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
 ```
+will launch a singularity container on based supplied Singularity image
+and will mount supplied directories to share files between the container and host.
 
-will launch a singularity container, assuming that a gRPC BMI server will start and exposes the port ```<PORT>```.
+```python
+from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+mymodel = BmiClientApptainer(<IMAGE>, <WORK DIR TO MOUNT>, input_dirs=[<INPUT DIRECTORIES TO MOUNT>])
+```
+will launch a Apptainer container on based supplied Apptainer image
+and will mount supplied directories to share files between the container and host.
 
 For more documentation see [https://grpc4bmi.readthedocs.io/](https://grpc4bmi.readthedocs.io/).
 
@@ -130,10 +140,16 @@ For more documentation see [https://grpc4bmi.readthedocs.io/](https://grpc4bmi.r
 When developers change the proto-file, it is necessary to install gRPC tools Python packages in your Python environment:
 
 ```bash
-pip install -r requirements.txt
-pip install -e .
+# Create virtual env
+python3 -m venv .venv
+. venv/bin/activate
+# Make sure latest pip and wheel are install
+pip install -U pip wheel
+pip install -e .[dev]
 # For R integration also install the R extras with
 pip install -e .[R]
+# For building docs (cd docs && make html) also install the docs extras with
+pip install -e .[docs]
 ```
 
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.

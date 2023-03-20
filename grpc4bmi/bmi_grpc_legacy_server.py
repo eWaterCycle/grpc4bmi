@@ -191,9 +191,6 @@ class BmiLegacyServer02(bmi_pb2_grpc.BmiServiceServicer):
         except Exception as e:
             self.exception_handler(e, context)
 
-    def setValuePtr(self, request, context):
-        raise NotImplementedError("Array references cannot be transmitted through this GRPC channel")
-
     def setValueAtIndices(self, request, context):
         try:
             index_array = numpy.array(request.indices)

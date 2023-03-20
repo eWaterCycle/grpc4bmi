@@ -3,17 +3,19 @@ import math
 import os
 import socket
 from contextlib import closing
+from typing import Optional
 
 import numpy as np
 from bmipy import Bmi
 import grpc
 import numpy
+from typeguard import typechecked
 
 from grpc_status import rpc_status
 from google.rpc import error_details_pb2
 
 from . import bmi_pb2, bmi_pb2_grpc
-from .utils import GRPC_MAX_MESSAGE_LENGTH
+from .constants import GRPC_MAX_MESSAGE_LENGTH
 
 log = logging.getLogger(__name__)
 
@@ -92,7 +94,8 @@ class BmiClient(Bmi):
             s.bind(("" if host is None else host, 0))
             return int(s.getsockname()[1])
 
-    def initialize(self, filename):
+    @typechecked
+    def initialize(self, filename: Optional[str]):
         fname = "" if filename is None else filename
         try:
             return self.stub.initialize(bmi_pb2.InitializeRequest(config_file=fname))
@@ -192,7 +195,17 @@ class BmiClient(Bmi):
 
     def get_var_itemsize(self, name):
         try:
-            return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=name)).size
+            item_size = self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=name)).size
+            if item_size == 0:
+                # BMI < v2.0 did not have get_var_itemsize, so old server will return 0
+                # fallback to getting item size from var type
+                var_type = self.get_var_type(name)
+                try:
+                    item_size = numpy.dtype(var_type).itemsize
+                    log.info(f'get_var_itemsize returned 0, corrected to {item_size} using get_var_type.')
+                except TypeError:
+                    raise ValueError('get_var_itemsize returned 0, which is impossible')
+            return item_size
         except grpc.RpcError as e:
             handle_error(e)
 

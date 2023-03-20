@@ -1,17 +1,25 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.6)
 
-project (grpc4bmi)
+project (grpc4bmi C CXX)
 set (GRPC4BMI_VERSION 0.2)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/grpc4bmi.pc.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/grpc4bmi.pc)
 
-add_compile_options(-std=c++11)
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+  set (CMAKE_CXX_STANDARD 14)
+endif()
 
+find_package(Threads REQUIRED)
 find_package(Protobuf REQUIRED)
+message(STATUS "Using protobuf ${Protobuf_VERSION}")
 find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin REQUIRED)
-find_library(GRPCPP_UNSECURE grpc++_unsecure)
-find_library(GRPCLIB grpc)
+find_library(GRPCREFLECTION grpc++_reflection)
+find_library(GRPCLIB grpc CONFIG REQUIRED)
+message(STATUS "Using gRPC ${GRPCLIB_VERSION}")
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(BMI REQUIRED IMPORTED_TARGET bmic bmicxx)
+message(STATUS "Using BMI ${BMI_VERSION}")
 
 set(PROTO_PATH "${CMAKE_SOURCE_DIR}/../proto/grpc4bmi")
 add_custom_command(
@@ -31,11 +39,20 @@ add_custom_command(
     )
 set(GRPC_SRC_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.cc ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.cc)
 set(GRPC_HDR_FILES ${CMAKE_CURRENT_BINARY_DIR}/bmi.pb.h ${CMAKE_CURRENT_BINARY_DIR}/bmi.grpc.pb.h)
-link_libraries(${PROTOBUF_LIBRARY} ${GRPCPP_UNSECURE} ${GRPC} ${BMIC})
+
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library (grpc4bmi SHARED bmi-c/bmi.h bmi-cxx/bmi.hxx bmi_cpp_extension.h bmi_cpp_extension.cc
+include_directories(${BMI_INCLUDE_DIRS})
+
+add_library (grpc4bmi SHARED bmi_cpp_extension.h bmi_cpp_extension.cc
     bmi_c_wrapper.h bmi_c_wrapper.cc bmi_grpc_server.cc bmi_grpc_server.h ${GRPC_SRC_FILES} ${GRPC_HDR_FILES})
+
+target_link_libraries(
+    grpc4bmi
+    ${GRPCREFLECTION}
+    ${GRPC}
+    ${PROTOBUF_LIBRARY}
+)
 set_target_properties(grpc4bmi PROPERTIES PUBLIC_HEADER "bmi_cpp_extension.h;bmi_c_wrapper.h;bmi_grpc_server.h;${GRPC_HDR_FILES}")
 add_subdirectory (test)
 

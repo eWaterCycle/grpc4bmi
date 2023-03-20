@@ -1,7 +1,7 @@
 import pytest
 
 
-def write_config(p, data_fn='/data/input/PEQ_Hupsel.dat'):
+def write_config(p, data_fn):
     p.write_text(f"""data: {data_fn}
 parameters:
   cW: 200
@@ -57,22 +57,24 @@ def write_datafile(p):
 @pytest.fixture
 def walrus_input(tmp_path):
     cfg = tmp_path / 'config.yml'
-    write_config(cfg)
-    write_datafile(tmp_path / 'PEQ_Hupsel.dat')
+    df = tmp_path / 'PEQ_Hupsel.dat'
+    write_config(cfg, df)
+    write_datafile(df)
     return cfg
 
 
 @pytest.fixture()
-def walrus_input_on_extra_volume(tmp_path):
-    # Have config in input dir and forcings data file on extra volume
+def walrus_2input_dirs(tmp_path):
+    # Have config in input dir and forcings data file in forcings dir
+    forcings_dir = tmp_path / 'forcings'
+    forcings_dir.mkdir()
+    df = forcings_dir / 'PEQ_Hupsel.dat'
+    write_datafile(df)
     input_dir = tmp_path / 'input'
     input_dir.mkdir()
     cfg = input_dir / 'config.yml'
-    write_config(cfg, '/forcings/PEQ_Hupsel.dat')
-    extra_dir = tmp_path / 'forcings'
-    extra_dir.mkdir()
-    write_datafile(extra_dir / 'PEQ_Hupsel.dat')
-    extra_volumes = {extra_dir: {'bind': '/forcings', 'mode': 'ro'}}
-    return input_dir, extra_volumes
-
-
+    write_config(cfg, df)
+    return {
+        'input_dirs': (input_dir, forcings_dir),
+        'cfg': str(cfg)
+    }

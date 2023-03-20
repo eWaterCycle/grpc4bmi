@@ -8,14 +8,15 @@ import pytest
 from google.protobuf import any_pb2
 from google.rpc import error_details_pb2, status_pb2, code_pb2
 from grpc_status import rpc_status
+from heat import BmiHeat
+from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
 from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_padding
 from test.fake_models import SomeException, FailingModel, Rect3DGridModel, UnstructuredGridBmiModel, UniRectGridModel, \
     Rect2DGridModel, Structured3DQuadrilateralsGridModel, Structured2DQuadrilateralsGridModel, Float32Model, Int32Model, \
-    BooleanModel
-from test.flatbmiheat import FlatBmiHeat
+    BooleanModel, WithItemSizeZeroAndUnknownVarType, WithItemSizeZeroAndVarTypeFloat32Model
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -52,8 +53,8 @@ class ServerWrapper(object):
 
 
 def make_bmi_classes(init=False):
-    client = BmiClient(stub=ServerWrapper(BmiServer(FlatBmiHeat())))
-    local = FlatBmiHeat()
+    client = BmiClient(stub=ServerWrapper(BmiServer(BmiHeat())))
+    local = BmiHeat()
     if init:
         numpy.random.seed(0)
         client.initialize(None)
@@ -101,6 +102,15 @@ def test_output_var_names():
 def test_initialize():
     client, local = make_bmi_classes(True)
     assert client is not None
+    client.finalize()
+    del client
+
+
+def test_initialize_with_nonstring():
+    client, local = make_bmi_classes(False)
+    assert client is not None
+    with pytest.raises(TypeCheckError, match='did not match any element in the union'):
+        client.initialize(42)
     client.finalize()
     del client
 
@@ -554,7 +564,7 @@ class TestUnstructuredGridBmiModel:
         assert result == 3
 
     def test_get_grid_edge_nodes(self, bmiclient):
-        placeholder = numpy.empty(16, dtype=numpy.int)
+        placeholder = numpy.empty(16, dtype=int)
 
         result = bmiclient.get_grid_edge_nodes(0, placeholder)
 
@@ -562,7 +572,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_nodes(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=int)
 
         result = bmiclient.get_grid_face_nodes(0, placeholder)
 
@@ -570,7 +580,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_edges(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int)
+        placeholder = numpy.empty(11, dtype=int)
 
         result = bmiclient.get_grid_face_edges(0, placeholder)
 
@@ -578,7 +588,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_nodes_per_face(self, bmiclient):
-        placeholder = numpy.empty(3, dtype=numpy.int)
+        placeholder = numpy.empty(3, dtype=int)
 
         result = bmiclient.get_grid_nodes_per_face(0, placeholder)
 
@@ -701,16 +711,16 @@ class TestBooleanModel:
 
     def test_get_value_at_indices(self, bmiclient):
         with pytest.raises(MyRpcError):
-            bmiclient.get_value_at_indices(self.name, numpy.empty(1, dtype=numpy.bool), numpy.array([1]))
+            bmiclient.get_value_at_indices(self.name, numpy.empty(1, dtype=numpy.bool_), numpy.array([1]))
 
     def test_set_value(self, bmiclient):
-        value = numpy.array((False, False, False), dtype=numpy.bool)
+        value = numpy.array((False, False, False), dtype=numpy.bool_)
 
         with pytest.raises(NotImplementedError):
             bmiclient.set_value(self.name, value)
 
     def test_set_value_at_indices(self, bmiclient):
-        value = numpy.array([False], dtype=numpy.bool)
+        value = numpy.array([False], dtype=numpy.bool_)
 
         with pytest.raises(NotImplementedError):
             bmiclient.set_value_at_indices(self.name, numpy.array([1]), value)
@@ -822,3 +832,43 @@ class TestCreateGrpcChannel:
         with BmiClient.create_grpc_channel(port) as channel1, BmiClient.create_grpc_channel(port) as channel2:
             assert channel1._channel.target() == b'localhost:51235'
             assert channel2._channel.target() == b'localhost:51235'
+
+class TestModelWithItemSizeZeroAndVarTypeFloat32:
+    name = 'plate_surface__temperature'
+
+    @pytest.fixture
+    def bmimodel(self):
+        model = WithItemSizeZeroAndVarTypeFloat32Model()
+        yield model
+        del model
+
+    @pytest.fixture
+    def bmiclient(self, bmimodel):
+        client = BmiClient(stub=ServerWrapper(BmiServer(bmimodel)))
+        yield client
+        del client
+
+    def test_get_var_itemsize(self, bmiclient):
+        result = bmiclient.get_var_itemsize(self.name)
+
+        expected = 4
+        assert result == expected
+
+class TestModelWithItemSizeZeroAndUnknownVarType:
+    name = 'plate_surface__temperature'
+
+    @pytest.fixture
+    def bmimodel(self):
+        model = WithItemSizeZeroAndUnknownVarType()
+        yield model
+        del model
+
+    @pytest.fixture
+    def bmiclient(self, bmimodel):
+        client = BmiClient(stub=ServerWrapper(BmiServer(bmimodel)))
+        yield client
+        del client
+
+    def test_get_var_itemsize(self, bmiclient):
+        with pytest.raises(ValueError, match='get_var_itemsize returned 0, which is impossible'):
+            bmiclient.get_var_itemsize(self.name)

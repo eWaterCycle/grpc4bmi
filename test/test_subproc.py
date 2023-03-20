@@ -7,7 +7,7 @@ import os
 
 from grpc4bmi.reserve import reserve_values_at_indices, reserve_values, reserve_grid_shape, reserve_grid_padding
 from test.fake_models import HugeModel
-from test.flatbmiheat import FlatBmiHeat
+from test.legacybmiheat import BmiHeat
 
 from grpc4bmi.bmi_client_subproc import BmiClientSubProcess
 
@@ -22,8 +22,8 @@ logging.basicConfig(level=logging.DEBUG)
 def make_bmi_classes(init=False):
     numpy.random.seed(0)
     os.environ["PYTHONPATH"] = os.path.dirname(os.path.abspath(__file__))
-    client = BmiClientSubProcess("flatbmiheat.FlatBmiHeat")
-    local = FlatBmiHeat()
+    client = BmiClientSubProcess("heat.BmiHeat")
+    local = BmiHeat()
     if init:
         client.initialize(None)
         local.initialize(None)
@@ -138,6 +138,18 @@ def test_get_var_values():
     local.set_value(varname, server_values)
     client.update()
     local.update()
+    result = client.get_value(varname, reserve_values(client, varname))
+    expected = local.get_value(varname, reserve_values(local, varname))
+    assert numpy.array_equal(result, expected)
+    del client
+
+
+def test_get_value_huge():
+    os.environ["PYTHONPATH"] = os.path.dirname(os.path.abspath(__file__))
+    client = BmiClientSubProcess("fake_models.HugeModel")
+    local = HugeModel()
+    varname = local.get_output_var_names()[0]
+
     result = client.get_value(varname, reserve_values(client, varname))
     expected = local.get_value(varname, reserve_values(local, varname))
     assert numpy.array_equal(result, expected)

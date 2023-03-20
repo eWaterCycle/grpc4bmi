@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grpc4bmi"
+version = "0.4.0"
+description = "Run your BMI implementation in a separate process and expose it as BMI-python with GRPC"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "Apache License 2.0" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Utilities",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: Apache Software License"
+]
+dependencies = [
+    "grpcio",
+    "grpcio-reflection",
+    "grpcio-status",
+    "googleapis-common-protos>=1.5.5",
+    "protobuf>=4,<5",
+    "numpy",
+    "docker",
+    "bmipy",
+    "packaging",
+    "typeguard",
+]
+
+[project.optional-dependencies]
+R = ["rpy2"]
+dev = [
+    "build",
+    "pytest",
+    "pytest-cov",
+    "coverage[toml]",
+    "grpcio-tools", # Used to generate Python bindings from proto file
+    "bmi-heat@https://github.com/csdms/bmi-example-python/archive/refs/heads/master.zip",
+    "nbconvert",
+    "ipykernel",
+    "nbformat",
+]
+docs = [
+    "sphinx",
+    "sphinxcontrib-apidoc",
+    "sphinxcontrib-napoleon",
+    "sphinx-argparse",
+    "sphinx_rtd_theme",
+    "numpydoc",
+    "sphinx-copybutton",
+]
+
+[project.scripts]
+run-bmi-server = "grpc4bmi.run_server:main"
+
+[project.urls]
+"Homepage" = "https://github.com/eWaterCycle/grpc4bmi"
+"Bug Tracker" = "https://github.com/eWaterCycle/grpc4bmi/issues"
+"Documentation" = "https://grpc4bmi.readthedocs.io/"
+"Source code" = "https://github.com/eWaterCycle/grpc4bmi"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["grpc4bmi"]
+namespaces = false
+
+[tool.setuptools.package-data]
+grpc4bmi = ["py.typed"]
+
+[tool.coverage.run]
+branch = true
+
+[tool.pytest.ini_options]
+testpaths = [
+    "test",
+]

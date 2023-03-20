@@ -49,7 +49,7 @@ and inside the ``mymodule.py`` the bmi implementation
 
 .. code-block:: python
 
-    from bmi import Bmi
+    from bmipy import Bmi
 
     class MyBmi(Bmi):
         def __init__(self):
@@ -64,3 +64,32 @@ Then we launch this toy model as a service by executing
     $ run-bmi-server --name mypackage.mymodule.MyBmi
 
 This will report the chosen port number in the standard output stream. It can be used to connect to the service via the BMI :ref:`grpc python client <python-grpc4bmi-client>`.
+
+Legacy version
+--------------
+
+The grpc4bmi by default uses the `v2.0 version of the Basic Model Interface (BMI) <https://pypi.org/project/bmipy/2.0/>`_ on the client and server side.
+Grpc4bmi has support for `legacy version 0.2 of BMI <https://pypi.org/project/basic-modeling-interface/0.2/>`_ on the server side.
+
+A legacy model can be launched with
+
+.. code-block:: sh
+
+    $ run-bmi-server --bmi-version 0.2 --name mypackage.mymodule.MyLegacyBmi
+
+The functions only present in BMI v0.2 will not be callable:
+
+- update_frac
+- get_grid_connectivity
+- get_grid_offset
+
+The functions only present in BMI v2.0 will throw not implemented errors:
+
+- get_var_location
+- get_grid_node_count
+- get_grid_edge_count
+- get_grid_face_count
+- get_grid_edge_nodes
+- get_grid_face_nodes
+- get_grid_face_edges
+- get_grid_nodes_per_face

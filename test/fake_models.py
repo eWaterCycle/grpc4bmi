@@ -4,7 +4,7 @@ import numpy
 import numpy as np
 from bmipy import Bmi
 
-from grpc4bmi.utils import GRPC_MAX_MESSAGE_LENGTH
+from grpc4bmi.constants import GRPC_MAX_MESSAGE_LENGTH
 
 
 class SomeException(Exception):
@@ -142,6 +142,9 @@ class FailingModel(Bmi):
 class GridModel(FailingModel):
     def __init__(self):
         super(GridModel, self).__init__(SomeException('not used'))
+
+    def initialize(self, filename):
+        pass
 
     def get_output_var_names(self) -> Tuple[str]:
         return 'plate_surface__temperature',
@@ -395,7 +398,7 @@ class BooleanModel(DTypeModel):
 
 
 class HugeModel(DTypeModel):
-    """Model which has value which does not fit in message body
+    """Model which has value which does not fit in single message body
 
     Can be run from command line with
 
@@ -409,3 +412,11 @@ class HugeModel(DTypeModel):
         # Create value which is bigger than 4Mb
         dimension = (3 * GRPC_MAX_MESSAGE_LENGTH) // self.dtype.itemsize + 1000
         self.value = numpy.ones((dimension,), dtype=self.dtype)
+
+class WithItemSizeZeroAndVarTypeFloat32Model(Float32Model):
+    def get_var_itemsize(self, name):
+        return 0
+
+class WithItemSizeZeroAndUnknownVarType(WithItemSizeZeroAndVarTypeFloat32Model):
+    def get_var_type(self, name):
+        return 'real'
