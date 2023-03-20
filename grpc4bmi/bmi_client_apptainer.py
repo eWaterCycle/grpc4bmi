@@ -50,7 +50,8 @@ class BmiClientApptainer(BmiClient):
 
             .. code-block:: console
 
-              apptainer pull ewatercycle-walrus-grpc4bmi_v0.2.0.sif docker://ewatercycle/walrus-grpc4bmi:v0.2.0
+              apptainer pull ewatercycle-walrus-grpc4bmi_v0.2.0.sif \\
+                docker://ewatercycle/walrus-grpc4bmi:v0.2.0
 
         input_dirs (Iterable[str]): Directories for input files of model.
 

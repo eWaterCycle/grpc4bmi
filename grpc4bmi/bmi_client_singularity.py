@@ -53,7 +53,8 @@ class BmiClientSingularity(BmiClient):
 
             .. code-block:: console
 
-              singularity pull ewatercycle-walrus-grpc4bmi_v0.3.1.sif docker://ewatercycle/walrus-grpc4bmi:v0.3.1
+              singularity pull ewatercycle-walrus-grpc4bmi_v0.3.1.sif \\
+                docker://ewatercycle/walrus-grpc4bmi:v0.3.1
 
         input_dirs (Iterable[str]): Directories for input files of model.
 
