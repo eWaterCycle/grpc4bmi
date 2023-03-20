@@ -21,9 +21,11 @@ class OptionalDestBmi(Bmi):
             orig_model.initialize()
             dest = np.empty((200,), dtype=np.float64)
             dest2 = orig_model.get_value('plate_surface__temperature', dest)
+            
 
     A `dest` variable must created and passed to the `get_value` method.
     It must be set to a Numpy array with the shape and type the model requires.
+    The returned numpy array (`dest2`) is the same as the `dest` numpy array.
     By using this class we no longer need do create and pass it.
 
     .. code-block:: python
