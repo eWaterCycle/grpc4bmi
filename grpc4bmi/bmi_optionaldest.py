@@ -38,6 +38,9 @@ class OptionalDestBmi(Bmi):
     This class will create dest variables by calling other Bmi methods for its shape.
     When using a slow model it is strongly suggested to wrap the BmiClient with :class:`grpc4bmi.bmi_memoized.MemoizedBmi` first to prevent a lot of calls.
 
+    The `dest` in :external+bmipy:ref:`bmipy.Bmi.get_value_at_indices(self, name, dest, inds) <get_value_at_indices>` method
+    can not be made optional so it has been changed to
+    :func:`OptionalDestBmi.get_value_at_indices(self, name, inds) <grpc4bmi.bmi_optionaldest.OptionalDestBmi.get_value_at_indices>`.
     """
     def __init__(self, origin: Bmi):
         self.origin = origin
@@ -125,8 +128,6 @@ class OptionalDestBmi(Bmi):
         array_like
             Value of the model variable at the given location.
         """
-        # As dest is not last argument, it was not possible to make it optional
-        # So dropped dest argument instead.
         dest = reserve_values_at_indices(self.origin, name, inds)
         return self.origin.get_value_at_indices(name, dest, inds)
 

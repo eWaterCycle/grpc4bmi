@@ -177,4 +177,5 @@ texinfo_documents = [
 intersphinx_mapping = {
     'https://docs.python.org/': None,
     'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    "bmipy": ("https://bmi.readthedocs.io/en/latest/", None),
 }
