@@ -16,7 +16,7 @@ SUPPORTED_APPTAINER_VERSIONS = '>=1.0.0-rc.2'  # First apptainer release with bi
 
 def check_apptainer_version_string(version_output: str) -> bool:
     version = version_output.split(' ').pop()
-    local_version = Version(version)
+    local_version = Version(version.replace('.el', ''))
     if local_version not in SpecifierSet(SUPPORTED_APPTAINER_VERSIONS):
         raise ApptainerVersionException(f'Unsupported version ({version_output}) of apptainer found, '
                                         f'supported versions {SUPPORTED_APPTAINER_VERSIONS}')

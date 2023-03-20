@@ -17,7 +17,7 @@ SUPPORTED_APPTAINER_VERSIONS = '>=1.0.0-rc.2'  # First apptainer release with bi
 
 def check_singularity_version_string(version_output: str) -> bool:
     (app, _, version) = version_output.split(' ')
-    local_version = Version(version)
+    local_version = Version(version.replace('.el', ''))
     if app == 'singularity' and local_version not in SpecifierSet(SUPPORTED_SINGULARITY_VERSIONS):
         raise SingularityVersionException(f'Unsupported version ({version_output}) of singularity found, '
                                           f'supported versions {SUPPORTED_SINGULARITY_VERSIONS}')
