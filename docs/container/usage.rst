@@ -102,3 +102,12 @@ To get a directory on your host computer inside a container you have mount them 
 :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity`.
 
 See :py:class:`grpc4bmi.bmi_client_singularity.BmiClientSingularity` for examples using `input_dirs` and `work_dir`.
+
+Support for legacy container images
+-----------------------------------
+
+A legacy container image is an image with grpc4bmi version < 0.3 inside,
+which uses BMI v0.2.
+The grpc4bmi version >= 0.3 uses BMI v2.0.
+These legacy container images can be called with grpc4bmi>=0.3,
+but some methods will not work, see :ref:`Legacy version` for list.
