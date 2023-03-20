@@ -23,6 +23,8 @@ FROM python:3.10-buster
 
 RUN pip install https://github.com/csdms/bmi-example-python/archive/44c7d4c54f7fa4c17f51f86a645ba3e2633a4dfb.zip
 
-RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/refs/heads/bmi2.zip
+# Install grpc4bmi, use commit c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
+# head of bmi2 branch, PR https://github.com/eWaterCycle/grpc4bmi/pull/124
+RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66.zip
 
 ENTRYPOINT ["run-bmi-server", "--name", "heat.BmiHeat", "--port", "50051"]

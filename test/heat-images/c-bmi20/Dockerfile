@@ -49,9 +49,11 @@ RUN git clone -b ${HEAT_VERSION} https://github.com/csdms/bmi-example-c /opt/bmi
 WORKDIR /opt/bmi-example-c/build
 RUN cmake .. && make install && ldconfig
 
-# Install grpc4bmi, use branch
-ARG GRPC4BMI_VERSION=latest-protobuf
-RUN git clone --depth 1 -b ${GRPC4BMI_VERSION} https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi
+# Install grpc4bmi, use commit c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
+# head of bmi2 branch, PR https://github.com/eWaterCycle/grpc4bmi/pull/124
+ARG GRPC4BMI_VERSION=c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
+RUN git clone https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi \
+  && cd /opt/grpc4bmi && git checkout ${GRPC4BMI_VERSION}
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake .. && make install
 

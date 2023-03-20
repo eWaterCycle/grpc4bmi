@@ -23,6 +23,8 @@ FROM python:3.10-buster
 
 RUN pip install https://github.com/csdms/bmi-example-python/archive/44c7d4c54f7fa4c17f51f86a645ba3e2633a4dfb.zip
 
-RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/refs/heads/latest-protobuf.zip
+# Install grpc4bmi, use commit cf9928f6ba01309166ffd2e9f66b29996bdcb0e5
+# head of latest-protobuf branch, PR https://github.com/eWaterCycle/grpc4bmi/pull/126
+RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/cf9928f6ba01309166ffd2e9f66b29996bdcb0e5.zip
 
 ENTRYPOINT ["run-bmi-server", "--name", "heat.BmiHeat", "--port", "50051"]

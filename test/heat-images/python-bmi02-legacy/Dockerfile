@@ -17,6 +17,8 @@ RUN pip install numpy 'scipy==1.8.1' 'PyYAML<6'
 
 RUN pip install https://github.com/csdms/bmi-example-python/archive/refs/tags/v0.1.zip
 
-RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/refs/heads/bmi2.zip
+# Install grpc4bmi, use commit c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
+# head of bmi2 branch, PR https://github.com/eWaterCycle/grpc4bmi/pull/124
+RUN pip install https://github.com/eWaterCycle/grpc4bmi/archive/c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66.zip
 
 ENTRYPOINT ["run-bmi-server","--bmi-version", "0.2", "--name", "heat.BmiHeat", "--port", "50051"]
