@@ -564,7 +564,7 @@ class TestUnstructuredGridBmiModel:
         assert result == 3
 
     def test_get_grid_edge_nodes(self, bmiclient):
-        placeholder = numpy.empty(16, dtype=numpy.int_)
+        placeholder = numpy.empty(16, dtype=int)
 
         result = bmiclient.get_grid_edge_nodes(0, placeholder)
 
@@ -572,7 +572,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_nodes(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int_)
+        placeholder = numpy.empty(11, dtype=int)
 
         result = bmiclient.get_grid_face_nodes(0, placeholder)
 
@@ -580,7 +580,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_face_edges(self, bmiclient):
-        placeholder = numpy.empty(11, dtype=numpy.int_)
+        placeholder = numpy.empty(11, dtype=int)
 
         result = bmiclient.get_grid_face_edges(0, placeholder)
 
@@ -588,7 +588,7 @@ class TestUnstructuredGridBmiModel:
         numpy.testing.assert_allclose(result, expected)
 
     def test_grid_nodes_per_face(self, bmiclient):
-        placeholder = numpy.empty(3, dtype=numpy.int_)
+        placeholder = numpy.empty(3, dtype=int)
 
         result = bmiclient.get_grid_nodes_per_face(0, placeholder)
 
