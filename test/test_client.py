@@ -9,13 +9,14 @@ from google.protobuf import any_pb2
 from google.rpc import error_details_pb2, status_pb2, code_pb2
 from grpc_status import rpc_status
 from heat import BmiHeat
+from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_grpc_server import BmiServer
 from grpc4bmi.bmi_grpc_client import BmiClient, RemoteException, handle_error
 from grpc4bmi.reserve import reserve_values, reserve_grid_shape, reserve_grid_padding
 from test.fake_models import SomeException, FailingModel, Rect3DGridModel, UnstructuredGridBmiModel, UniRectGridModel, \
     Rect2DGridModel, Structured3DQuadrilateralsGridModel, Structured2DQuadrilateralsGridModel, Float32Model, Int32Model, \
-    BooleanModel
+    BooleanModel, WithItemSizeZeroAndUnknownVarType, WithItemSizeZeroAndVarTypeFloat32Model
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -108,7 +109,7 @@ def test_initialize():
 def test_initialize_with_nonstring():
     client, local = make_bmi_classes(False)
     assert client is not None
-    with pytest.raises(TypeError, match='got int instead'):
+    with pytest.raises(TypeCheckError, match='did not match any element in the union'):
         client.initialize(42)
     client.finalize()
     del client
@@ -831,3 +832,43 @@ class TestCreateGrpcChannel:
         with BmiClient.create_grpc_channel(port) as channel1, BmiClient.create_grpc_channel(port) as channel2:
             assert channel1._channel.target() == b'localhost:51235'
             assert channel2._channel.target() == b'localhost:51235'
+
+class TestModelWithItemSizeZeroAndVarTypeFloat32:
+    name = 'plate_surface__temperature'
+
+    @pytest.fixture
+    def bmimodel(self):
+        model = WithItemSizeZeroAndVarTypeFloat32Model()
+        yield model
+        del model
+
+    @pytest.fixture
+    def bmiclient(self, bmimodel):
+        client = BmiClient(stub=ServerWrapper(BmiServer(bmimodel)))
+        yield client
+        del client
+
+    def test_get_var_itemsize(self, bmiclient):
+        result = bmiclient.get_var_itemsize(self.name)
+
+        expected = 4
+        assert result == expected
+
+class TestModelWithItemSizeZeroAndUnknownVarType:
+    name = 'plate_surface__temperature'
+
+    @pytest.fixture
+    def bmimodel(self):
+        model = WithItemSizeZeroAndUnknownVarType()
+        yield model
+        del model
+
+    @pytest.fixture
+    def bmiclient(self, bmimodel):
+        client = BmiClient(stub=ServerWrapper(BmiServer(bmimodel)))
+        yield client
+        del client
+
+    def test_get_var_itemsize(self, bmiclient):
+        with pytest.raises(ValueError, match='get_var_itemsize returned 0, which is impossible'):
+            bmiclient.get_var_itemsize(self.name)

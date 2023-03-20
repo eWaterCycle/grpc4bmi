@@ -9,7 +9,7 @@ import numpy as np
 from bmipy import Bmi
 import grpc
 import numpy
-from typeguard import check_argument_types
+from typeguard import typechecked
 
 from grpc_status import rpc_status
 from google.rpc import error_details_pb2
@@ -94,8 +94,8 @@ class BmiClient(Bmi):
             s.bind(("" if host is None else host, 0))
             return int(s.getsockname()[1])
 
+    @typechecked
     def initialize(self, filename: Optional[str]):
-        assert check_argument_types()
         fname = "" if filename is None else filename
         try:
             return self.stub.initialize(bmi_pb2.InitializeRequest(config_file=fname))
@@ -195,7 +195,17 @@ class BmiClient(Bmi):
 
     def get_var_itemsize(self, name):
         try:
-            return self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=name)).size
+            item_size = self.stub.getVarItemSize(bmi_pb2.GetVarRequest(name=name)).size
+            if item_size == 0:
+                # BMI < v2.0 did not have get_var_itemsize, so old server will return 0
+                # fallback to getting item size from var type
+                var_type = self.get_var_type(name)
+                try:
+                    item_size = numpy.dtype(var_type).itemsize
+                    log.info(f'get_var_itemsize returned 0, corrected to {item_size} using get_var_type.')
+                except TypeError:
+                    raise ValueError('get_var_itemsize returned 0, which is impossible')
+            return item_size
         except grpc.RpcError as e:
             handle_error(e)
 

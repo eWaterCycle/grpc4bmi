@@ -1,0 +1,3 @@
+# Apptainer images
+*.sif
+/.venv

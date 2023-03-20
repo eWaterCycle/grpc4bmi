@@ -10,6 +10,7 @@ from grpc import RpcError
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_notebook, new_code_cell
 import numpy as np
+from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_client_singularity import SUPPORTED_APPTAINER_VERSIONS, SUPPORTED_SINGULARITY_VERSIONS, BmiClientSingularity, check_singularity_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
@@ -167,17 +168,17 @@ class TestBmiClientSingularity:
         assert len(model.get_value('Q', np.zeros(1,))) == 1
 
     def test_workdir_as_number(self):
-        with pytest.raises(TypeError, match='must be str'):
+        with pytest.raises(TypeCheckError, match='is not an instance of str'):
             BmiClientSingularity(image=IMAGE_NAME, work_dir=42)
 
     def test_inputdirs_as_str(self, tmp_path):
         some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
+        with pytest.raises(TypeError, match='must be collections.abc.Iterable'):
             BmiClientSingularity(image=IMAGE_NAME, input_dirs='old type', work_dir=some_dir)
 
     def test_inputdirs_as_number(self, tmp_path):
         some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
+        with pytest.raises(TypeCheckError, match='is not an instance of collections.abc.Iterable'):
             BmiClientSingularity(image=IMAGE_NAME, input_dirs=42, work_dir=some_dir)
 
 

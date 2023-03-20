@@ -1,8 +1,10 @@
-#include <grpc/grpc.h>
+#include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
+#include <grpcpp/ext/proto_server_reflection_plugin.h>
+#include <grpcpp/health_check_service_interface.h>
 #include "bmi_grpc_server.h"
 #include "bmi_c_wrapper.h"
 
@@ -815,15 +817,17 @@ void run_bmi_server(BmiClass *model, int argc, char *argv[])
     {
         server_address = "0.0.0.0:" + std::string(argv[1]);
     }
-    std::string bmi_port = std::getenv("BMI_PORT");
-    if(!bmi_port.empty()) {
-        server_address = "0.0.0.0:" + bmi_port;
+    if(const char* bmi_port = std::getenv("BMI_PORT")) {
+        server_address = "0.0.0.0:" + std::string(bmi_port);
     }
-    std::cerr << "BMI grpc server attached to server address " << server_address << std::endl;
     BmiGRPCService service(model);
+    grpc::EnableDefaultHealthCheckService(true);
+    grpc::reflection::InitProtoReflectionServerBuilderPlugin();
     grpc::ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    std::cerr << "BMI grpc server attached to server address " << server_address << std::endl;
     server->Wait();
+    std::cerr << "Waiting";
 }

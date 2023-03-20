@@ -20,6 +20,16 @@ For native programming languages it is necessary to install and compile the C++ 
     sudo make -j4 install
     sudo ldconfig
 
+You will also need the install the BMI C and C++ headers
+
+.. code-block:: sh
+
+    git clone -b v2.0 https://github.com/csdms/bmi-cxx.git bmi-cxx
+    cd bmi-cxx && mkdir build && cd build cmake .. && make install
+
+    git clone -b v2.1 https://github.com/csdms/bmi-c.git bmi-c
+    cd bmi-c && mkdir build && cd build cmake .. && make install
+
 You will also need to compile grpc4bmi
 
 .. code-block:: sh
@@ -33,29 +43,41 @@ You will also need to compile grpc4bmi
 Creating
 --------
 
-The grpc4bmi package comes with a C++ abstract base class that contains the BMI functions. The `header file <https://github.com/eWaterCycle/grpc4bmi/blob/master/cpp/bmi_class.h>`_ will
-be copied to your system include path upon the installation steps above. Write an implementation of the ``Bmi`` class using your model time step code and data structures. You don't have to worry about global variables in your model code: with grpc4bmi every model instance runs in its own memory space. For the same reason, the ``get_value_ptr`` and ``set_value_ptr`` methods can be safely ignored, they are never called through the grpc process bridge.
+The grpc4bmi package requires a model implementing the BMI interface in 
+`C with bmi.h <https://github.com/csdms/bmi-c/blob/v2.1/bmi.h>`_ 
+or `C++ with bmi.hxx <https://github.com/csdms/bmi-cxx/blob/v2.0/bmi.hxx>`_. 
+The header files will
+be copied to your system include path upon the installation steps above. 
+Write an implementation of the ``Bmi`` class using your model time step code and data structures. 
+You don't have to worry about global variables in your model code: 
+with grpc4bmi every model instance runs in its own memory space. 
+For the same reason, the ``get_value_ptr`` and ``set_value_ptr`` methods can be safely ignored, 
+they are never called through the grpc network protocol.
 
 Running
 -------
 
-Since native language lack reflection, it is necessary to make your own ``run_bmi_server`` program. We provide a function ``run_bmi_server(Bmi*, int*, char*)`` in the ``bmi_grpc_server.h`` header that can be called with your model instance (see the example below). To compile your server binary, it is necessary to link against grpc4bmi and protobuf libraries.
-The program will accept a single optional argument which is the port the server will run on. The port can also be specified using the BMI_PORT environment variable. The default port is 50051.
+Since native language lack reflection, it is necessary to make your own ``run_bmi_server`` program. 
+We provide a function ``run_bmi_server(Bmi*, int*, char*)`` in the ``bmi_grpc_server.h`` header 
+that can be called with your model instance (see the example below). To compile your server binary, 
+it is necessary to link against grpc4bmi and protobuf libraries.
+The program will accept a single optional argument which is the port the server will run on.
+The port can also be specified using the BMI_PORT environment variable. The default port is 50051.
 
 .. _example_cpp:
 
-Example
--------
+Example in C
+------------
 
-To create a BMI to your model, write a header file in which you declare the overridden functions of the base class ``Bmi`` in the included file ``bmi_class.h``.
+To create a BMI to your model, write a header file in which you declare the overridden functions of the base class ``Bmi`` in the included file ``bmi.h``.
 
 my_bmi_model.h:
 
 .. code-block:: cpp
 
-    #include <bmi_class.h>
+    #include <bmi.h>
 
-    class MyBmiModel: public Bmi
+    class MyBmiModel: public bmi::Bmi
     {
         public:
             MyBmiModel();
