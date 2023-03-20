@@ -14,6 +14,7 @@ class Test_check_apptainer_version_string:
         ('apptainer version 1.0.3'),
         ('apptainer version 1.1.0-rc.3'),
         ('apptainer version 1.1.2'),
+        # From snellius cluster at SURF.
         ('apptainer version 1.1.5-2.el8'),
     ])
     def test_ok(self, test_input: str):
