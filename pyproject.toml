@@ -52,6 +52,7 @@ docs = [
     "sphinx",
     "sphinxcontrib-apidoc",
     "sphinxcontrib-napoleon",
+    "sphinxcontrib-jquery",
     "sphinx-argparse",
     "sphinx_rtd_theme",
     "numpydoc",
