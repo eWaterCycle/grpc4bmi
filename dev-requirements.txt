@@ -1,0 +1,5 @@
+-e .[dev]
+# Dependencies which are URLs can not be part 
+# of pyproject.toml:project.optional-dependencies:dev
+# so they are listed here
+bmi-heat@https://github.com/csdms/bmi-example-python/archive/refs/heads/master.zip

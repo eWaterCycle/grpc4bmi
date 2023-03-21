@@ -44,7 +44,6 @@ dev = [
     "pytest-cov",
     "coverage[toml]",
     "grpcio-tools", # Used to generate Python bindings from proto file
-    "bmi-heat@https://github.com/csdms/bmi-example-python/archive/refs/heads/master.zip",
     "nbconvert",
     "ipykernel",
     "nbformat",
