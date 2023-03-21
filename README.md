@@ -71,7 +71,7 @@ Bmi* create_model_instance()
 }
 ```
 
-with the instantiation of your model BMI. The model needs to implement the csdms BMI for C, but you may also implement our more object-oriented C++ interface [BmiCppExtension](https://github.com/eWaterCycle/grpc4bmi/blob/master/cpp/bmi_cpp_extension.h).
+with the instantiation of your model BMI. The model needs to implement the csdms BMI for C, but you may also implement our more object-oriented C++ interface [BmiCppExtension](https://github.com/eWaterCycle/grpc4bmi/blob/main/cpp/bmi_cpp_extension.h).
 
 ### Model written in R
 
