@@ -9,7 +9,6 @@ import numpy as np
 from bmipy import Bmi
 import grpc
 import numpy
-from typeguard import typechecked
 
 from grpc_status import rpc_status
 from google.rpc import error_details_pb2
@@ -94,7 +93,6 @@ class BmiClient(Bmi):
             s.bind(("" if host is None else host, 0))
             return int(s.getsockname()[1])
 
-    @typechecked
     def initialize(self, filename: Optional[str]):
         fname = "" if filename is None else filename
         try:
