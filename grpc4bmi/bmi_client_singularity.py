@@ -8,7 +8,6 @@ from typing import Iterable
 
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
-from typeguard import check_argument_types, qualified_name
 
 from grpc4bmi.bmi_grpc_client import BmiClient
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
@@ -18,7 +17,7 @@ SUPPORTED_APPTAINER_VERSIONS = '>=1.0.0-rc.2'  # First apptainer release with bi
 
 def check_singularity_version_string(version_output: str) -> bool:
     (app, _, version) = version_output.split(' ')
-    local_version = Version(version)
+    local_version = Version(version.replace('.el', ''))
     if app == 'singularity' and local_version not in SpecifierSet(SUPPORTED_SINGULARITY_VERSIONS):
         raise SingularityVersionException(f'Unsupported version ({version_output}) of singularity found, '
                                           f'supported versions {SUPPORTED_SINGULARITY_VERSIONS}')
@@ -200,11 +199,6 @@ class BmiClientSingularity(BmiClient):
     def __init__(self, image: str, work_dir: str, input_dirs: Iterable[str] = tuple(), delay=0, timeout=None,
                  capture_logs=True,
                  ):
-        assert check_argument_types()
-        if type(input_dirs) == str:
-            msg = f'type of argument "input_dirs" must be collections.abc.Iterable; ' \
-                  f'got {qualified_name(input_dirs)} instead'
-            raise TypeError(msg)
         check_singularity_version()
         host = 'localhost'
         port = BmiClient.get_unique_port(host)

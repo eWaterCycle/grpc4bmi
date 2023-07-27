@@ -11,7 +11,7 @@ def read(fname):
 
 
 setup(name="grpc4bmi",
-      version="0.2.16",
+      version="0.2.17",
       author="Gijs van den Oord",
       author_email="g.vandenoord@esciencecenter.nl",
       description="Run your BMI implementation in a separate process and expose it as BMI-python with GRPC",
@@ -33,7 +33,6 @@ setup(name="grpc4bmi",
           "docker",
           "basic-modeling-interface",
           "packaging",
-          "typeguard",
       ],
       extras_require={
           'R': ['rpy2'],

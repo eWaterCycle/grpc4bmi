@@ -13,6 +13,8 @@ class Test_check_apptainer_version_string:
         ('apptainer version 1.0.3'),
         ('apptainer version 1.1.0-rc.3'),
         ('apptainer version 1.1.2'),
+        # From snellius cluster at SURF.
+        ('apptainer version 1.1.5-2.el8'),
     ])
     def test_ok(self, test_input: str):
         result = check_apptainer_version_string(test_input)
@@ -63,19 +65,6 @@ class TestBmiClientApptainerBadDays:
         with pytest.raises(ValueError, match=match):
             BmiClientApptainer(image=IMAGE_NAME, input_dirs=(some_dir,), work_dir=some_dir)
 
-    def test_workdir_as_number(self):
-        with pytest.raises(TypeError, match='must be str'):
-            BmiClientApptainer(image=IMAGE_NAME, work_dir=42)
-
-    def test_inputdirs_as_str(self, tmp_path):
-        some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
-            BmiClientApptainer(image=IMAGE_NAME, input_dirs='old type', work_dir=some_dir)
-
-    def test_inputdirs_as_number(self, tmp_path):
-        some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
-            BmiClientApptainer(image=IMAGE_NAME, input_dirs=42, work_dir=some_dir)
 
 
 

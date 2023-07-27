@@ -8,7 +8,6 @@ from typing import Optional
 import basic_modeling_interface.bmi as bmi
 import grpc
 import numpy
-from typeguard import check_argument_types
 
 from . import bmi_pb2, bmi_pb2_grpc
 from .constants import GRPC_MAX_MESSAGE_LENGTH
@@ -57,7 +56,6 @@ class BmiClient(bmi.Bmi):
             return int(s.getsockname()[1])
 
     def initialize(self, filename: Optional[str]):
-        assert check_argument_types()
         fname = "" if filename is None else filename
         self.stub.initialize(bmi_pb2.InitializeRequest(config_file=fname))
 
