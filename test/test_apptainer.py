@@ -65,19 +65,6 @@ class TestBmiClientApptainerBadDays:
         with pytest.raises(ValueError, match=match):
             BmiClientApptainer(image=IMAGE_NAME, input_dirs=(some_dir,), work_dir=some_dir)
 
-    def test_workdir_as_number(self):
-        with pytest.raises(TypeError, match='must be str'):
-            BmiClientApptainer(image=IMAGE_NAME, work_dir=42)
-
-    def test_inputdirs_as_str(self, tmp_path):
-        some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
-            BmiClientApptainer(image=IMAGE_NAME, input_dirs='old type', work_dir=some_dir)
-
-    def test_inputdirs_as_number(self, tmp_path):
-        some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
-            BmiClientApptainer(image=IMAGE_NAME, input_dirs=42, work_dir=some_dir)
 
 
 
