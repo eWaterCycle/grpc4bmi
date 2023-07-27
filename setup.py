@@ -33,7 +33,6 @@ setup(name="grpc4bmi",
           "docker",
           "basic-modeling-interface",
           "packaging",
-          "typeguard",
       ],
       extras_require={
           'R': ['rpy2'],
