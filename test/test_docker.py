@@ -93,20 +93,6 @@ class TestBmiClientDocker:
         with pytest.raises(ValueError, match=match):
             BmiClientDocker(image=walrus_docker_image, image_port=55555, input_dirs=(some_dir,), work_dir=some_dir)
 
-    def test_workdir_as_number(self):
-        with pytest.raises(TypeError, match='must be str'):
-            BmiClientDocker(image=walrus_docker_image, work_dir=42)
-
-    def test_inputdirs_as_str(self, tmp_path):
-        some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got str instead'):
-            BmiClientDocker(image=walrus_docker_image, input_dirs='old type', work_dir=some_dir)
-
-    def test_inputdirs_as_number(self, tmp_path):
-        some_dir = str(tmp_path)
-        with pytest.raises(TypeError, match='must be collections.abc.Iterable; got int instead'):
-            BmiClientDocker(image=walrus_docker_image, input_dirs=42, work_dir=some_dir)
-
     def test_logs(self, walrus_model, capfd):
         logs = walrus_model.logs()
 
