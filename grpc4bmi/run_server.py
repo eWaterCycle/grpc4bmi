@@ -148,7 +148,7 @@ def build_parser():
                         help="Version of BMI interface implemented by model")
     parser.add_argument("--debug", action="store_true",
                         help="Run server in debug mode. "
-                             "Logs errors with stacktraces and returns stacktrace in error response")
+                             "Logs running port and errors with stacktraces and returns stacktrace in error response")
     return parser
 
 
