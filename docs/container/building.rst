@@ -68,6 +68,30 @@ The WALRUS model has a `Dockerfile`_  file which can be used as an example.
 
 .. _Dockerfile: https://github.com/eWaterCycle/grpc4bmi-examples/blob/master/walrus/Dockerfile
 
+Julia
+-----
+
+The docker file for the model container simply contains the installation instructions of grpc4bmi and the BMI-enabled model itself, and as entrypoint the ``run-bmi-server`` command. For the :ref:`python example <python-example>` the Docker file will read
+
+.. code-block:: Dockerfile
+
+    FROM ubuntu:jammy
+    MAINTAINER your name <your email address>
+
+    # Install grpc4bmi
+    RUN pip install grpc4bmi
+
+    # Install your BMI model:
+    python3 -c 'from grpc4bmi.bmi_julia_model import install;install("<JULIA-PACKAGE-NAME>")'
+
+    # Run bmi server
+    ENTRYPOINT ["run-bmi-server", "--lang", "julia", "--name", "<PACKAGE>,<BMI-IMPLEMENTATION-NAME>,<MODEL-NAME>"]
+
+    # Expose the magic grpc4bmi port
+    EXPOSE 55555
+
+The port 55555 is the internal port in the Docker container that the model communicates over. It is the default port for ``run_bmi_server`` and also the default port that all clients listen to.
+
 C/C++/Fortran
 -------------
 

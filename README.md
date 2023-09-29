@@ -24,6 +24,12 @@ on the client (Python) side. If your server model is implemented in Python, do t
 pip install grpc4bmi[R]
 ```
 
+If the model is implemented in Julia, run instead
+
+```bash
+pip install grpc4bmi[julia]
+```
+
 in the server environment. For bleeding edge version from GitHub use
 
 ```bash
@@ -90,6 +96,25 @@ For example with [WALRUS](https://github.com/eWaterCycle/grpc4bmi-examples/tree/
 run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 55555
 ```
 
+### Models written in Julia
+
+The grpc4bmi Python package can also run BMI models written in Julia if the model has an implementation of the [BasicModelInterface.jl](https://github.com/Deltares/BasicModelInterface.jl).
+
+Run the Julia model as a server with
+
+```bash
+run-bmi-server --lang julia --name <PACKAGE>,<BMI-IMPLEMENTATION-NAME>,<MODEL-NAME> --port <PORT>
+```
+
+For example with [Wflow.jl](https://github.com/Deltares/Wflow.jl/) use
+
+```bash
+# Install Wflow.jl package in the Julia environment managed by the juliacall Python package.
+python3 -c 'from grpc4bmi.bmi_julia_model import install;install("Wflow")'
+# Run the server
+run-bmi-server --lang julia --name Wflow,Wflow.BMI,Wflow.Model --port 55555
+```
+
 ### The client side
 
 The client side has only a Python implementation. The default BMI client assumes a running server process on a given port.
@@ -154,7 +179,3 @@ pip install -e .[docs]
 
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
 After this, simply executing the `proto_gen.sh` script should do the job.
-
-## Future work
-
-More language bindings are underway.

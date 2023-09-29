@@ -24,6 +24,11 @@ try:
 except ImportError:
     BmiR = None
 
+try:
+    from .bmi_julia_model import BmiJulia
+except ImportError:
+    BmiJulia = None
+
 """
 Run server script, turning a BMI implementation into an executable by looping indefinitely, until interrupt signals are
 handled. The command line tool needs at least a module and class name to instantiate the BMI wrapper class that exposes
@@ -73,6 +78,11 @@ def build_r(class_name, source_fn):
         raise ValueError('Missing R dependencies, install with `pip install grpc4bmi[R]')
     return BmiR(class_name, source_fn)
 
+def build_julia(name: str):
+    if not BmiJulia:
+        raise ValueError('Missing Julia dependencies, install with `pip install grpc4bmi[julia]')
+    module, implementation_name, model_name = name.split(',')
+    return BmiJulia(module, implementation_name, model_name)
 
 def serve(model, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -110,6 +120,8 @@ def main(argv=sys.argv[1:]):
 
     if args.language == "R":
         model = build_r(args.name, path)
+    elif args.language == "julia":
+        model = build_julia(args.name)
     else:
         model = build(args.name, path)
 
@@ -142,6 +154,8 @@ def build_parser():
     lang_choices = ['python']
     if BmiR:
         lang_choices.append('R')
+    if BmiJulia:
+        lang_choices.append('julia')
     parser.add_argument("--language", default="python", choices=lang_choices,
                         help="Language in which BMI implementation class is written")
     parser.add_argument("--bmi-version", default="2.0.0", choices=["2.0.0", "0.2"],
