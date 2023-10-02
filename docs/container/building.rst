@@ -85,7 +85,7 @@ The docker file for the model container simply contains the installation instruc
     python3 -c 'from grpc4bmi.bmi_julia_model import install;install("<JULIA-PACKAGE-NAME>")'
 
     # Run bmi server
-    ENTRYPOINT ["run-bmi-server", "--lang", "julia", "--name", "<PACKAGE>,<BMI-IMPLEMENTATION-NAME>,<MODEL-NAME>"]
+    ENTRYPOINT ["run-bmi-server", "--lang", "julia", "--name", "<MODEL-NAME>"]
 
     # Expose the magic grpc4bmi port
     EXPOSE 55555

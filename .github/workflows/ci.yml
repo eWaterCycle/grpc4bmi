@@ -22,7 +22,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip wheel
         pip install -r dev-requirements.txt
-        pip install -e .[R]
+        pip install -e .[R,julia]
     - name: Setup Apptainer
       uses: eWaterCycle/setup-apptainer@v2
       with:
@@ -45,6 +45,10 @@ jobs:
       run: |
         Rscript -e "install.packages('remotes')"
         Rscript -e "install.packages('R6')"
+    - name: Install Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: '^1.9'
     - name: Test with pytest
       run: |
         pytest -vv --cov=grpc4bmi --cov-report xml

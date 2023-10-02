@@ -103,7 +103,7 @@ The grpc4bmi Python package can also run BMI models written in Julia if the mode
 Run the Julia model as a server with
 
 ```bash
-run-bmi-server --lang julia --name <PACKAGE>,<BMI-IMPLEMENTATION-NAME>,<MODEL-NAME> --port <PORT>
+run-bmi-server --lang julia --name <MODEL-NAME> --port <PORT>
 ```
 
 For example with [Wflow.jl](https://github.com/Deltares/Wflow.jl/) use
@@ -112,7 +112,7 @@ For example with [Wflow.jl](https://github.com/Deltares/Wflow.jl/) use
 # Install Wflow.jl package in the Julia environment managed by the juliacall Python package.
 python3 -c 'from grpc4bmi.bmi_julia_model import install;install("Wflow")'
 # Run the server
-run-bmi-server --lang julia --name Wflow,Wflow.BMI,Wflow.Model --port 55555
+run-bmi-server --lang julia --name Wflow.Model --port 55555
 ```
 
 ### The client side

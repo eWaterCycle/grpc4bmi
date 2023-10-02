@@ -81,8 +81,7 @@ def build_r(class_name, source_fn):
 def build_julia(name: str):
     if not BmiJulia:
         raise ValueError('Missing Julia dependencies, install with `pip install grpc4bmi[julia]')
-    module, implementation_name, model_name = name.split(',')
-    return BmiJulia(module, implementation_name, model_name)
+    return BmiJulia.from_name(name)
 
 def serve(model, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

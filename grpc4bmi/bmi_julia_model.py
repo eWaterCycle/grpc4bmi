@@ -2,7 +2,7 @@ from typing import List
 
 from bmipy import Bmi
 import numpy as np
-from juliacall import Main as jl
+from juliacall import Main as jl, ModuleValue, TypeValue
 
 def install(package):
     """Add package to Julia environment.
@@ -18,19 +18,30 @@ class BmiJulia(Bmi):
     BasicModelInterface is available in https://github.com/Deltares/BasicModelInterface.jl repo.
 
     Args:
-        model_name: Name of Julia model class 
-        implementation_name: Name of Julia variable which implements BasicModelInterface
-
+        model: Julia model class
+        implementation: Julia variable which implements BasicModelInterface
     """
     state = None
 
-    def __init__(self, model_name, implementation_name = 'BasicModelInterface'):
+    @classmethod
+    def from_name(cls, model_name, implementation_name = 'BasicModelInterface'):
+        """Construct BmiJulia from Julia model class name and implementation name.
+
+        Args:
+            model_name: Name of Julia model class
+            implementation_name: Name of Julia variable which implements BasicModelInterface
+        """
         package4model = model_name.split('.')[0]
         package4implementation = implementation_name.split('.')[0]
         jl.seval("import " + package4model)
         jl.seval("import " + package4implementation)
-        self.model = jl.seval(model_name)
-        self.implementation = jl.seval(implementation_name)
+        model = jl.seval(model_name)
+        implementation = jl.seval(implementation_name)
+        return BmiJulia(model, implementation)
+
+    def __init__(self, model: TypeValue, implementation: ModuleValue):
+        self.model = model
+        self.implementation = implementation
 
     def initialize(self, config_file: str) -> None:
         """Perform startup tasks for the model.
@@ -290,7 +301,7 @@ class BmiJulia(Bmi):
         return self.implementation.get_time_step(self.state)
 
     # pylint: disable=arguments-differ
-    def get_value(self, name: str) -> np.ndarray:
+    def get_value(self, name: str, dest: np.ndarray) -> np.ndarray:
         """Get a copy of values of the given variable.
         This is a getter for the model, used to access the model's
         current state. It returns a *copy* of a model variable, with
@@ -305,7 +316,8 @@ class BmiJulia(Bmi):
         ndarray
             A numpy array containing the requested value(s).
         """
-        return np.array(self.implementation.get_value(self.state, name))
+        self.implementation.get_value(self.state, name, dest)
+        return dest
 
     def get_value_ptr(self, name: str) -> np.ndarray:
         """Get a reference to values of the given variable.
@@ -326,7 +338,7 @@ class BmiJulia(Bmi):
         )
 
     # pylint: disable=arguments-differ
-    def get_value_at_indices(self, name: str, inds: np.ndarray) -> np.ndarray:
+    def get_value_at_indices(self, name: str, dest: np.ndarray, inds: np.ndarray) -> np.ndarray:
         """Get values at particular indices.
         Parameters
         ----------
@@ -346,13 +358,16 @@ class BmiJulia(Bmi):
                 "Julia indices start at 1. Please adjust your indices accordingly."
             )
 
-        return np.array(
-            self.implementation.get_value_at_indices(
-                self.state, name, jl.convert(jl.Vector[jl.Int64], inds)
-            )
+        self.implementation.get_value_at_indices(
+            self.state, 
+            name, 
+            jl.convert(jl.Vector[jl.Int64], inds),
+            # inds, 
+            dest
         )
-
-    def set_value(self, name: str, values: np.ndarray) -> None:
+        return dest
+    
+    def set_value(self, name: str, src: np.ndarray) -> None:
         """Specify a new value for a model variable.
         This is the setter for the model, used to change the model's
         current state. It accepts, through *values*, a new value for a
@@ -365,7 +380,10 @@ class BmiJulia(Bmi):
         values : array_like
             The new value for the specified variable.
         """
-        self.implementation.set_value(self.state, name, jl.convert(jl.Vector, values))
+        self.implementation.set_value(self.state, name, 
+                                      src,
+                                    #   jl.convert(jl.Vector, src)
+                                      )
 
     def set_value_at_indices(
         self, name: str, inds: np.ndarray, src: np.ndarray
@@ -428,7 +446,7 @@ class BmiJulia(Bmi):
         return self.implementation.get_grid_type(self.state, grid)
 
     # Uniform rectilinear
-    def get_grid_shape(self, grid: int) -> np.ndarray:
+    def get_grid_shape(self, grid: int, shape: np.ndarray) -> np.ndarray:
         """Get dimensions of the computational grid.
         Parameters
         ----------
@@ -440,9 +458,10 @@ class BmiJulia(Bmi):
         ndarray of int
             A numpy array that holds the grid's shape.
         """
-        return np.array(self.implementation.get_grid_shape(self.state, grid))
+        self.implementation.get_grid_shape(self.state, grid ,shape)
+        return shape
 
-    def get_grid_spacing(self, grid: int) -> np.ndarray:
+    def get_grid_spacing(self, grid: int, spacing: np.ndarray) -> np.ndarray:
         """Get distance between nodes of the computational grid.
         Parameters
         ----------
@@ -453,9 +472,10 @@ class BmiJulia(Bmi):
         ndarray of float
             A numpy array that holds the grid's spacing between grid rows and columns.
         """
-        return np.array(self.implementation.get_grid_spacing(self.state, grid))
+        self.implementation.get_grid_spacing(self.state, grid, spacing)
+        return spacing
 
-    def get_grid_origin(self, grid: int) -> np.ndarray:
+    def get_grid_origin(self, grid: int, origin: np.ndarray) -> np.ndarray:
         """Get coordinates for the lower-left corner of the computational grid.
         Parameters
         ----------
@@ -468,38 +488,45 @@ class BmiJulia(Bmi):
             A numpy array that holds the coordinates of the grid's
             lower-left corner.
         """
-        return np.array(self.implementation.get_grid_origin(self.state, grid))
+        self.implementation.get_grid_origin(self.state, grid, origin)
+        return origin
 
     # Non-uniform rectilinear, curvilinear
-    def get_grid_x(self, grid: int) -> np.ndarray:
+    def get_grid_x(self, grid: int, x: np.ndarray) -> np.ndarray:
         """Get coordinates of grid nodes in the x direction.
         Parameters
         ----------
         grid : int
             A grid identifier.
+        x: An array to hold the x-coordinates of the grid nodes.
+
 
         Returns
         -------
         ndarray of float
             The input numpy array that holds the grid's column x-coordinates.
         """
-        return np.array(self.implementation.get_grid_x(self.state, grid))
+        self.implementation.get_grid_x(self.state, grid, x)
+        return x
 
-    def get_grid_y(self, grid: int) -> np.ndarray:
+    def get_grid_y(self, grid: int, y: np.ndarray) -> np.ndarray:
         """Get coordinates of grid nodes in the y direction.
         Parameters
         ----------
         grid : int
             A grid identifier.
+        y: 
+            An array to hold the y-coordinates of the grid nodes.
 
         Returns
         -------
         ndarray of float
             The input numpy array that holds the grid's row y-coordinates.
         """
-        return np.array(self.implementation.get_grid_y(self.state, grid))
+        self.implementation.get_grid_y(self.state, grid,y)
+        return y
 
-    def get_grid_z(self, grid: int) -> np.ndarray:
+    def get_grid_z(self, grid: int, z: np.ndarray) -> np.ndarray:
         """Get coordinates of grid nodes in the z direction.
         Parameters
         ----------
@@ -512,7 +539,8 @@ class BmiJulia(Bmi):
         ndarray of float
             The input numpy array that holds the grid's layer z-coordinates.
         """
-        return np.array(self.implementation.get_grid_z(self.state, grid))
+        self.implementation.get_grid_z(self.state, grid, z)
+        return z
 
     def get_grid_node_count(self, grid: int) -> int:
         """Get the number of nodes in the grid.
@@ -553,12 +581,16 @@ class BmiJulia(Bmi):
         """
         return self.implementation.get_grid_face_count(self.state, grid)
 
-    def get_grid_edge_nodes(self, grid: int) -> np.ndarray:
+    def get_grid_edge_nodes(self, grid: int, edge_nodes: np.ndarray) -> np.ndarray:
         """Get the edge-node connectivity.
         Parameters
         ----------
         grid : int
             A grid identifier.
+        edge_nodes: An array of integers to place the edge-node connectivity.
+            For each edge, connectivity is given as node at edge tail,
+            followed by node at edge head. Therefore this array must be twice
+            the number of nodes long.
 
         Returns
         -------
@@ -567,31 +599,39 @@ class BmiJulia(Bmi):
             connectivity is given as node at edge tail, followed by node at
             edge head.
         """
-        return np.array(self.implementation.get_grid_edge_nodes(self.state, grid))
+        self.implementation.get_grid_edge_nodes(self.state, grid, edge_nodes)
+        return edge_nodes
 
-    def get_grid_face_edges(self, grid: int) -> np.ndarray:
+    def get_grid_face_edges(self, grid: int, face_edges: np.ndarray) -> np.ndarray:
         """Get the face-edge connectivity.
 
         Parameters
         ----------
         grid : int
             A grid identifier.
+        face_edges: 
+            An array of integers in which to place the face-edge connectivity.
 
         Returns
         -------
         ndarray of int
             A numpy array that holds the face-edge connectivity.
         """
-        return np.array(self.implementation.get_grid_face_edges(self.state, grid))
+        self.implementation.get_grid_face_edges(self.state, grid, face_edges)
+        return face_edges
 
-    def get_grid_face_nodes(self, grid: int) -> np.ndarray:
+    def get_grid_face_nodes(self, grid: int, face_nodes: np.ndarray) -> np.ndarray:
         """Get the face-node connectivity.
 
         Parameters
         ----------
         grid : int
             A grid identifier.
-
+        face_nodes : ndarray of int
+            A numpy array to place the face-node connectivity. For each face,
+            the nodes (listed in a counter-clockwise direction) that form the
+            boundary of the face.
+        
         Returns
         -------
         ndarray of int
@@ -599,9 +639,10 @@ class BmiJulia(Bmi):
             the nodes (listed in a counter-clockwise direction) that form the
             boundary of the face.
         """
-        return np.array(self.implementation.get_grid_face_nodes(self.state, grid))
+        self.implementation.get_grid_face_nodes(self.state, grid, face_nodes)
+        return face_nodes
 
-    def get_grid_nodes_per_face(self, grid: int) -> np.ndarray:
+    def get_grid_nodes_per_face(self, grid: int,  nodes_per_face: np.ndarray) -> np.ndarray:
         """Get the number of nodes for each face.
         Parameters
         ----------
@@ -614,4 +655,5 @@ class BmiJulia(Bmi):
         ndarray of int, shape *(nfaces,)*
             A numpy array that holds the number of nodes per face.
         """
-        return np.array(self.implementation.get_grid_nodes_per_face(self.state, grid))
+        self.implementation.get_grid_nodes_per_face(self.state, grid,nodes_per_face)
+        return nodes_per_face
