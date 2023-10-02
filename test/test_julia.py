@@ -53,8 +53,7 @@ class TestJuliaHeatModel:
             ("get_end_time", tuple(), np.Inf),
             ("get_time_step", tuple(), 0.25),
             ("get_time_units", tuple(), "s"),
-            # TODO Float54 is a Julia type, not a numpy type, should use lookup table to
-            ("get_var_type", ["plate_surface__temperature"], "Float64"),
+            ("get_var_type", ["plate_surface__temperature"], "float64"),
             ("get_var_units", ["plate_surface__temperature"], "K"),
             ("get_var_itemsize", ["plate_surface__temperature"], 8),
             ("get_var_nbytes", ["plate_surface__temperature"], 384),

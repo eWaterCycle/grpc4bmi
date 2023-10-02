@@ -170,7 +170,7 @@ class BmiJulia(Bmi):
         str
             The Python variable type; e.g., ``str``, ``int``, ``float``.
         """
-        return self.implementation.get_var_type(self.state, name)
+        return self.implementation.get_var_type(self.state, name).lower()
 
     def get_var_units(self, name: str) -> str:
         """Get units of the given variable.
