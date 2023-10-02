@@ -18,17 +18,19 @@ class BmiJulia(Bmi):
     BasicModelInterface is available in https://github.com/Deltares/BasicModelInterface.jl repo.
 
     Args:
-        package: Name of Julia package which contains interface and model classes
-        implementation_name: Name of Julia variable which implements BasicModelInterface
         model_name: Name of Julia model class 
+        implementation_name: Name of Julia variable which implements BasicModelInterface
 
     """
-    def __init__(self, package, implementation_name, model_name):
-        self.module = package
-        self.model_name = model_name
-        jl.seval("using " + package)
-        self.model = getattr(getattr(jl, self.module), self.model_name)
-        self.implementation = getattr(getattr(jl, package), implementation_name)
+    state = None
+
+    def __init__(self, model_name, implementation_name = 'BasicModelInterface'):
+        package4model = model_name.split('.')[0]
+        package4implementation = implementation_name.split('.')[0]
+        jl.seval("import " + package4model)
+        jl.seval("import " + package4implementation)
+        self.model = jl.seval(model_name)
+        self.implementation = jl.seval(implementation_name)
 
     def initialize(self, config_file: str) -> None:
         """Perform startup tasks for the model.
