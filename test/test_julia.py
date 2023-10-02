@@ -12,7 +12,7 @@ except ImportError:
 
 @pytest.mark.skipif(not BmiJulia, reason="R and its dependencies are not installed")
 class TestJuliaHeatModel:
-    @pytest.fixture(scope="class")
+    @pytest.fixture(scope="class", autouse=True)
     def install_heat(self):
         jl.Pkg.add(
             url="https://github.com/csdms/bmi-example-julia.git",
@@ -59,6 +59,7 @@ class TestJuliaHeatModel:
             ("get_var_nbytes", ["plate_surface__temperature"], 384),
             ("get_var_grid", ["plate_surface__temperature"], 0),
             ("get_var_location", ["plate_surface__temperature"], "node"),
+            # TODO spec says order should be y,x not x,y
             ("get_grid_shape", [0, np.zeros((2,))], [6, 8]),
             ("get_grid_spacing", [0, np.zeros((2,))], [1.0, 1.0]),
             ("get_grid_origin", [0, np.zeros((2,))], [0.0, 0.0]),
