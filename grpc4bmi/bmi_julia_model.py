@@ -29,7 +29,10 @@ class BmiJulia(Bmi):
 
         Args:
             model_name: Name of Julia model class
+                The package of model_name should be installed.
             implementation_name: Name of Julia variable which implements BasicModelInterface
+                The package of implementation_name should be installed.
+                Uses https://juliapackages.com/p/basicmodelinterface by default.
         """
         package4model = model_name.split('.')[0]
         package4implementation = implementation_name.split('.')[0]
