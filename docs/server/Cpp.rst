@@ -69,13 +69,13 @@ The port can also be specified using the BMI_PORT environment variable. The defa
 Example in C
 ------------
 
-To create a BMI to your model, write a header file in which you declare the overridden functions of the base class ``Bmi`` in the included file ``bmi.h``.
+To create a BMI to your model, write a header file in which you declare the overridden functions of the base class ``Bmi`` in the included file ``bmi.hxx``.
 
 my_bmi_model.h:
 
-.. code-block:: cpp
+.. code-block:: cxx
 
-    #include <bmi.h>
+    #include <bmi.hxx>
 
     class MyBmiModel: public bmi::Bmi
     {
@@ -88,29 +88,26 @@ my_bmi_model.h:
 
 Write your implementation of the basic modeling interface in the corresponding source file
 
-my_bmi_model.cc:
+my_bmi_model.cxx:
 
 .. code-block:: cpp
 
-    #include <my_bmi_model.h>
     #include <cstring>
+    #include <my_bmi_model.hxx>
 
-    MyBmiModel::MyBmiModel(){}
-    int MyBmiModel::initialize(const char* config_file)
-    {
-        /* ...initialize the model from config_file... */
-        return BMI_SUCCESS;
+    MyBmiModel::MyBmiModel() {}
+
+    void MyBmiModel::Initialize(std::string config_file) {
+    /* ...initialize the model from config_file... */
     }
-    ...
-    int MyBmiModel::get_component_name(char* name) const
-    {
-        strcpy(name, "Hello world");
-        return BMI_SUCCESS;
+
+    std::string MyBmiModel::GetComponentName() {
+    return "My BMI model";
     }
 
 Now the BMI server can be simply be implemented as
 
-run_my_bmi_model.cc:
+run_my_bmi_model.cxx:
 
 .. code-block:: cpp
 
@@ -142,7 +139,7 @@ my_bmi_model.f90:
 
 .. code-block:: fortran
 
-    subroutine get_component_name(name) bind(c, name="get_component_name_f")
+    subroutine bmif_get_component_name(name) bind(c, name="bmif_get_component_name")
         use, intrinsic ::iso_c_binding
         implicit none
         character(kind=c_char), intent(out) :: name(*)
@@ -151,13 +148,13 @@ my_bmi_model.f90:
 
 Now it is possible to call this function from the BMI C implementation as follows,
 
-my_bmi_model.cc:
+my_bmi_model.cxx:
 
 .. code-block:: cpp
 
-    extern "C" void get_component_name_f(char*)
+    extern "C" void bmif_get_component_name(char*)
     int MyBmiModel::get_component_name(char* name) const
     {
-        get_component_name_f(name);
+        bmif_get_component_name(name);
         return BMI_SUCCESS;
     }
