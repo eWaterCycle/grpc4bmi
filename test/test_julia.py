@@ -6,7 +6,7 @@ import pytest
 
 
 try:
-    from grpc4bmi.bmi_julia_model import BmiJulia
+    from grpc4bmi.bmi_julia_model import BmiJulia,install
     from juliacall import Main as jl
 except ImportError:
     BmiJulia = None
@@ -15,6 +15,9 @@ except ImportError:
 class TestJuliaHeatModel:
     @pytest.fixture(scope="class", autouse=True)
     def install_heat(self):
+        # TODO for other Julia models do we need to install BasicModelInterface?
+        # it is dep of Heat.jl, but we use it directly
+        install('BasicModelInterface')
         jl.Pkg.add(
             url="https://github.com/csdms/bmi-example-julia.git",
             rev="d8b354ceddf6b048727c2e214031f43d62964120",
