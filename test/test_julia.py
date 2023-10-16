@@ -140,10 +140,10 @@ class TestJuliaFakeModel:
         install('BasicModelInterface')
 
     @pytest.fixture
-    def model(self, cfg_file):
+    def model(self):
         jl.seval('include("fake.jl")')
         model = BmiJulia.from_name(".FakeModel.Model", ".FakeModel.BMI")
-        model.initialize(str(cfg_file))
+        model.initialize('')
         return model
     
     @pytest.mark.parametrize(
