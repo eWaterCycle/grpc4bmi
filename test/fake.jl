@@ -9,7 +9,7 @@ end
 BMI.initialize(::Type{Model}) = Model()
 
 BMI.get_grid_x(m::Model, grid, x)
-    copyto!(x, [0.0, 1.0])
+    copyto!(x, [1.0, 2.0])
 end
 
 end

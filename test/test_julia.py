@@ -11,7 +11,7 @@ try:
 except ImportError:
     BmiJulia = None
 
-@pytest.mark.skipif(not BmiJulia, reason="R and its dependencies are not installed")
+@pytest.mark.skipif(not BmiJulia, reason="Julia and its dependencies are not installed")
 class TestJuliaHeatModel:
     @pytest.fixture(scope="class", autouse=True)
     def install_heat(self):
@@ -117,4 +117,49 @@ class TestJuliaHeatModel:
     #     result = model.get_value("plate_surface__temperature", np.zeros((48,)))
     #     assert_array_equal(result, np.ones((48,)))
 
+    # TODO test set_value_at_indices method
+
 # TODO Heat.jl does not implement all methods, use fake.jl to test all methods not covered by Heat.jl
+"""
+To test
+
+get_grid_x
+get_grid_y
+get_grid_z
+get_grid_edge_count
+get_grid_face_count
+get_grid_edge_nodes
+get_grid_face_edges
+get_grid_face_nodes
+get_grid_nodes_per_face
+"""
+@pytest.mark.skipif(not BmiJulia, reason="Julia and its dependencies are not installed")
+class TestJuliaFakeModel:
+    @pytest.fixture(scope="class", autouse=True)
+    def install_fake(self):
+        install('BasicModelInterface')
+
+    @pytest.fixture
+    def model(self, cfg_file):
+        jl.seval('include("fake.jl")')
+        model = BmiJulia.from_name(".FakeModel.Model", ".FakeModel.BMI")
+        model.initialize(str(cfg_file))
+        return model
+    
+    @pytest.mark.parametrize(
+        "fn_name,fn_args,expected",
+        [
+            ("get_grid_x", [0, np.zeros((2,))], [1, 2]),
+        ],
+    )
+    def test_methods(self, model: BmiJulia, fn_name, fn_args, expected):
+        fn = getattr(model, fn_name)
+        if fn_args == tuple():
+            result = fn()
+        else:
+            result = fn(*fn_args)
+
+        try:
+            assert_array_equal(result, expected)
+        except:
+            assert result == expected
