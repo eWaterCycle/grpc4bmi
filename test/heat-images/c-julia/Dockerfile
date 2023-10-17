@@ -70,9 +70,10 @@ COPY --from=builder /usr/local/bin/run_bmi_server /usr/local/bin/run_bmi_server
 COPY --from=builder /usr/local/lib/ /usr/local/lib/
 
 # Install heat-julia
-RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/csdms/bmi-example-julia.git",rev="80c34b4f2217599e600fe9372b1bae50e1229edf")'
+RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/csdms/bmi-example-julia.git",rev="80c34b4f2217599e600fe9372b1bae50e1229edf")' && \
+  julia -e 'using Pkg; Pkg.add("BasicModelInterface")'
 
-RUN curl -L -O /usr/local/share/bmi/heat.toml https://github.com/csdms/bmi-example-julia/raw/main/example/heat.toml 
+RUN curl -L https://github.com/csdms/bmi-example-julia/raw/main/example/heat.toml > /usr/local/share/heat.toml
 
 RUN echo '/usr/local/julia/lib' > /etc/ld.so.conf.d/julia.conf && ldconfig
 
