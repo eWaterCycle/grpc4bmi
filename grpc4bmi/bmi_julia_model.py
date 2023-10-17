@@ -356,17 +356,11 @@ class BmiJulia(Bmi):
         array_like
             Value of the model variable at the given location.
         """
-        if np.any(inds == 0):
-            raise ValueError(
-                "Julia indices start at 1. Please adjust your indices accordingly."
-            )
-
         self.implementation.get_value_at_indices(
             self.state, 
             name, 
-            jl.convert(jl.Vector[jl.Int64], inds),
-            # inds, 
-            dest
+            jl.convert(jl.Vector[jl.Int64], inds + 1),
+            dest,
         )
         return dest
     
@@ -384,8 +378,7 @@ class BmiJulia(Bmi):
             The new value for the specified variable.
         """
         self.implementation.set_value(self.state, name, 
-                                      src,
-                                    #   jl.convert(jl.Vector, src)
+                                      jl.convert(jl.Vector, src)
                                       )
 
     def set_value_at_indices(
@@ -404,7 +397,7 @@ class BmiJulia(Bmi):
         self.implementation.set_value_at_indices(
             self.state,
             name,
-            jl.convert(jl.Vector[jl.Int64], inds),
+            jl.convert(jl.Vector[jl.Int64], inds + 1),
             jl.convert(jl.Vector, src),
         )
 

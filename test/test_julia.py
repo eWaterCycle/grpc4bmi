@@ -20,7 +20,7 @@ class TestJuliaHeatModel:
         install('BasicModelInterface')
         jl.Pkg.add(
             url="https://github.com/csdms/bmi-example-julia.git",
-            rev="d8b354ceddf6b048727c2e214031f43d62964120",
+            rev="80c34b4f2217599e600fe9372b1bae50e1229edf",
         )
        
 
@@ -102,47 +102,39 @@ class TestJuliaHeatModel:
             model.get_value_ptr("plate_surface__temperature")
 
     # TODO fix gives no method matching error
-    # def test_get_value_at_indices(self, model: BmiJulia):
-    #     result = model.get_value_at_indices(
-    #         "plate_surface__temperature", np.zeros((3,)), np.array([5, 6, 7])
-    #     )
-    #     assert result.shape == (3,)
-    #     assert result.dtype == np.float64
+    def test_get_value_at_indices(self, model: BmiJulia):
+        result = model.get_value_at_indices(
+            "plate_surface__temperature", np.zeros((3,)), np.array([5, 6, 7])
+        )
+        assert result.shape == (3,)
+        assert result.dtype == np.float64
         # cannot test values as model is initialized with random values
 
-    # TODO fix gives DimensionMismatch error now
-    # def test_set_value(self, model: BmiJulia):
-    #     model.set_value("plate_surface__temperature", np.ones((48,)))
+    def test_set_value(self, model: BmiJulia):
+        model.set_value("plate_surface__temperature", np.ones((48,)))
 
-    #     result = model.get_value("plate_surface__temperature", np.zeros((48,)))
-    #     assert_array_equal(result, np.ones((48,)))
+        result = model.get_value("plate_surface__temperature", np.zeros((48,)))
+        assert_array_equal(result, np.ones((48,)))
 
-    # TODO test set_value_at_indices method
+    def test_set_value_at_indices(self, model: BmiJulia):
+        model.set_value_at_indices(
+            "plate_surface__temperature", np.array([5, 6, 7]), np.ones((3,))
+        )
 
-# TODO Heat.jl does not implement all methods, use fake.jl to test all methods not covered by Heat.jl
-"""
-To test
+        result = model.get_value("plate_surface__temperature", np.zeros((48,)))
+        assert_array_equal(result[5:8], np.ones((3,)))
 
-get_grid_x
-get_grid_y
-get_grid_z
-get_grid_edge_count
-get_grid_face_count
-get_grid_edge_nodes
-get_grid_face_edges
-get_grid_face_nodes
-get_grid_nodes_per_face
-"""
+# Heat.jl does not implement all methods, use fake.jl to test all methods not covered by Heat.jl
 @pytest.mark.skipif(not BmiJulia, reason="Julia and its dependencies are not installed")
 class TestJuliaFakeModel:
     @pytest.fixture(scope="class", autouse=True)
     def install_fake(self):
         install('BasicModelInterface')
+        jl.seval('include("test/fake.jl")')
 
     @pytest.fixture
     def model(self):
-        jl.seval('include("fake.jl")')
-        model = BmiJulia.from_name(".FakeModel.Model", ".FakeModel.BMI")
+        model = BmiJulia.from_name("Main.FakeModel.Model", "Main.FakeModel.BMI")
         model.initialize('')
         return model
     
@@ -150,6 +142,14 @@ class TestJuliaFakeModel:
         "fn_name,fn_args,expected",
         [
             ("get_grid_x", [0, np.zeros((2,))], [1, 2]),
+            ("get_grid_y", [0, np.zeros((2,))], [3, 4]),
+            ("get_grid_z", [0, np.zeros((2,))], [5, 6]),
+            ('get_grid_edge_count', [0], 10),
+            ('get_grid_face_count', [0], 11),
+            ('get_grid_edge_nodes',[0, np.zeros((2,))], [7, 8]),
+            ('get_grid_face_edges',[0, np.zeros((2,))], [9,10]),
+            ('get_grid_face_nodes',[0, np.zeros((2,))], [11, 12]),
+            ('get_grid_nodes_per_face',[0, np.zeros((2,))], [13, 14]),
         ],
     )
     def test_methods(self, model: BmiJulia, fn_name, fn_args, expected):
