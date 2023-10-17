@@ -43,12 +43,6 @@ RUN git clone -b ${BMIC_VERSION} https://github.com/csdms/bmi-c.git /opt/bmi-c
 WORKDIR /opt/bmi-c/build
 RUN cmake .. && make install
 
-# Install heat-julia
-ARG HEAT_VERSION=80c34b4f2217599e600fe9372b1bae50e1229edf
-RUN git clone -b ${HEAT_VERSION} https://github.com/csdms/bmi-example-julia.git /opt/bmi-example-julia
-WORKDIR /opt/bmi-example-julia/build
-RUN cmake .. && make install && ldconfig
-
 # Install grpc4bmi, use commit c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
 # head of bmi2 branch, PR https://github.com/eWaterCycle/grpc4bmi/pull/124
 ARG GRPC4BMI_VERSION=c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
@@ -57,9 +51,11 @@ RUN git clone https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi \
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake .. && make install
 
+
 # Compile main
 WORKDIR /opt/grpc4bmiheatc-julia/build
-COPY test/heat-images/c-julia/run_bmi_server.cc /opt/grpc4bmiheatc-julia-julia
+COPY test/heat-images/c-julia/FindJulia.cmake /opt/grpc4bmiheatc-julia
+COPY test/heat-images/c-julia/run_bmi_server.cc /opt/grpc4bmiheatc-julia
 COPY test/heat-images/c-julia/CMakeLists.txt /opt/grpc4bmiheatc-julia
 RUN cmake .. && make install
 
@@ -73,7 +69,12 @@ RUN apt-get update && apt-get install -qy libssl1.1 && rm -rf /var/lib/apt/lists
 COPY --from=builder /usr/local/bin/run_bmi_server /usr/local/bin/run_bmi_server
 COPY --from=builder /usr/local/lib/ /usr/local/lib/
 
-RUN ldconfig
+# Install heat-julia
+RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/csdms/bmi-example-julia.git",rev="80c34b4f2217599e600fe9372b1bae50e1229edf")'
+
+RUN curl -L -O /usr/local/share/bmi/heat.toml https://github.com/csdms/bmi-example-julia/raw/main/example/heat.toml 
+
+RUN echo '/usr/local/julia/lib' > /etc/ld.so.conf.d/julia.conf && ldconfig
 
 ENV BMI_PORT=50051
 

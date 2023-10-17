@@ -125,8 +125,6 @@ def main(argv=sys.argv[1:]):
             model = build_julia(names[0], names[1])
         else:
             model = build_julia(names[0])
-        # model.initialize('t')
-        # print(model.get_component_name())
     else:
         model = build(args.name, path)
 
