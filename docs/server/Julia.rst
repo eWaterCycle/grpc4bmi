@@ -36,12 +36,12 @@ The server can be started with
 
 .. code-block:: sh
 
-    run-bmi-server --lang julia --name <MODEL-NAME> --port <PORT>
+    run-bmi-server --lang julia --name <MODEL-NAME>[,IMPLEMENTATION-NAME] --port <PORT>
 
 For example with [Wflow.jl](https://github.com/Deltares/Wflow.jl/) use
 
 .. code-block:: sh
 
-    run-bmi-server --lang julia --name Wflow.Model --port 55555
+    run-bmi-server --lang julia --name Wflow.Model,Wflow.bmi.BMI --port 55555
 
 The Python grpc4bmi :ref:`usage` can then be used to connect to the server.

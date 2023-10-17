@@ -78,10 +78,10 @@ def build_r(class_name, source_fn):
         raise ValueError('Missing R dependencies, install with `pip install grpc4bmi[R]')
     return BmiR(class_name, source_fn)
 
-def build_julia(name: str):
+def build_julia(name: str, implementation_name: str = 'BasicModelInterface'):
     if not BmiJulia:
         raise ValueError('Missing Julia dependencies, install with `pip install grpc4bmi[julia]')
-    return BmiJulia.from_name(name)
+    return BmiJulia.from_name(name, implementation_name)
 
 def serve(model, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -120,7 +120,13 @@ def main(argv=sys.argv[1:]):
     if args.language == "R":
         model = build_r(args.name, path)
     elif args.language == "julia":
-        model = build_julia(args.name)
+        names = args.name.split(',')
+        if len(names) == 2:
+            model = build_julia(names[0], names[1])
+        else:
+            model = build_julia(names[0])
+        # model.initialize('t')
+        # print(model.get_component_name())
     else:
         model = build(args.name, path)
 
