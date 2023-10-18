@@ -2,6 +2,8 @@
 #
 #  docker build -t heat:c-julia -f test/heat-images/c-julia/Dockerfile .
 #
+#  docker run -ti --rm -p 55555:55555 heat:c-julia
+#
 # Run with
 #
 # ipython
@@ -45,9 +47,11 @@ RUN cmake .. && make install
 
 # Install grpc4bmi, use commit c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
 # head of bmi2 branch, PR https://github.com/eWaterCycle/grpc4bmi/pull/124
-ARG GRPC4BMI_VERSION=c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
-RUN git clone https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi \
-  && cd /opt/grpc4bmi && git checkout ${GRPC4BMI_VERSION}
+# ARG GRPC4BMI_VERSION=c5cc9b9bf33b6043e8db242a07c6fb92b9c63f66
+# RUN git clone https://github.com/eWaterCycle/grpc4bmi /opt/grpc4bmi \
+#   && cd /opt/grpc4bmi && git checkout ${GRPC4BMI_VERSION}
+COPY cpp /opt/grpc4bmi/cpp
+COPY proto /opt/grpc4bmi/proto
 WORKDIR /opt/grpc4bmi/cpp/build
 RUN cmake .. && make install
 
@@ -59,6 +63,14 @@ COPY test/heat-images/c-julia/run_bmi_server.cc /opt/grpc4bmiheatc-julia
 COPY test/heat-images/c-julia/CMakeLists.txt /opt/grpc4bmiheatc-julia
 RUN cmake .. && make install
 
+FROM julia:bullseye AS jldeps
+
+# Install heat-julia
+RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/csdms/bmi-example-julia.git",rev="80c34b4f2217599e600fe9372b1bae50e1229edf")' && \
+  julia -e 'using Pkg; Pkg.add("BasicModelInterface")'
+
+RUN curl -L https://github.com/csdms/bmi-example-julia/raw/main/example/heat.toml > /usr/local/share/heat.toml
+
 # run container
 FROM julia:bullseye
 
@@ -68,15 +80,11 @@ RUN apt-get update && apt-get install -qy libssl1.1 && rm -rf /var/lib/apt/lists
 # Copy compiled and deps
 COPY --from=builder /usr/local/bin/run_bmi_server /usr/local/bin/run_bmi_server
 COPY --from=builder /usr/local/lib/ /usr/local/lib/
-
-# Install heat-julia
-RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/csdms/bmi-example-julia.git",rev="80c34b4f2217599e600fe9372b1bae50e1229edf")' && \
-  julia -e 'using Pkg; Pkg.add("BasicModelInterface")'
-
-RUN curl -L https://github.com/csdms/bmi-example-julia/raw/main/example/heat.toml > /usr/local/share/heat.toml
+COPY --from=jldeps /root/.julia/ /root/.julia/
+COPY --from=jldeps /usr/local/share/heat.toml /usr/local/share/heat.toml
 
 RUN echo '/usr/local/julia/lib' > /etc/ld.so.conf.d/julia.conf && ldconfig
 
-ENV BMI_PORT=50051
+# TODO run server as non-root user
 
 ENTRYPOINT ["/usr/local/bin/run_bmi_server"]

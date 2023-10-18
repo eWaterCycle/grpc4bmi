@@ -824,6 +824,7 @@ void run_bmi_server(BmiClass *model, int argc, char *argv[])
     grpc::EnableDefaultHealthCheckService(true);
     grpc::reflection::InitProtoReflectionServerBuilderPlugin();
     grpc::ServerBuilder builder;
+    // builder.SetResourceQuota(grpc::ResourceQuota().SetMaxThreads(2));
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());

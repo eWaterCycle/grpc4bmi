@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(run_bmi_server C CXX)
+project(run_bmi_server CXX)
 
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -7,9 +7,9 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 set(_cflags "-ansi -Wall -Wundef -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -O2")
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(BMIC REQUIRED IMPORTED_TARGET bmic)
-message("--   bmic include - ${BMIC_INCLUDE_DIRS}")
-include_directories(${BMIC_INCLUDE_DIRS})
+pkg_check_modules(BMICXX REQUIRED IMPORTED_TARGET bmicxx)
+message("--   bmicxx include - ${BMICXX_INCLUDE_DIRS}")
+include_directories(${BMICXX_INCLUDE_DIRS})
 pkg_check_modules(GRPC4BMI REQUIRED grpc4bmi)
 
 # See https://github.com/barche/embedding-julia
