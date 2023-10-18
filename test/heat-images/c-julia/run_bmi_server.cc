@@ -270,6 +270,7 @@ int main(int argc, char *argv[])
             */
         }
         {
+            // TODO read BmiJulia from env var or cli arguments
             bmi::Bmi* model = new BmiJulia("Heat", "Heat.Model");
             // Calling without grpc works
             // model->Initialize("/usr/local/share/heat.toml");

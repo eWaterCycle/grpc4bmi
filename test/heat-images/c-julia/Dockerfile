@@ -69,6 +69,7 @@ FROM julia:bullseye AS jldeps
 RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/csdms/bmi-example-julia.git",rev="80c34b4f2217599e600fe9372b1bae50e1229edf")' && \
   julia -e 'using Pkg; Pkg.add("BasicModelInterface")'
 
+# TODO use config file from outside container
 RUN curl -L https://github.com/csdms/bmi-example-julia/raw/main/example/heat.toml > /usr/local/share/heat.toml
 
 # run container
@@ -88,3 +89,5 @@ RUN echo '/usr/local/julia/lib' > /etc/ld.so.conf.d/julia.conf && ldconfig
 # TODO run server as non-root user
 
 ENTRYPOINT ["/usr/local/bin/run_bmi_server"]
+
+# TODO document how to use this Dockerfile together with another Julia BMI model
