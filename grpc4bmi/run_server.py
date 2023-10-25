@@ -73,6 +73,7 @@ def build_r(class_name, source_fn):
         raise ValueError('Missing R dependencies, install with `pip install grpc4bmi[R]')
     return BmiR(class_name, source_fn)
 
+
 def serve(model, port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     bmi_pb2_grpc.add_BmiServiceServicer_to_server(model, server)
