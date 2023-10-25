@@ -101,7 +101,6 @@ class TestJuliaHeatModel:
         with pytest.raises(NotImplementedError):
             model.get_value_ptr("plate_surface__temperature")
 
-    # TODO fix gives no method matching error
     def test_get_value_at_indices(self, model: BmiJulia):
         result = model.get_value_at_indices(
             "plate_surface__temperature", np.zeros((3,)), np.array([5, 6, 7])

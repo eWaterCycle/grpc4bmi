@@ -354,7 +354,7 @@ class BmiJulia(Bmi):
             self.state, 
             name, 
             jl.convert(jl.Vector, dest),
-            jl.convert(jl.Vector, inds) + 1
+            jl.convert(jl.Vector, inds + 1)
         )
         return dest
     
@@ -391,7 +391,7 @@ class BmiJulia(Bmi):
         self.implementation.set_value_at_indices(
             self.state,
             name,
-            jl.convert(jl.Vector, inds) + 1,
+            jl.convert(jl.Vector, inds + 1),
             jl.convert(jl.Vector, src),
         )
 
