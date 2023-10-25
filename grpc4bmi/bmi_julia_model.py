@@ -4,14 +4,6 @@ from bmipy import Bmi
 import numpy as np
 from juliacall import Main as jl, ModuleValue, TypeValue
 
-def install(package):
-    """Add package to Julia environment.
-    
-    Args:
-        package: Name of package to install.
-    """
-    jl.Pkg.add(package)
-
 class BmiJulia(Bmi):
     """Python Wrapper of a Julia based implementation of BasicModelInterface.
 
