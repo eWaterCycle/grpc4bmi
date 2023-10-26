@@ -15,14 +15,14 @@ class BmiClientSubProcess(BmiClient):
     >>> mymodel = BmiClientSubProcess(<PACKAGE>.<MODULE>.<CLASS>)
     """
 
-    def __init__(self, module_name, path=None, timeout=None):
+    def __init__(self, module_name, path=None, timeout=None, delay=1):
         host = "localhost"
         port = BmiClient.get_unique_port(host)
         name_options = ["--name", module_name]
         port_options = ["--port", str(port)]
         path_options = ["--path", path] if path else []
         self.pipe = subprocess.Popen(["run-bmi-server"] + name_options + port_options + path_options, env=dict(os.environ))
-        time.sleep(1)
+        time.sleep(delay)
         super(BmiClientSubProcess, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
