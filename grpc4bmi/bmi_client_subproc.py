@@ -26,7 +26,7 @@ class BmiClientSubProcess(BmiClient):
         super(BmiClientSubProcess, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
-        self.pipe.terminate()
+        self.pipe.kill()
         self.pipe.wait(timeout=0.1)
 
     def get_value_ref(self, var_name):
