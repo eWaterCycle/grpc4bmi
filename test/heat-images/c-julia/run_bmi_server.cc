@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <thread>
 
 #include <bmi.hxx>
 #include <julia.h>
@@ -56,6 +57,8 @@ public:
         // cout << cmd << endl;
         jl_eval_string(cmd.c_str());
         handle_julia_exception();
+        std::cout << "Initialize has Thread ID: " << std::this_thread::get_id() << std::endl;
+
     }
     
 
@@ -74,6 +77,7 @@ public:
 
     std::string GetComponentName()
     {
+        std::cout << "GetComponentName has Thread ID: " << std::this_thread::get_id() << std::endl;
         cout << "GetComponentName" << jl_is_initialized << endl;
         jl_eval_string("print(model)");
         // If we cant get passed line above 
