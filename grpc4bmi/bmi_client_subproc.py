@@ -27,7 +27,7 @@ class BmiClientSubProcess(BmiClient):
 
     def __del__(self):
         self.pipe.terminate()
-        self.pipe.wait()
+        self.pipe.wait(timeout=0.1)
 
     def get_value_ref(self, var_name):
         raise NotImplementedError("Cannot exchange memory references across process boundary")

@@ -52,6 +52,7 @@ jobs:
     - name: Test with pytest
       run: |
         pytest -vv --cov=grpc4bmi --cov-report xml
+      timeout-minutes: 20
     - name: Correct coverage paths
       run: sed -i "s+$PWD/++g" coverage.xml
     - name: SonarCloud analysis
