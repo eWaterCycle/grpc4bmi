@@ -6,7 +6,7 @@ import pytest
 
 
 try:
-    from grpc4bmi.bmi_julia_model import BmiJulia,install
+    from grpc4bmi.bmi_julia_model import BmiJulia
     from juliacall import Main as jl
 except ImportError:
     BmiJulia = None
@@ -17,7 +17,7 @@ class TestJuliaHeatModel:
     def install_heat(self):
         # TODO for other Julia models do we need to install BasicModelInterface?
         # it is dep of Heat.jl, but we use it directly
-        install('BasicModelInterface')
+        jl.Pkg.add('BasicModelInterface')
         jl.Pkg.add(
             url="https://github.com/csdms/bmi-example-julia.git",
             rev="80c34b4f2217599e600fe9372b1bae50e1229edf",
@@ -101,7 +101,6 @@ class TestJuliaHeatModel:
         with pytest.raises(NotImplementedError):
             model.get_value_ptr("plate_surface__temperature")
 
-    # TODO fix gives no method matching error
     def test_get_value_at_indices(self, model: BmiJulia):
         result = model.get_value_at_indices(
             "plate_surface__temperature", np.zeros((3,)), np.array([5, 6, 7])
@@ -129,7 +128,7 @@ class TestJuliaHeatModel:
 class TestJuliaFakeModel:
     @pytest.fixture(scope="class", autouse=True)
     def install_fake(self):
-        install('BasicModelInterface')
+        jl.Pkg.add('BasicModelInterface')
         jl.seval('include("test/fake.jl")')
 
     @pytest.fixture

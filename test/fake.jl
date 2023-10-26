@@ -9,7 +9,7 @@ BMI.initialize(::Type{Model}, config_file) = Model()
 
 BMI.get_component_name(m::Model) = "The 2D Heat Equation"
 
-function BMI.get_grid_x(m::Model, grid, x)
+function BMI.get_grid_x(m::Model, grid, x::Vector{T}) where {T<:AbstractFloat}
     copyto!(x, [1.0, 2.0])
 end
 

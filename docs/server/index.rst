@@ -7,5 +7,4 @@ Creating a BMI server
 
    python
    R
-   Julia
    Cpp
