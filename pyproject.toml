@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "grpc4bmi"
-version = "0.4.0"
+version = "0.5.0"
 description = "Run your BMI implementation in a separate process and expose it as BMI-python with GRPC"
 readme = "README.md"
 requires-python = ">=3.7"
