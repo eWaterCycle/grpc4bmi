@@ -68,6 +68,11 @@ The WALRUS model has a `Dockerfile`_  file which can be used as an example.
 
 .. _Dockerfile: https://github.com/eWaterCycle/grpc4bmi-examples/blob/master/walrus/Dockerfile
 
+Julia
+-----
+
+A Julia model can not be run as a server, see https://github.com/eWaterCycle/grpc4bmi/blob/main/README.md#model-written-in-julia .
+
 C/C++/Fortran
 -------------
 

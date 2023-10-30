@@ -38,6 +38,7 @@ dependencies = [
 
 [project.optional-dependencies]
 R = ["rpy2"]
+julia = ["juliacall"]
 dev = [
     "build",
     "pytest",

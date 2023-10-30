@@ -102,7 +102,8 @@ class BmiClientDocker(BmiClient):
         super(BmiClientDocker, self).__init__(BmiClient.create_grpc_channel(port=port, host=host), timeout=timeout)
 
     def __del__(self):
-        self.container.stop()
+        if hasattr(self, 'container'):
+            self.container.stop()
 
     def logs(self) -> str:
         """Returns complete combined stdout and stderr written by the Docker container.

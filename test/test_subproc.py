@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.DEBUG)
 def make_bmi_classes(init=False):
     numpy.random.seed(0)
     os.environ["PYTHONPATH"] = os.path.dirname(os.path.abspath(__file__))
-    client = BmiClientSubProcess("heat.BmiHeat")
+    client = BmiClientSubProcess("heat.BmiHeat", timeout=10, delay=3)
     local = BmiHeat()
     if init:
         client.initialize(None)

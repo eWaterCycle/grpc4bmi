@@ -24,6 +24,12 @@ on the client (Python) side. If your server model is implemented in Python, do t
 pip install grpc4bmi[R]
 ```
 
+If the model is implemented in Julia, run instead
+
+```bash
+pip install grpc4bmi[julia]
+```
+
 in the server environment. For bleeding edge version from GitHub use
 
 ```bash
@@ -90,6 +96,35 @@ For example with [WALRUS](https://github.com/eWaterCycle/grpc4bmi-examples/tree/
 run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus-bmi.r --name WalrusBmi --port 55555
 ```
 
+### Models written in Julia
+
+The grpc4bmi Python package can also run BMI models written in Julia if the model has an implementation of the [BasicModelInterface.jl](https://github.com/Deltares/BasicModelInterface.jl).
+
+Run the Julia model in Python with
+
+```bash
+from grpc4bmi.bmi_julia_model import BmiJulia
+
+mymodel = BmiJulia.from_name('<package>.<model>', 'BasicModelInterface')
+```
+
+For example with [Wflow.jl](https://github.com/Deltares/Wflow.jl/) use
+
+```bash
+# Install Wflow.jl package in the Julia environment managed by the juliacall Python package.
+from juliacall import Main as jl
+jl.Pkg.add("Wflow")
+# Create the model
+from grpc4bmi.bmi_julia_model import BmiJulia
+mymodel = BmiJulia.from_name('Wflow.Model', 'Wflow.bmi.BMI')
+```
+
+A Julia model has to be run locally. It can not be run in the default gRPC client/server Docker container mode because:
+
+1. Julia has no gRPC server implementation
+2. Calling Julia methods from Python gRPC server causes 100% CPU usage and no progress
+3. Calling Julia methods from C++ gRPC server causes segmentation faults
+
 ### The client side
 
 The client side has only a Python implementation. The default BMI client assumes a running server process on a given port.
@@ -154,7 +189,3 @@ pip install -e .[docs]
 
 and install the C++ runtime and `protoc` command as described in <https://github.com/google/protobuf/blob/master/src/README.md>.
 After this, simply executing the `proto_gen.sh` script should do the job.
-
-## Future work
-
-More language bindings are underway.
