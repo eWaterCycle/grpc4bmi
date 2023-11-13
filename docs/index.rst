@@ -18,6 +18,7 @@ Welcome to grpc4bmi's documentation!
    container/building
    container/usage
    cli
+   openapi
    python_api
 
 Indices and tables

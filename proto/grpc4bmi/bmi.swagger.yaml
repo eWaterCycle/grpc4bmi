@@ -1,0 +1,1084 @@
+swagger: "2.0"
+info:
+  title: proto/grpc4bmi/bmi.proto
+  version: version not set
+tags:
+  - name: BmiService
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /bmi.BmiService/finalize:
+    post:
+      operationId: BmiService_finalize
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getComponentName:
+    post:
+      operationId: BmiService_getComponentName
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetComponentNameResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getCurrentTime:
+    post:
+      operationId: BmiService_getCurrentTime
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetTimeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getEndTime:
+    post:
+      operationId: BmiService_getEndTime
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetTimeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridEdgeCount:
+    post:
+      operationId: BmiService_getGridEdgeCount
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetCountResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridEdgeNodes:
+    post:
+      operationId: BmiService_getGridEdgeNodes
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridEdgeNodesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridFaceCount:
+    post:
+      operationId: BmiService_getGridFaceCount
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetCountResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridFaceEdges:
+    post:
+      operationId: BmiService_getGridFaceEdges
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridFaceEdgesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridFaceNodes:
+    post:
+      operationId: BmiService_getGridFaceNodes
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridFaceNodesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridNodeCount:
+    post:
+      operationId: BmiService_getGridNodeCount
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetCountResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridNodesPerFace:
+    post:
+      operationId: BmiService_getGridNodesPerFace
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridNodesPerFaceResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridOrigin:
+    post:
+      operationId: BmiService_getGridOrigin
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridOriginResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridRank:
+    post:
+      operationId: BmiService_getGridRank
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridRankResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridShape:
+    post:
+      operationId: BmiService_getGridShape
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridShapeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridSize:
+    post:
+      operationId: BmiService_getGridSize
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridSizeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridSpacing:
+    post:
+      operationId: BmiService_getGridSpacing
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridSpacingResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridType:
+    post:
+      operationId: BmiService_getGridType
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridTypeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridX:
+    post:
+      operationId: BmiService_getGridX
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridPointsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridY:
+    post:
+      operationId: BmiService_getGridY
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridPointsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getGridZ:
+    post:
+      operationId: BmiService_getGridZ
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetGridPointsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGridRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getInputItemCount:
+    post:
+      operationId: BmiService_getInputItemCount
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetCountResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getInputVarNames:
+    post:
+      operationId: BmiService_getInputVarNames
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarNamesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getOutputItemCount:
+    post:
+      operationId: BmiService_getOutputItemCount
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetCountResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getOutputVarNames:
+    post:
+      operationId: BmiService_getOutputVarNames
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarNamesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getStartTime:
+    post:
+      operationId: BmiService_getStartTime
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetTimeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getTimeStep:
+    post:
+      operationId: BmiService_getTimeStep
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetTimeStepResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getTimeUnits:
+    post:
+      operationId: BmiService_getTimeUnits
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetTimeUnitsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/getValue:
+    post:
+      operationId: BmiService_getValue
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetValueResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getValueAtIndices:
+    post:
+      operationId: BmiService_getValueAtIndices
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetValueAtIndicesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetValueAtIndicesRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getVarGrid:
+    post:
+      operationId: BmiService_getVarGrid
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarGridResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getVarItemSize:
+    post:
+      operationId: BmiService_getVarItemSize
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarItemSizeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getVarLocation:
+    post:
+      operationId: BmiService_getVarLocation
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarLocationResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getVarNBytes:
+    post:
+      operationId: BmiService_getVarNBytes
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarNBytesResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getVarType:
+    post:
+      operationId: BmiService_getVarType
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarTypeResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/getVarUnits:
+    post:
+      operationId: BmiService_getVarUnits
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiGetVarUnitsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetVarRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/initialize:
+    post:
+      operationId: BmiService_initialize
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiInitializeRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/setValue:
+    post:
+      operationId: BmiService_setValue
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiSetValueRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/setValueAtIndices:
+    post:
+      operationId: BmiService_setValueAtIndices
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiSetValueAtIndicesRequest'
+      tags:
+        - BmiService
+  /bmi.BmiService/update:
+    post:
+      operationId: BmiService_update
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+      tags:
+        - BmiService
+  /bmi.BmiService/updateUntil:
+    post:
+      operationId: BmiService_updateUntil
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/bmiEmpty'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bmiGetTimeResponse'
+      tags:
+        - BmiService
+definitions:
+  GetVarLocationResponseLocation:
+    type: string
+    enum:
+      - NODE
+      - EDGE
+      - FACE
+    default: NODE
+  bmiDoubleArrayMessage:
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          type: number
+          format: double
+  bmiEmpty:
+    type: object
+  bmiFloatArrayMessage:
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          type: number
+          format: float
+  bmiGetComponentNameResponse:
+    type: object
+    properties:
+      name:
+        type: string
+  bmiGetCountResponse:
+    type: object
+    properties:
+      count:
+        type: string
+        format: int64
+  bmiGetGridEdgeNodesResponse:
+    type: object
+    properties:
+      edgeNodes:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiGetGridFaceEdgesResponse:
+    type: object
+    properties:
+      faceEdges:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiGetGridFaceNodesResponse:
+    type: object
+    properties:
+      faceNodes:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiGetGridNodesPerFaceResponse:
+    type: object
+    properties:
+      nodesPerFace:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiGetGridOriginResponse:
+    type: object
+    properties:
+      origin:
+        type: array
+        items:
+          type: number
+          format: double
+  bmiGetGridPointsResponse:
+    type: object
+    properties:
+      coordinates:
+        type: array
+        items:
+          type: number
+          format: double
+  bmiGetGridRankResponse:
+    type: object
+    properties:
+      rank:
+        type: string
+        format: int64
+  bmiGetGridShapeResponse:
+    type: object
+    properties:
+      shape:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiGetGridSizeResponse:
+    type: object
+    properties:
+      size:
+        type: string
+        format: int64
+  bmiGetGridSpacingResponse:
+    type: object
+    properties:
+      spacing:
+        type: array
+        items:
+          type: number
+          format: double
+  bmiGetGridTypeResponse:
+    type: object
+    properties:
+      type:
+        type: string
+  bmiGetTimeResponse:
+    type: object
+    properties:
+      time:
+        type: number
+        format: double
+  bmiGetTimeStepResponse:
+    type: object
+    properties:
+      interval:
+        type: number
+        format: double
+  bmiGetTimeUnitsResponse:
+    type: object
+    properties:
+      units:
+        type: string
+  bmiGetValueAtIndicesRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      indices:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiGetValueAtIndicesResponse:
+    type: object
+    properties:
+      valuesInt:
+        $ref: '#/definitions/bmiIntArrayMessage'
+      valuesFloat:
+        $ref: '#/definitions/bmiFloatArrayMessage'
+      valuesDouble:
+        $ref: '#/definitions/bmiDoubleArrayMessage'
+  bmiGetValueResponse:
+    type: object
+    properties:
+      valuesInt:
+        $ref: '#/definitions/bmiIntArrayMessage'
+      valuesFloat:
+        $ref: '#/definitions/bmiFloatArrayMessage'
+      valuesDouble:
+        $ref: '#/definitions/bmiDoubleArrayMessage'
+  bmiGetVarGridResponse:
+    type: object
+    properties:
+      gridId:
+        type: integer
+        format: int32
+  bmiGetVarItemSizeResponse:
+    type: object
+    properties:
+      size:
+        type: string
+        format: int64
+  bmiGetVarLocationResponse:
+    type: object
+    properties:
+      location:
+        $ref: '#/definitions/GetVarLocationResponseLocation'
+  bmiGetVarNBytesResponse:
+    type: object
+    properties:
+      nbytes:
+        type: string
+        format: int64
+  bmiGetVarNamesResponse:
+    type: object
+    properties:
+      names:
+        type: array
+        items:
+          type: string
+  bmiGetVarRequest:
+    type: object
+    properties:
+      name:
+        type: string
+  bmiGetVarTypeResponse:
+    type: object
+    properties:
+      type:
+        type: string
+  bmiGetVarUnitsResponse:
+    type: object
+    properties:
+      units:
+        type: string
+  bmiGridRequest:
+    type: object
+    properties:
+      gridId:
+        type: string
+        format: int64
+  bmiInitializeRequest:
+    type: object
+    properties:
+      configFile:
+        type: string
+  bmiIntArrayMessage:
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          type: string
+          format: int64
+  bmiSetValueAtIndicesRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      indices:
+        type: array
+        items:
+          type: string
+          format: int64
+      valuesInt:
+        $ref: '#/definitions/bmiIntArrayMessage'
+      valuesFloat:
+        $ref: '#/definitions/bmiFloatArrayMessage'
+      valuesDouble:
+        $ref: '#/definitions/bmiDoubleArrayMessage'
+  bmiSetValueRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      valuesInt:
+        $ref: '#/definitions/bmiIntArrayMessage'
+      valuesFloat:
+        $ref: '#/definitions/bmiFloatArrayMessage'
+      valuesDouble:
+        $ref: '#/definitions/bmiDoubleArrayMessage'
+  protobufAny:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  rpcStatus:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/protobufAny'

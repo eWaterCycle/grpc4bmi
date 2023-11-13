@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bmi;
+option go_package = "github.com/eWatercycle/grpc4bmi";
 
 message Empty{}
 
