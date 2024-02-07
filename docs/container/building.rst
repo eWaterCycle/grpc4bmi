@@ -103,6 +103,8 @@ The Docker image can be published at `Docker Hub`_ by creating a repository and 
 
    docker push <image name>
 
+Note `<image name>` must be in the format `<username>/<modelname>` for the docker push to work. Username of you https://www.docker.com/ account. 
+
 The example WALRUS model is published at https://cloud.docker.com/u/ewatercycle/repository/docker/ewatercycle/walrus-grpc4bmi.
 
 The Docker image can then be started with the grpc4bmi :ref:`docker client <docker_client>`.
