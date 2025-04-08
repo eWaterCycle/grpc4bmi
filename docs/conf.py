@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.abspath('.'))
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode',
               'sphinx.ext.napoleon', 'sphinx.ext.intersphinx',
               'sphinx.ext.autosectionlabel',
-              'sphinxarg.ext', 'sphinxcontrib.apidoc',
+              'sphinxarg.ext', 'sphinx.ext.apidoc',
               'sphinx_copybutton', 'sphinxcontrib.jquery',
               ]
 
@@ -175,7 +175,7 @@ texinfo_documents = [
 ]
 
 intersphinx_mapping = {
-    'https://docs.python.org/': None,
+    'python': ('https://docs.python.org/', None),
     'numpy': ('http://docs.scipy.org/doc/numpy', None),
     "bmipy": ("https://bmi.readthedocs.io/en/latest/", None),
 }
