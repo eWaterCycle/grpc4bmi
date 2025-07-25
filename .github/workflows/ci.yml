@@ -21,8 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip wheel
-        pip install -r dev-requirements.txt
-        pip install -e .[R,julia]
+        pip install -e .[dev,R,julia]
     - name: Setup Apptainer
       uses: eWaterCycle/setup-apptainer@v2
       with:
