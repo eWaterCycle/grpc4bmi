@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip wheel
-        pip install -e .[dev,R,julia]
+        pip install -e .[dev,julia]
     - name: Setup Apptainer
       uses: eWaterCycle/setup-apptainer@v2
       with:
@@ -44,6 +44,9 @@ jobs:
       run: |
         Rscript -e "install.packages('remotes')"
         Rscript -e "install.packages('R6')"
+    - name: Install rpy2 (first requires R to be available).
+      run: |
+        pip install -e .[R]
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
