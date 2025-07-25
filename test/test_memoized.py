@@ -83,9 +83,11 @@ def test_nonmemoized_methods(mut_name, mut_args):
         mot = getattr(client, mut_name)
 
         mot(*mut_args)
-        mot(*mut_args)
-
-        assert mock_method.call_count == 2
+        if mut_name != "finalize":
+            mot(*mut_args)
+            assert mock_method.call_count == 2
+        else:
+            assert mock_method.call_count == 1
 
 
 def test_initialize_clears_cache():

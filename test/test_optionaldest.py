@@ -50,7 +50,7 @@ def test_methods_with_optional_dest(orig_model, method_name, method_args, expect
     [
         (BmiHeat(), 'update', tuple()),
         (BmiHeat(), 'update_until', [2]),
-        (BmiHeat(), 'finalize', tuple()),
+        # (BmiHeat(), 'finalize', tuple()),  # Can't test finalize: double finalize not allowed.
         (BmiHeat(), 'get_current_time', tuple()),
         (BmiHeat(), 'get_component_name', tuple()),
         (BmiHeat(), 'get_input_item_count', tuple()),
