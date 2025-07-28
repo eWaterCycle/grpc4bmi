@@ -55,7 +55,7 @@ class TestJuliaHeatModel:
             ("get_input_var_names", tuple(), ["plate_surface__temperature"]),
             ("get_output_var_names", tuple(), ["plate_surface__temperature"]),
             ("get_start_time", tuple(), 0.0),
-            ("get_end_time", tuple(), np.Inf),
+            ("get_end_time", tuple(), np.inf),
             ("get_time_step", tuple(), 0.25),
             ("get_time_units", tuple(), "s"),
             ("get_var_type", ["plate_surface__temperature"], "float64"),

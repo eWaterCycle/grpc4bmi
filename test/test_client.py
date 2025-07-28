@@ -110,7 +110,10 @@ def test_initialize_with_nonstring():
     assert client is not None
     with pytest.raises(TypeError, match='bad argument type for built-in operation'):
         client.initialize(42)
-    client.finalize()
+    try:  # Can't finalize model which is not initialized.
+        client.finalize()
+    except MyRpcError as err:
+        assert "has no attribute '_model'" in str(err)
     del client
 
 
@@ -132,7 +135,7 @@ def test_update_until():
 
 
 def test_get_time_unit():
-    client, local = make_bmi_classes()
+    client, local = make_bmi_classes(True)
     assert client.get_time_units() == local.get_time_units()
     client.finalize()
     del client
@@ -819,18 +822,18 @@ class TestCreateGrpcChannel:
     def test_defaults(self):
         with BmiClient.create_grpc_channel() as channel:
             target = channel._channel.target()
-            assert target == b'localhost:50051'
+            assert target == b'dns:///localhost:50051'
 
     def test_custom(self):
         with BmiClient.create_grpc_channel(51234, 'somehost') as channel:
             target = channel._channel.target()
-            assert target == b'somehost:51234'
+            assert target == b'dns:///somehost:51234'
 
     def test_same_port_twice(self):
         port = 51235
         with BmiClient.create_grpc_channel(port) as channel1, BmiClient.create_grpc_channel(port) as channel2:
-            assert channel1._channel.target() == b'localhost:51235'
-            assert channel2._channel.target() == b'localhost:51235'
+            assert channel1._channel.target() == b'dns:///localhost:51235'
+            assert channel2._channel.target() == b'dns:///localhost:51235'
 
 class TestModelWithItemSizeZeroAndVarTypeFloat32:
     name = 'plate_surface__temperature'

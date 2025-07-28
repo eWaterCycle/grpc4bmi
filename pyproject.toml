@@ -48,6 +48,7 @@ dev = [
     "nbconvert",
     "ipykernel",
     "nbformat",
+    "bmi-heat@git+https://github.com/csdms/bmi-example-python",
 ]
 docs = [
     "sphinx",
