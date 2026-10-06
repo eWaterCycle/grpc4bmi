@@ -18,6 +18,7 @@ find_library(GRPCREFLECTION grpc++_reflection)
 find_library(GRPCLIB grpc CONFIG REQUIRED)
 message(STATUS "Using gRPC ${GRPCLIB_VERSION}")
 find_package(PkgConfig REQUIRED)
+pkg_check_modules(ABSL_CHECK REQUIRED IMPORTED_TARGET absl_check)
 pkg_check_modules(BMI REQUIRED IMPORTED_TARGET bmic bmicxx)
 message(STATUS "Using BMI ${BMI_VERSION}")
 
@@ -52,6 +53,7 @@ target_link_libraries(
     ${GRPCREFLECTION}
     ${GRPC}
     ${PROTOBUF_LIBRARY}
+    ${ABSL_CHECK_LINK_LIBRARIES}
 )
 set_target_properties(grpc4bmi PROPERTIES PUBLIC_HEADER "bmi_cpp_extension.h;bmi_c_wrapper.h;bmi_grpc_server.h;${GRPC_HDR_FILES}")
 add_subdirectory (test)
