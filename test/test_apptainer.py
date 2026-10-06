@@ -29,7 +29,7 @@ class Test_check_apptainer_version_string:
         with pytest.raises(error_class, match=expected):
             check_apptainer_version_string(test_input)
 
-IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.2.0"
+IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.3.1"
 
 @pytest.fixture
 def walrus_model(tmp_path, walrus_input):

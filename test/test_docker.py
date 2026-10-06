@@ -34,7 +34,7 @@ def walrus_model_with_2input_dirs(tmp_path, walrus_2input_dirs):
     input_dirs = walrus_2input_dirs['input_dirs']
     work_dir = tmp_path / 'work'
     work_dir.mkdir()
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.2.0",
+    model = BmiClientDocker(image=walrus_docker_image,
                             image_port=55555,
                             work_dir=str(work_dir),
                             input_dirs=input_dirs)
