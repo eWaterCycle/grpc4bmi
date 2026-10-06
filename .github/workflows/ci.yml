@@ -47,25 +47,6 @@ jobs:
       uses: julia-actions/setup-julia@v3
       with:
         version: '^1.9'
-    # TODO remove: temporary debug step for apptainer walrus container not reachable in CI
-    - name: Debug Apptainer walrus container
-      run: |
-        apptainer --version
-        sysctl kernel.apparmor_restrict_unprivileged_userns || true
-        cat /proc/sys/net/ipv6/conf/all/disable_ipv6 || true
-        work_dir=$(mktemp -d)
-        apptainer run --contain --env BMI_PORT=55555 \
-          --bind "$work_dir:$work_dir:rw" --pwd "$work_dir" \
-          docker://ewatercycle/walrus-grpc4bmi:v0.3.1 > "$work_dir/container.log" 2>&1 &
-        pid=$!
-        sleep 30
-        ps -p $pid -o pid,stat,etime,cmd || echo "container exited"
-        ss -ltn | grep 55555 || echo "nothing listening on 55555"
-        python -c "import grpc; grpc.channel_ready_future(grpc.insecure_channel('localhost:55555')).result(timeout=10); print('connected')" || echo "connect failed"
-        echo "--- container log ---"
-        cat "$work_dir/container.log"
-        kill $pid || true
-      timeout-minutes: 3
     - name: Test with pytest
       run: |
         pytest -vv --cov=grpc4bmi --cov-report xml

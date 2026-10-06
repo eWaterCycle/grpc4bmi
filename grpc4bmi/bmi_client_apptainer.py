@@ -38,6 +38,7 @@ class BmiClientApptainer(BmiClient):
     The Apptainer container image is expected to run a BMI GRPC server as its default command.
     The client picks a random port and expects the container to run the BMI GRPC server on that port.
     The port is passed to the container using the BMI_PORT environment variable.
+    Other environment variables of the host are not passed to the container.
 
     Args:
         image: Apptainer image.
@@ -210,6 +211,7 @@ class BmiClientApptainer(BmiClient):
             "apptainer",
             "run",
             "--contain",
+            "--cleanenv",
             "--env", f"BMI_PORT={port}"
         ]
 
