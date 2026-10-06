@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import numpy as np
 from heat import BmiHeat
 from numpy.testing import assert_allclose
@@ -50,7 +52,6 @@ def test_methods_with_optional_dest(orig_model, method_name, method_args, expect
     [
         (BmiHeat(), 'update', tuple()),
         (BmiHeat(), 'update_until', [2]),
-        (BmiHeat(), 'finalize', tuple()),
         (BmiHeat(), 'get_current_time', tuple()),
         (BmiHeat(), 'get_component_name', tuple()),
         (BmiHeat(), 'get_input_item_count', tuple()),
@@ -90,3 +91,15 @@ def test_methods_with_no_dest(orig_model, method_name, method_args):
             assert_allclose(result, expected)
     else:
         assert result == expected
+
+
+def test_finalize():
+    orig_model = BmiHeat()
+    with patch.object(orig_model, 'finalize', wraps=orig_model.finalize) as mock_method:
+        model = OptionalDestBmi(orig_model)
+        model.initialize(None)
+
+        result = model.finalize()
+
+        assert result is None
+        mock_method.assert_called_once_with()

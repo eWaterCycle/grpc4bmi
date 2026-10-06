@@ -7,7 +7,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/grpc4bmi.pc.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/grpc4bmi.pc)
 
 if (NOT DEFINED CMAKE_CXX_STANDARD)
-  set (CMAKE_CXX_STANDARD 14)
+  set (CMAKE_CXX_STANDARD 17)
 endif()
 
 find_package(Threads REQUIRED)

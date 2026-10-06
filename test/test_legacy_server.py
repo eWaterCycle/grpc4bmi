@@ -88,7 +88,6 @@ def test_update():
 def test_get_time_unit():
     server, local = make_bmi_classes()
     assert server.getTimeUnits(None, None).units == make_string(local.get_time_units())
-    server.finalize(None, None)
     del server
 
 

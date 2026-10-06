@@ -41,6 +41,7 @@ class BmiClientSingularity(BmiClient):
     During initialization launches a singularity container with run-bmi-server as its command.
     The client picks a random port and expects the container to run the server on that port.
     The port is passed to the container using the BMI_PORT environment variable.
+    Other environment variables of the host are not passed to the container.
 
     Args:
         image: Singularity image.
@@ -213,6 +214,7 @@ class BmiClientSingularity(BmiClient):
             "singularity",
             "run",
             "--contain",
+            "--cleanenv",
             "--env", f"BMI_PORT={port}"
         ]
 

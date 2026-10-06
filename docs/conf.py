@@ -20,6 +20,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 
+from intersphinx_registry import get_intersphinx_mapping
 
 # -- General configuration ------------------------------------------------
 
@@ -174,8 +175,10 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-intersphinx_mapping = {
-    'https://docs.python.org/': None,
-    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+intersphinx_mapping = get_intersphinx_mapping(
+    packages={"python", "numpy"}
+)
+
+intersphinx_mapping.update({
     "bmipy": ("https://bmi.readthedocs.io/en/latest/", None),
-}
+})

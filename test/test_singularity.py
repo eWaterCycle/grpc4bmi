@@ -15,14 +15,16 @@ from typeguard import TypeCheckError
 from grpc4bmi.bmi_client_singularity import SUPPORTED_APPTAINER_VERSIONS, SUPPORTED_SINGULARITY_VERSIONS, BmiClientSingularity, check_singularity_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException, SingularityVersionException
 from grpc4bmi.reserve import reserve_grid_padding
-from test.conftest import write_config, write_datafile
+from test.conftest import CONTAINER_TIMEOUT, write_config, write_datafile
 
 IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.3.1"
 
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(tmp_path))
+    model = BmiClientSingularity(
+        image=IMAGE_NAME, work_dir=str(tmp_path), timeout=CONTAINER_TIMEOUT
+    )
     yield model
     del model
 
@@ -30,7 +32,12 @@ def walrus_model(tmp_path, walrus_input):
 @pytest.fixture()
 def walrus_model_with_input_dir(tmp_path, walrus_input):
     work_dir = TemporaryDirectory()
-    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=work_dir.name, input_dirs=[str(tmp_path)])
+    model = BmiClientSingularity(
+        image=IMAGE_NAME,
+        work_dir=work_dir.name,
+        input_dirs=[str(tmp_path)],
+        timeout=CONTAINER_TIMEOUT,
+    )
     yield model
     del model
     work_dir.cleanup()
@@ -41,7 +48,12 @@ def walrus_model_with_2input_dirs(walrus_2input_dirs, tmp_path):
     work_dir = tmp_path / 'work'
     work_dir.mkdir()
     input_dirs = walrus_2input_dirs['input_dirs']
-    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(work_dir), input_dirs=input_dirs)
+    model = BmiClientSingularity(
+        image=IMAGE_NAME,
+        work_dir=str(work_dir),
+        input_dirs=input_dirs,
+        timeout=CONTAINER_TIMEOUT,
+    )
     yield model
     del model
 
@@ -52,7 +64,9 @@ def walrus_model_with_work_dir(tmp_path):
     write_config(work_dir / 'config.yml', 'PEQ_Hupsel.dat')
     write_datafile(work_dir / 'PEQ_Hupsel.dat')
 
-    model = BmiClientSingularity(image=IMAGE_NAME, work_dir=str(work_dir))
+    model = BmiClientSingularity(
+        image=IMAGE_NAME, work_dir=str(work_dir), timeout=CONTAINER_TIMEOUT
+    )
     yield model, work_dir
     del model
 
@@ -78,7 +92,7 @@ From: {IMAGE_NAME.replace('docker://', '')}
 
     work_dir = tmp_path / 'work'
     work_dir.mkdir()
-    model = BmiClientSingularity(str(image), str(work_dir))
+    model = BmiClientSingularity(str(image), str(work_dir), timeout=CONTAINER_TIMEOUT)
 
     yield model
 

@@ -8,13 +8,19 @@ from typeguard import TypeCheckError
 from grpc4bmi.bmi_client_docker import BmiClientDocker
 from grpc4bmi.exceptions import DeadContainerException
 from grpc4bmi.reserve import reserve_grid_padding
+from test.conftest import CONTAINER_TIMEOUT
 
 walrus_docker_image = 'ewatercycle/walrus-grpc4bmi:v0.3.1'
 
 
 @pytest.fixture()
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientDocker(image=walrus_docker_image, image_port=55555, work_dir=str(tmp_path))
+    model = BmiClientDocker(
+        image=walrus_docker_image,
+        image_port=55555,
+        work_dir=str(tmp_path),
+        timeout=CONTAINER_TIMEOUT,
+    )
     yield model
     del model
 
@@ -34,10 +40,13 @@ def walrus_model_with_2input_dirs(tmp_path, walrus_2input_dirs):
     input_dirs = walrus_2input_dirs['input_dirs']
     work_dir = tmp_path / 'work'
     work_dir.mkdir()
-    model = BmiClientDocker(image="ewatercycle/walrus-grpc4bmi:v0.2.0",
-                            image_port=55555,
-                            work_dir=str(work_dir),
-                            input_dirs=input_dirs)
+    model = BmiClientDocker(
+        image=walrus_docker_image,
+        image_port=55555,
+        work_dir=str(work_dir),
+        input_dirs=input_dirs,
+        timeout=CONTAINER_TIMEOUT,
+    )
     yield model
     del model
 
