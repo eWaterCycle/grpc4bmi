@@ -7,28 +7,29 @@ name = "grpc4bmi"
 version = "0.5.0"
 description = "Run your BMI implementation in a separate process and expose it as BMI-python with GRPC"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = { text = "Apache License 2.0" }
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Utilities",
     "Topic :: Scientific/Engineering",
     "License :: OSI Approved :: Apache Software License"
 ]
 dependencies = [
-    "grpcio",
-    "grpcio-reflection",
-    "grpcio-status",
+    # Lower bounds must match the versions used to generate grpc4bmi/bmi_pb2*.py
+    "grpcio>=1.84.0",
+    "grpcio-reflection>=1.84.0",
+    "grpcio-status>=1.84.0",
     "googleapis-common-protos>=1.5.5",
-    "protobuf>=4,<5",
+    "protobuf>=7.35.1,<8",
     "numpy",
     "docker",
     "bmipy",
