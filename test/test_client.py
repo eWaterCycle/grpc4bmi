@@ -110,7 +110,6 @@ def test_initialize_with_nonstring():
     assert client is not None
     with pytest.raises(TypeError, match='bad argument type for built-in operation'):
         client.initialize(42)
-    client.finalize()
     del client
 
 
@@ -134,7 +133,6 @@ def test_update_until():
 def test_get_time_unit():
     client, local = make_bmi_classes()
     assert client.get_time_units() == local.get_time_units()
-    client.finalize()
     del client
 
 

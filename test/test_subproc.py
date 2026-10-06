@@ -67,7 +67,6 @@ def test_update():
 def test_get_time_unit():
     client, local = make_bmi_classes()
     assert client.get_time_units() == local.get_time_units()
-    client.finalize()
     del client
 
 

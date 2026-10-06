@@ -66,7 +66,6 @@ def test_memoized_methods(model, mut_name, mut_args):
     [
         ('update', tuple()),
         ('update_until', [2]),
-        ('finalize', tuple()),
         ('get_current_time', tuple()),
         ('get_value', ['plate_surface__temperature', np.zeros((200,))]),
         ('get_value_ptr', ['plate_surface__temperature']),
@@ -84,6 +83,19 @@ def test_nonmemoized_methods(mut_name, mut_args):
 
         mot(*mut_args)
         mot(*mut_args)
+
+        assert mock_method.call_count == 2
+
+
+def test_finalize_not_memoized():
+    model = BmiHeat()
+    with patch.object(model, 'finalize', wraps=model.finalize) as mock_method:
+        client = MemoizedBmi(model)
+        # Finalize is only defined on an initialized model, so re-initialize between calls
+        client.initialize(None)
+        client.finalize()
+        client.initialize(None)
+        client.finalize()
 
         assert mock_method.call_count == 2
 
