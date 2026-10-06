@@ -17,6 +17,7 @@ class TestJuliaHeatModel:
     def install_heat(self):
         # TODO for other Julia models do we need to install BasicModelInterface?
         # it is dep of Heat.jl, but we use it directly
+        jl.seval("using Pkg")
         jl.Pkg.add('BasicModelInterface')
         jl.Pkg.add(
             url="https://github.com/csdms/bmi-example-julia.git",
@@ -55,7 +56,7 @@ class TestJuliaHeatModel:
             ("get_input_var_names", tuple(), ["plate_surface__temperature"]),
             ("get_output_var_names", tuple(), ["plate_surface__temperature"]),
             ("get_start_time", tuple(), 0.0),
-            ("get_end_time", tuple(), np.Inf),
+            ("get_end_time", tuple(), np.inf),
             ("get_time_step", tuple(), 0.25),
             ("get_time_units", tuple(), "s"),
             ("get_var_type", ["plate_surface__temperature"], "float64"),
@@ -128,6 +129,7 @@ class TestJuliaHeatModel:
 class TestJuliaFakeModel:
     @pytest.fixture(scope="class", autouse=True)
     def install_fake(self):
+        jl.seval("using Pkg")
         jl.Pkg.add('BasicModelInterface')
         jl.seval('include("test/fake.jl")')
 
