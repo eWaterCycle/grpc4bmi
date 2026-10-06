@@ -1,5 +1,9 @@
 import pytest
 
+# Seconds to wait for gRPC server inside container to come up,
+#  so tests fail instead of hang
+CONTAINER_TIMEOUT = 60
+
 
 def write_config(p, data_fn):
     p.write_text(f"""data: {data_fn}

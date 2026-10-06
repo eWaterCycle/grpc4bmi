@@ -6,6 +6,7 @@ from typeguard import TypeCheckError
 
 from grpc4bmi.bmi_client_apptainer import SUPPORTED_APPTAINER_VERSIONS, BmiClientApptainer, check_apptainer_version_string
 from grpc4bmi.exceptions import ApptainerVersionException, DeadContainerException
+from test.conftest import CONTAINER_TIMEOUT
 
 class Test_check_apptainer_version_string:
     @pytest.mark.parametrize("test_input", [
@@ -33,7 +34,9 @@ IMAGE_NAME = "docker://ewatercycle/walrus-grpc4bmi:v0.3.1"
 
 @pytest.fixture
 def walrus_model(tmp_path, walrus_input):
-    model = BmiClientApptainer(image=IMAGE_NAME, work_dir=str(tmp_path))
+    model = BmiClientApptainer(
+        image=IMAGE_NAME, work_dir=str(tmp_path), timeout=CONTAINER_TIMEOUT
+    )
     yield model
     del model
 
