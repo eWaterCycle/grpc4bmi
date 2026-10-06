@@ -53,10 +53,6 @@ jobs:
       timeout-minutes: 20
     - name: Correct coverage paths
       run: sed -i "s+$PWD/++g" coverage.xml
-    - name: SonarCloud analysis
-      uses: SonarSource/sonarqube-scan-action@v8
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   cpp:
     runs-on: ubuntu-22.04
     steps:
@@ -94,4 +90,3 @@ jobs:
       - name: ctest
         run: ctest -V
         working-directory: cpp/build
-      # TODO use https://github.com/marketplace/actions/sonarcloud-scan-for-c-and-c
