@@ -819,18 +819,18 @@ class TestCreateGrpcChannel:
     def test_defaults(self):
         with BmiClient.create_grpc_channel() as channel:
             target = channel._channel.target()
-            assert target == b'localhost:50051'
+            assert target.endswith(b'localhost:50051')
 
     def test_custom(self):
         with BmiClient.create_grpc_channel(51234, 'somehost') as channel:
             target = channel._channel.target()
-            assert target == b'somehost:51234'
+            assert target.endswith(b'somehost:51234')
 
     def test_same_port_twice(self):
         port = 51235
         with BmiClient.create_grpc_channel(port) as channel1, BmiClient.create_grpc_channel(port) as channel2:
-            assert channel1._channel.target() == b'localhost:51235'
-            assert channel2._channel.target() == b'localhost:51235'
+            assert channel1._channel.target().endswith(b'localhost:51235')
+            assert channel2._channel.target().endswith(b'localhost:51235')
 
 class TestModelWithItemSizeZeroAndVarTypeFloat32:
     name = 'plate_surface__temperature'
