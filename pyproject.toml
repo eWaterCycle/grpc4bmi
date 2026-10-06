@@ -7,7 +7,7 @@ name = "grpc4bmi"
 version = "0.5.0"
 description = "Run your BMI implementation in a separate process and expose it as BMI-python with GRPC"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "Apache License 2.0" }
 classifiers = [
     "Development Status :: 3 - Alpha",
