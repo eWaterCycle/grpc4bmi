@@ -64,7 +64,7 @@ jobs:
       - name: Install grpc
         uses: ewatercycle/setup-grpc@v5
         with:
-          grpc-version: 1.51.1
+          grpc-version: 1.84.0
       - name: Copy grpc to system default
         run: |
           sudo rsync -a $GRPC_ROOT/ /usr/local

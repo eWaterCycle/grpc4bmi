@@ -18,10 +18,7 @@ find_library(GRPCREFLECTION grpc++_reflection)
 find_library(GRPCLIB grpc CONFIG REQUIRED)
 message(STATUS "Using gRPC ${GRPCLIB_VERSION}")
 find_package(PkgConfig REQUIRED)
-# protobuf >= 22 (reported as 4.22) depends on abseil
-if (NOT Protobuf_VERSION VERSION_LESS 4.22)
-  pkg_check_modules(ABSL_CHECK REQUIRED IMPORTED_TARGET absl_check)
-endif()
+pkg_check_modules(ABSL_CHECK REQUIRED IMPORTED_TARGET absl_check)
 pkg_check_modules(BMI REQUIRED IMPORTED_TARGET bmic bmicxx)
 message(STATUS "Using BMI ${BMI_VERSION}")
 
