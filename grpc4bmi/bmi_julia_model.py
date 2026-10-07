@@ -37,11 +37,13 @@ class BmiJulia(Bmi):
 
     def __init__(self, model: TypeValue, implementation: ModuleValue):
         warnings.warn(
-            "Support for Julia models (BmiJulia, via juliacall) is deprecated "
-            "and will be removed in a future release of grpc4bmi. ",
-            "Please switch to RemoteBMI instead: ",
-            "https://github.com/eWaterCycle/remotebmi",
-            FutureWarning,
+            message=(
+                "Support for Julia models (BmiJulia, via juliacall) is deprecated "
+                "and will be removed in a future release of grpc4bmi. "
+                "Please switch to RemoteBMI instead: "
+                "https://github.com/eWaterCycle/remotebmi"
+            ),
+            category=FutureWarning,
             stacklevel=2,
         )
         self.model = model
