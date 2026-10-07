@@ -1,4 +1,5 @@
 from typing import List
+import warnings
 
 from bmipy import Bmi
 import numpy as np
@@ -35,6 +36,14 @@ class BmiJulia(Bmi):
         return BmiJulia(model, implementation)
 
     def __init__(self, model: TypeValue, implementation: ModuleValue):
+        warnings.warn(
+            "Support for Julia models (BmiJulia, via juliacall) is deprecated "
+            "and will be removed in a future release of grpc4bmi. ",
+            "Please switch to RemoteBMI instead: ",
+            "https://github.com/eWaterCycle/remotebmi",
+            FutureWarning,
+            stacklevel=2,
+        )
         self.model = model
         self.implementation = implementation
 
