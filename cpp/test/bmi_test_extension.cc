@@ -125,11 +125,11 @@ std::string BmiTestExtension::GetVarLocation(std::string name)
 {
     if(name == "water level")
     {
-        return "FACE";
+        return "face";
     }
     if(name == "discharge")
     {
-        return "EDGE";
+        return "edge";
     }
     throw std::invalid_argument("unknown variable: " + name);
 }

@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cctype>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
@@ -249,8 +251,11 @@ grpc::Status BmiGRPCService::getVarLocation(grpc::ServerContext *context, const 
     try
     {
         std::string loc = this->bmi->GetVarLocation(request->name());
+        // BMI specifies lowercase locations ("node", "edge", "face"), the proto enum names are uppercase
+        std::string loc_upper(loc);
+        std::transform(loc_upper.begin(), loc_upper.end(), loc_upper.begin(), [](unsigned char c) { return std::toupper(c); });
         bmi::GetVarLocationResponse::Location loce;
-        bmi::GetVarLocationResponse::Location_Parse(loc, &loce);
+        bmi::GetVarLocationResponse::Location_Parse(loc_upper, &loce);
         response->set_location(loce);
     }
     catch (const std::exception &e)
