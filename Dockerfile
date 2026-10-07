@@ -5,7 +5,7 @@ FROM ubuntu:24.04
 LABEL maintainer="eWaterCycle <ewatercycle@esciencecenter.nl>"
 LABEL org.opencontainers.image.source="https://github.com/eWaterCycle/grpc4bmi"
 
-ENV GRPC_VERSION="1.66.1"
+ENV GRPC_VERSION="1.84.0"
 ENV BMIC_VERSION="2.1.2"
 ENV BMICXX_VERSION="2.0.2"
 
