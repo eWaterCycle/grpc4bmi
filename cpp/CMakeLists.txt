@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.6)
 
 project (grpc4bmi C CXX)
-set (GRPC4BMI_VERSION 0.2)
+set (GRPC4BMI_VERSION 0.6.1)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/grpc4bmi.pc.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/grpc4bmi.pc)

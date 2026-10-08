@@ -206,11 +206,10 @@ void test_var_location(BmiGRPCService* s, BmiClass* b)
     bmi::GetVarLocationResponse* response = new bmi::GetVarLocationResponse();
     for(std::vector<std::string>::size_type i = 0; i < names.size(); ++i)
     {
-        std::string expected_loc_char = b->GetVarLocation(names[i]);
         request->set_name(names[i]);
-        s->getVarLocation(NULL, request, response);
-        bmi::GetVarLocationResponse::Location expected_location;
-        bmi::GetVarLocationResponse::Location_Parse(std::string(expected_loc_char), &expected_location);
+        grpc::Status status = s->getVarLocation(NULL, request, response);
+        assert(status.ok());
+        bmi::GetVarLocationResponse::Location expected_location = names[i] == "water level" ? bmi::GetVarLocationResponse::FACE : bmi::GetVarLocationResponse::EDGE;
         assert(expected_location == response->location());
     }
     delete request;
