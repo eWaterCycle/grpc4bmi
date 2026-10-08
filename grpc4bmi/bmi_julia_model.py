@@ -27,15 +27,6 @@ class BmiJulia(Bmi):
                 The package of implementation_name should be installed.
                 Uses https://juliapackages.com/p/basicmodelinterface by default.
         """
-        package4model = model_name.split('.')[0]
-        package4implementation = implementation_name.split('.')[0]
-        jl.seval("import " + package4model)
-        jl.seval("import " + package4implementation)
-        model = jl.seval(model_name)
-        implementation = jl.seval(implementation_name)
-        return BmiJulia(model, implementation)
-
-    def __init__(self, model: TypeValue, implementation: ModuleValue):
         warnings.warn(
             message=(
                 "Support for Julia models (BmiJulia, via juliacall) is deprecated "
@@ -46,6 +37,15 @@ class BmiJulia(Bmi):
             category=FutureWarning,
             stacklevel=2,
         )
+        package4model = model_name.split('.')[0]
+        package4implementation = implementation_name.split('.')[0]
+        jl.seval("import " + package4model)
+        jl.seval("import " + package4implementation)
+        model = jl.seval(model_name)
+        implementation = jl.seval(implementation_name)
+        return BmiJulia(model, implementation)
+
+    def __init__(self, model: TypeValue, implementation: ModuleValue):
         self.model = model
         self.implementation = implementation
 
