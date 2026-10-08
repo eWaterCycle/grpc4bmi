@@ -100,7 +100,7 @@ run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus
 
 > [!WARNING]
 > Support for Julia models is deprecated and will be removed in a future release.
-> Please make use of [RemoteBMI](https://github.com/eWaterCycle/remotebmi) instead which has native Julia support.
+> Please make use of [RemoteBMI](https://github.com/eWaterCycle/remotebmi) instead, which has native Julia support.
 
 <details><summary>Instructions</summary>
 
