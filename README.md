@@ -96,6 +96,12 @@ run-bmi-server --lang R --path ~/git/eWaterCycle/grpc4bmi-examples/walrus/walrus
 
 ### Models written in Julia
 
+> [!WARNING]
+> Support for Julia models is deprecated and will be removed in a future release.
+> Please make use of [RemoteBMI](https://github.com/eWaterCycle/remotebmi) instead, which has native Julia support.
+
+<details><summary>Instructions</summary>
+
 The grpc4bmi Python package can also run BMI models written in Julia if the model has an implementation of the [BasicModelInterface.jl](https://github.com/Deltares/BasicModelInterface.jl).
 
 Run the Julia model in Python with
@@ -122,6 +128,8 @@ A Julia model has to be run locally. It can not be run in the default gRPC clien
 1. Julia has no gRPC server implementation
 2. Calling Julia methods from Python gRPC server causes 100% CPU usage and no progress
 3. Calling Julia methods from C++ gRPC server causes segmentation faults
+
+</details>
 
 ### The client side
 
